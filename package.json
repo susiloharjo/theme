@@ -1,7 +1,7 @@
 {
-  "name": "sap-hana-tailwind-theme",
+  "name": "eris-tailwind-theme",
   "version": "1.0.0",
-  "description": "SAP HANA/Fiori inspired Tailwind UI theme with comprehensive component library",
+  "description": "ERIS inspired Tailwind UI theme with comprehensive component library",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,4 +1,4 @@
-// Component Utilities for SAP HANA Theme
+// Component Utilities for ERIS Theme
 // Handles interactive behaviors for components
 
 // Sidebar Toggle
