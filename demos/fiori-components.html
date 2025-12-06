@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP Fiori Components - SAP HANA Theme</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+
+<body class="bg-background min-h-screen p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <a href="/" class="text-sm text-primary hover:text-primary-600 mb-4 inline-block">← Back to Home</a>
+            <h1 class="text-h1 text-text-primary mb-2">SAP Fiori Components</h1>
+            <p class="text-text-secondary">Enhanced tables and cards following SAP Fiori design patterns</p>
+        </div>
+
+        <!-- Object Cards Section -->
+        <section class="mb-12">
+            <h2 class="text-h3 text-text-primary mb-6">Object Cards</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Product Object Card -->
+                <div class="object-card">
+                    <div class="object-card-header">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="object-card-title">Wireless Headphones Pro</h3>
+                                <p class="object-card-subtitle">SKU: WH-PRO-001</p>
+                            </div>
+                            <span class="badge-success">In Stock</span>
+                        </div>
+                    </div>
+                    <div class="object-card-body">
+                        <div class="object-card-attributes">
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Category</span>
+                                <span class="object-card-attribute-value">Electronics</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Price</span>
+                                <span class="object-card-attribute-value">$299.99</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Stock Quantity</span>
+                                <span class="object-card-attribute-value">245 units</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Supplier</span>
+                                <span class="object-card-attribute-value">Tech Solutions Inc.</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Last Updated</span>
+                                <span class="object-card-attribute-value">Dec 6, 2025</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Warehouse</span>
+                                <span class="object-card-attribute-value">Warehouse A</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-end gap-3">
+                        <button class="btn-outline btn-sm">View Details</button>
+                        <button class="btn-primary btn-sm">Edit</button>
+                    </div>
+                </div>
+
+                <!-- Customer Object Card -->
+                <div class="object-card">
+                    <div class="object-card-header">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="object-card-title">Acme Corporation</h3>
+                                <p class="object-card-subtitle">Customer ID: CUST-10234</p>
+                            </div>
+                            <span class="badge-primary">Premium</span>
+                        </div>
+                    </div>
+                    <div class="object-card-body">
+                        <div class="object-card-attributes">
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Contact Person</span>
+                                <span class="object-card-attribute-value">John Smith</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Email</span>
+                                <span class="object-card-attribute-value">john@acme.com</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Phone</span>
+                                <span class="object-card-attribute-value">+1 (555) 123-4567</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Total Orders</span>
+                                <span class="object-card-attribute-value">127</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Lifetime Value</span>
+                                <span class="object-card-attribute-value">$45,230</span>
+                            </div>
+                            <div class="object-card-attribute">
+                                <span class="object-card-attribute-label">Member Since</span>
+                                <span class="object-card-attribute-value">Jan 2023</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-end gap-3">
+                        <button class="btn-outline btn-sm">View Orders</button>
+                        <button class="btn-primary btn-sm">Contact</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- List Cards Section -->
+        <section class="mb-12">
+            <h2 class="text-h3 text-text-primary mb-6">List Cards</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent Activities List Card -->
+                <div class="list-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Activities</h3>
+                        <button class="text-primary text-sm hover:text-primary-600">View All</button>
+                    </div>
+                    <div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">New order received</div>
+                                    <div class="list-card-item-description">Order #ORD-1234 from Alice Johnson</div>
+                                </div>
+                                <div class="list-card-item-meta">2 min ago</div>
+                            </div>
+                        </div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">Payment processed</div>
+                                    <div class="list-card-item-description">$189.50 received from Bob Smith</div>
+                                </div>
+                                <div class="list-card-item-meta">15 min ago</div>
+                            </div>
+                        </div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">Inventory alert</div>
+                                    <div class="list-card-item-description">Product "Wireless Headphones" low stock
+                                    </div>
+                                </div>
+                                <div class="list-card-item-meta">1 hour ago</div>
+                            </div>
+                        </div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">New user registered</div>
+                                    <div class="list-card-item-description">Emma Wilson joined the platform</div>
+                                </div>
+                                <div class="list-card-item-meta">3 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Products List Card -->
+                <div class="list-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Top Products</h3>
+                        <button class="text-primary text-sm hover:text-primary-600">View All</button>
+                    </div>
+                    <div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">Wireless Headphones Pro</div>
+                                    <div class="list-card-item-description">245 units sold this month</div>
+                                </div>
+                                <div class="list-card-item-meta text-success font-semibold">$18,450</div>
+                            </div>
+                        </div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">Smart Watch Ultra</div>
+                                    <div class="list-card-item-description">189 units sold this month</div>
+                                </div>
+                                <div class="list-card-item-meta text-success font-semibold">$15,230</div>
+                            </div>
+                        </div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">Bluetooth Speaker</div>
+                                    <div class="list-card-item-description">156 units sold this month</div>
+                                </div>
+                                <div class="list-card-item-meta text-success font-semibold">$12,180</div>
+                            </div>
+                        </div>
+                        <div class="list-card-item">
+                            <div class="list-card-item-content">
+                                <div class="list-card-item-main">
+                                    <div class="list-card-item-title">USB-C Cable</div>
+                                    <div class="list-card-item-description">423 units sold this month</div>
+                                </div>
+                                <div class="list-card-item-meta text-success font-semibold">$8,460</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytical Cards Section -->
+        <section class="mb-12">
+            <h2 class="text-h3 text-text-primary mb-6">Analytical Cards</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">$45.2K</span>
+                            <span class="analytical-card-unit">USD</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-3">Total Revenue</div>
+                        <div class="analytical-card-trend-positive">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            <span>12.5% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">1,429</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-3">Total Orders</div>
+                        <div class="analytical-card-trend-positive">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            <span>8.2% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">9,284</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-3">Active Users</div>
+                        <div class="analytical-card-trend-positive">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            <span>23.1% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">54.2%</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-3">Conversion Rate</div>
+                        <div class="analytical-card-trend-negative">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                            <span>2.3% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Table Section -->
+        <section class="mb-12">
+            <h2 class="text-h3 text-text-primary mb-6">Enhanced Data Table</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Product Inventory</h3>
+                    <div class="flex gap-2">
+                        <button class="btn-outline btn-sm">Export</button>
+                        <button class="btn-primary btn-sm">Add Product</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="w-4 h-4 text-primary border-border rounded">
+                                </th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="group">
+                                <td><input type="checkbox" class="w-4 h-4 text-primary border-border rounded"></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Wireless Headphones Pro</span>
+                                        <span class="table-object-cell-subtitle">SKU: WH-PRO-001 • Updated 2 hours
+                                            ago</span>
+                                    </div>
+                                </td>
+                                <td>Electronics</td>
+                                <td>245</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-success"></span>
+                                        <span>In Stock</span>
+                                    </div>
+                                </td>
+                                <td class="font-semibold">$299.99</td>
+                                <td>
+                                    <div class="table-row-actions">
+                                        <button class="btn-icon btn-sm text-primary hover:bg-primary-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="btn-icon btn-sm text-text-secondary hover:bg-gray-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="group">
+                                <td><input type="checkbox" class="w-4 h-4 text-primary border-border rounded"></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Smart Watch Ultra</span>
+                                        <span class="table-object-cell-subtitle">SKU: SW-ULTRA-092 • Updated 5 hours
+                                            ago</span>
+                                    </div>
+                                </td>
+                                <td>Electronics</td>
+                                <td>67</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-warning"></span>
+                                        <span>Low Stock</span>
+                                    </div>
+                                </td>
+                                <td class="font-semibold">$399.99</td>
+                                <td>
+                                    <div class="table-row-actions">
+                                        <button class="btn-icon btn-sm text-primary hover:bg-primary-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="btn-icon btn-sm text-text-secondary hover:bg-gray-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="group">
+                                <td><input type="checkbox" class="w-4 h-4 text-primary border-border rounded"></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Bluetooth Speaker Mini</span>
+                                        <span class="table-object-cell-subtitle">SKU: BS-MINI-045 • Updated 1 day
+                                            ago</span>
+                                    </div>
+                                </td>
+                                <td>Electronics</td>
+                                <td>0</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-error"></span>
+                                        <span>Out of Stock</span>
+                                    </div>
+                                </td>
+                                <td class="font-semibold">$79.99</td>
+                                <td>
+                                    <div class="table-row-actions">
+                                        <button class="btn-icon btn-sm text-primary hover:bg-primary-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="btn-icon btn-sm text-text-secondary hover:bg-gray-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="group selected">
+                                <td><input type="checkbox" class="w-4 h-4 text-primary border-border rounded" checked>
+                                </td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">USB-C Cable Premium</span>
+                                        <span class="table-object-cell-subtitle">SKU: USB-C-PREM-128 • Updated 3 hours
+                                            ago</span>
+                                    </div>
+                                </td>
+                                <td>Accessories</td>
+                                <td>1,234</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-success"></span>
+                                        <span>In Stock</span>
+                                    </div>
+                                </td>
+                                <td class="font-semibold">$19.99</td>
+                                <td>
+                                    <div class="table-row-actions">
+                                        <button class="btn-icon btn-sm text-primary hover:bg-primary-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="btn-icon btn-sm text-text-secondary hover:bg-gray-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="group">
+                                <td><input type="checkbox" class="w-4 h-4 text-primary border-border rounded"></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Laptop Stand Adjustable</span>
+                                        <span class="table-object-cell-subtitle">SKU: LS-ADJ-234 • Updated 6 hours
+                                            ago</span>
+                                    </div>
+                                </td>
+                                <td>Accessories</td>
+                                <td>156</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-info"></span>
+                                        <span>Reordering</span>
+                                    </div>
+                                </td>
+                                <td class="font-semibold">$49.99</td>
+                                <td>
+                                    <div class="table-row-actions">
+                                        <button class="btn-icon btn-sm text-primary hover:bg-primary-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="btn-icon btn-sm text-text-secondary hover:bg-gray-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer flex items-center justify-between">
+                    <p class="text-sm text-text-secondary">Showing 1 to 5 of 47 results • 1 selected</p>
+                    <div class="flex gap-2">
+                        <button class="btn-outline btn-sm" disabled>Previous</button>
+                        <button class="btn-primary btn-sm">1</button>
+                        <button class="btn-outline btn-sm">2</button>
+                        <button class="btn-outline btn-sm">3</button>
+                        <button class="btn-outline btn-sm">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Component Features -->
+        <section class="mb-12">
+            <h2 class="text-h3 text-text-primary mb-6">SAP Fiori Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-h5 text-text-primary mb-3">Object Cells</h4>
+                        <p class="text-sm text-text-secondary">Two-line cells with title and subtitle for rich data
+                            presentation in tables</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-h5 text-text-primary mb-3">Status Indicators</h4>
+                        <p class="text-sm text-text-secondary">Color-coded status dots with labels for quick visual
+                            scanning</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-h5 text-text-primary mb-3">Row Actions</h4>
+                        <p class="text-sm text-text-secondary">Contextual actions that appear on hover for cleaner
+                            interface</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-h5 text-text-primary mb-3">Object Cards</h4>
+                        <p class="text-sm text-text-secondary">Structured attribute display with labels and values in
+                            grid layout</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-h5 text-text-primary mb-3">List Cards</h4>
+                        <p class="text-sm text-text-secondary">Compact list items with title, description, and metadata
+                        </p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-h5 text-text-primary mb-3">Analytical Cards</h4>
+                        <p class="text-sm text-text-secondary">KPI display with large values and trend indicators</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="/src/js/components.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview Page - SAP HANA Theme</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="bg-surface border-b border-border shadow-sm sticky top-0 z-30">
+        <div class="flex items-center justify-between px-4 lg:px-6 py-3">
+            <!-- Left Section: Menu + Logo + Nav -->
+            <div class="flex items-center gap-4 flex-1">
+                <!-- Hamburger Menu -->
+                <button id="mobile-menu-toggle" class="lg:hidden text-text-secondary hover:text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <!-- Back Button (Desktop) -->
+                <button class="hidden lg:block text-text-secondary hover:text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- Logo + Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">E</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-text-primary text-lg">ERIS</span>
+                        <span class="hidden sm:block text-text-secondary text-sm border-l border-border pl-2">Sales
+                            Overview</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links (Desktop) -->
+                <nav class="hidden lg:flex items-center gap-1 ml-4">
+                    <a href="/demos/dashboard.html"
+                        class="px-3 py-2 text-sm text-primary font-medium border-b-2 border-primary hover:bg-gray-50">
+                        My Home
+                    </a>
+                    <a href="#"
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md">
+                        Industries
+                    </a>
+                    <button
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md flex items-center gap-1">
+                        Support
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <button
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md flex items-center gap-1">
+                        Training
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <button
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md flex items-center gap-1">
+                        Community
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Right Section: Search + Actions + User -->
+            <div class="flex items-center gap-2 lg:gap-3">
+                <!-- Search (Desktop) -->
+                <div class="hidden md:block relative">
+                    <input type="text" placeholder="Search" class="input pl-9 pr-4 py-1.5 w-48 lg:w-64 text-sm">
+                    <svg class="w-4 h-4 text-text-secondary absolute left-3 top-1/2 -translate-y-1/2" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+
+                <!-- Search Icon (Mobile) -->
+                <button class="md:hidden text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+
+                <!-- Notifications -->
+                <button class="relative text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+
+                <!-- Help -->
+                <button class="hidden lg:block text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- More Options -->
+                <button class="hidden lg:block text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- User Menu -->
+                <div class="relative">
+                    <button data-dropdown-trigger="user-menu"
+                        class="flex items-center gap-2 hover:bg-gray-50 rounded-md p-1.5">
+                        <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-medium text-primary">JD</span>
+                        </div>
+                        <svg class="w-4 h-4 text-text-secondary hidden sm:block" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="user-menu" data-dropdown
+                        class="hidden absolute right-0 mt-2 w-48 bg-surface rounded-md shadow-lg border border-border py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Profile</a>
+                        <a href="/demos/settings.html"
+                            class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Settings</a>
+                        <hr class="my-1 border-border">
+                        <a href="/demos/login.html" class="block px-4 py-2 text-sm text-error hover:bg-gray-50">Sign
+                            Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Filter Bar -->
+    <div class="bg-surface border-b border-border">
+        <div class="max-w-[1600px] mx-auto px-6 py-4">
+            <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                <div class="flex flex-wrap gap-3 flex-1">
+                    <select class="input w-48">
+                        <option>All Regions</option>
+                        <option>North America</option>
+                        <option>Europe</option>
+                        <option>Asia Pacific</option>
+                    </select>
+                    <select class="input w-48">
+                        <option>All Products</option>
+                        <option>Software</option>
+                        <option>Hardware</option>
+                        <option>Services</option>
+                    </select>
+                    <select class="input w-48">
+                        <option>This Quarter</option>
+                        <option>Last Quarter</option>
+                        <option>This Year</option>
+                        <option>Last Year</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn-outline">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                        Refresh
+                    </button>
+                    <button class="btn-primary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content - Card Grid -->
+    <main class="max-w-[1600px] mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+            <!-- KPI Card - Revenue -->
+            <div class="analytical-card">
+                <div class="card-header">
+                    <h3 class="text-sm font-medium text-text-secondary">Total Revenue</h3>
+                    <button class="text-text-secondary hover:text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="analytical-card-kpi">
+                        <span class="analytical-card-value">$2.4M</span>
+                        <span class="analytical-card-unit">USD</span>
+                    </div>
+                    <div class="analytical-card-trend-positive">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        <span>18.2% vs last quarter</span>
+                    </div>
+                    <div class="text-xs text-text-secondary mt-2">Target: $2.8M</div>
+                </div>
+            </div>
+
+            <!-- KPI Card - Orders -->
+            <div class="analytical-card">
+                <div class="card-header">
+                    <h3 class="text-sm font-medium text-text-secondary">Total Orders</h3>
+                    <button class="text-text-secondary hover:text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="analytical-card-kpi">
+                        <span class="analytical-card-value">3,847</span>
+                    </div>
+                    <div class="analytical-card-trend-positive">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        <span>12.4% vs last quarter</span>
+                    </div>
+                    <div class="text-xs text-text-secondary mt-2">Target: 4,000</div>
+                </div>
+            </div>
+
+            <!-- KPI Card - Conversion -->
+            <div class="analytical-card">
+                <div class="card-header">
+                    <h3 class="text-sm font-medium text-text-secondary">Conversion Rate</h3>
+                    <button class="text-text-secondary hover:text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="analytical-card-kpi">
+                        <span class="analytical-card-value">64.2%</span>
+                    </div>
+                    <div class="analytical-card-trend-positive">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        <span>5.1% vs last quarter</span>
+                    </div>
+                    <div class="text-xs text-text-secondary mt-2">Target: 70%</div>
+                </div>
+            </div>
+
+            <!-- KPI Card - Customer Satisfaction -->
+            <div class="analytical-card">
+                <div class="card-header">
+                    <h3 class="text-sm font-medium text-text-secondary">Customer Satisfaction</h3>
+                    <button class="text-text-secondary hover:text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="analytical-card-kpi">
+                        <span class="analytical-card-value">4.8</span>
+                        <span class="analytical-card-unit">/5</span>
+                    </div>
+                    <div class="analytical-card-trend-positive">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        <span>0.3 vs last quarter</span>
+                    </div>
+                    <div class="text-xs text-text-secondary mt-2">1,247 reviews</div>
+                </div>
+            </div>
+
+            <!-- List Card - Top Products (spans 2 columns) -->
+            <div class="card md:col-span-2">
+                <div class="card-header">
+                    <h3 class="text-h5 text-text-primary">Top Products</h3>
+                    <button class="text-primary hover:text-primary-600 text-sm font-medium">View All</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="divide-y divide-border">
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">Enterprise Software Suite</div>
+                                    <div class="text-sm text-text-secondary">SKU: ESS-2024</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold text-text-primary">$542K</div>
+                                <div class="text-sm text-success">+18.2%</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-secondary-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">Mobile Application Platform</div>
+                                    <div class="text-sm text-text-secondary">SKU: MAP-2024</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold text-text-primary">$387K</div>
+                                <div class="text-sm text-success">+24.5%</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">Cloud Infrastructure Services</div>
+                                    <div class="text-sm text-text-secondary">SKU: CIS-2024</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold text-text-primary">$298K</div>
+                                <div class="text-sm text-success">+15.8%</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">Security & Compliance Suite</div>
+                                    <div class="text-sm text-text-secondary">SKU: SCS-2024</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold text-text-primary">$245K</div>
+                                <div class="text-sm text-success">+9.3%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Card - Recent Orders (spans 2 columns) -->
+            <div class="card md:col-span-2">
+                <div class="card-header">
+                    <h3 class="text-h5 text-text-primary">Recent Orders</h3>
+                    <button class="text-primary hover:text-primary-600 text-sm font-medium">View All</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="overflow-x-auto">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th class="text-right">Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-medium text-primary">ORD-2024-1247</td>
+                                    <td>Acme Corporation</td>
+                                    <td>Enterprise Software Suite</td>
+                                    <td class="text-right font-semibold">$45,200</td>
+                                    <td><span class="badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-primary">ORD-2024-1246</td>
+                                    <td>TechStart Inc</td>
+                                    <td>Mobile Application Platform</td>
+                                    <td class="text-right font-semibold">$32,800</td>
+                                    <td><span class="badge-warning">Processing</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-primary">ORD-2024-1245</td>
+                                    <td>Global Systems Ltd</td>
+                                    <td>Cloud Infrastructure Services</td>
+                                    <td class="text-right font-semibold">$67,500</td>
+                                    <td><span class="badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-primary">ORD-2024-1244</td>
+                                    <td>Innovation Labs</td>
+                                    <td>Security & Compliance Suite</td>
+                                    <td class="text-right font-semibold">$28,900</td>
+                                    <td><span class="badge-primary">Pending</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Card - Revenue Trend (spans 2 columns) -->
+            <div class="card lg:col-span-2">
+                <div class="card-header">
+                    <h3 class="text-h5 text-text-primary">Revenue Trend</h3>
+                    <select class="input-sm">
+                        <option>Last 6 Months</option>
+                        <option>Last Year</option>
+                        <option>All Time</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <div
+                        class="h-64 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-lg flex items-center justify-center border border-dashed border-primary-200">
+                        <div class="text-center">
+                            <svg class="w-16 h-16 text-primary-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z">
+                                </path>
+                            </svg>
+                            <p class="text-text-secondary font-medium">Line Chart Placeholder</p>
+                            <p class="text-xs text-text-secondary mt-1">Integrate Chart.js or ECharts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Link List Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-h5 text-text-primary">Quick Actions</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="divide-y divide-border">
+                        <a href="#" class="flex items-center justify-between p-3 hover:bg-gray-50">
+                            <span class="text-sm text-text-primary">Create New Order</span>
+                            <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#" class="flex items-center justify-between p-3 hover:bg-gray-50">
+                            <span class="text-sm text-text-primary">Add New Customer</span>
+                            <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#" class="flex items-center justify-between p-3 hover:bg-gray-50">
+                            <span class="text-sm text-text-primary">Generate Report</span>
+                            <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#" class="flex items-center justify-between p-3 hover:bg-gray-50">
+                            <span class="text-sm text-text-primary">View Analytics</span>
+                            <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#" class="flex items-center justify-between p-3 hover:bg-gray-50">
+                            <span class="text-sm text-text-primary">Export Data</span>
+                            <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stack Card - Alerts -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-h5 text-text-primary">Alerts</h3>
+                    <span class="badge-error">3</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="divide-y divide-border">
+                        <div class="p-3 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-error mt-0.5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                    </path>
+                                </svg>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-text-primary">Low Stock Alert</div>
+                                    <div class="text-xs text-text-secondary mt-1">3 products below threshold</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-warning mt-0.5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-text-primary">Pending Approvals</div>
+                                    <div class="text-xs text-text-secondary mt-1">5 orders awaiting approval</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 hover:bg-gray-50 cursor-pointer">
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-error mt-0.5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-text-primary">System Maintenance</div>
+                                    <div class="text-xs text-text-secondary mt-1">Scheduled for tonight at 2 AM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module" src="/src/js/components.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Overview - ERIS</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="bg-surface border-b border-border shadow-sm sticky top-0 z-30">
+        <div class="flex items-center justify-between px-4 lg:px-6 py-3">
+            <div class="flex items-center gap-4 flex-1">
+                <button id="mobile-menu-toggle" class="lg:hidden text-text-secondary hover:text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <button class="hidden lg:block text-text-secondary hover:text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">E</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-text-primary text-lg">ERIS</span>
+                        <span class="hidden sm:block text-text-secondary text-sm border-l border-border pl-2">CRM
+                            Overview</span>
+                    </div>
+                </div>
+
+                <nav class="hidden lg:flex items-center gap-1 ml-4">
+                    <a href="/demos/dashboard.html"
+                        class="px-3 py-2 text-sm text-primary font-medium border-b-2 border-primary hover:bg-gray-50">
+                        My Home
+                    </a>
+                    <a href="#"
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md">
+                        Customers
+                    </a>
+                    <a href="#"
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md">
+                        Opportunities
+                    </a>
+                    <a href="#"
+                        class="px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 rounded-md">
+                        Reports
+                    </a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-2 lg:gap-3">
+                <div class="hidden md:block relative">
+                    <input type="text" placeholder="Search" class="input pl-9 pr-4 py-1.5 w-48 lg:w-64 text-sm">
+                    <svg class="w-4 h-4 text-text-secondary absolute left-3 top-1/2 -translate-y-1/2" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+
+                <button class="md:hidden text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+
+                <button class="relative text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+
+                <button class="hidden lg:block text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </button>
+
+                <button class="hidden lg:block text-text-secondary hover:text-primary p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                        </path>
+                    </svg>
+                </button>
+
+                <div class="relative">
+                    <button data-dropdown-trigger="user-menu"
+                        class="flex items-center gap-2 hover:bg-gray-50 rounded-md p-1.5">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-medium text-white">JD</span>
+                        </div>
+                        <svg class="w-4 h-4 text-text-secondary hidden sm:block" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="user-menu" data-dropdown
+                        class="hidden absolute right-0 mt-2 w-48 bg-surface rounded-md shadow-lg border border-border py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Profile</a>
+                        <a href="/demos/settings.html"
+                            class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Settings</a>
+                        <hr class="my-1 border-border">
+                        <a href="/demos/login.html" class="block px-4 py-2 text-sm text-error hover:bg-gray-50">Sign
+                            Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Subheader -->
+    <div class="bg-surface border-b border-border">
+        <div class="max-w-[1600px] mx-auto px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <button class="flex items-center gap-2 text-primary font-medium text-sm">
+                    <span>Standard</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <span class="text-xs text-text-secondary">No filters active</span>
+            </div>
+            <button class="btn-outline btn-sm hidden sm:flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+                Open in New Window
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content - Exact SAP Layout -->
+    <main class="max-w-[1600px] mx-auto px-6 pt-24 pb-6 mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <!-- Column 1: Urgent Follow-ups -->
+            <div class="space-y-4">
+                <div class="card h-full">
+                    <div class="card-header flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-text-primary">Urgent Follow-up Items</h3>
+                            <p class="text-xs text-text-secondary">By deadline and priority</p>
+                        </div>
+                        <button class="text-text-secondary hover:text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-body p-0 divide-y divide-border text-sm">
+                        <!-- Item 1 -->
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="font-medium text-text-primary">Enterprise Deal - Acme Corp</div>
+                                    <div class="text-xs text-error flex items-center gap-1 mt-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Contract Expires Soon</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-1">ID: 100035264</div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="text-text-secondary">Deal Value:</span>
+                                <span class="font-semibold">$180K</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                                <div class="bg-error h-1.5 rounded-full" style="width: 30%"></div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-3">30% probability</div>
+                            <div class="flex gap-2">
+                                <button class="btn-success btn-sm flex-1 text-xs">Contact</button>
+                                <button class="btn-error btn-sm flex-1 text-xs">Urgent</button>
+                                <button class="btn-outline btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="font-medium text-text-primary">Demo Scheduled - TechVision</div>
+                                    <div class="text-xs text-warning flex items-center gap-1 mt-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Only 2 Days Left</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-1">ID: 100035265</div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="text-text-secondary">Est. Value:</span>
+                                <span class="font-semibold">$68K</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                                <div class="bg-warning h-1.5 rounded-full" style="width: 50%"></div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-3">50% probability</div>
+                            <div class="flex gap-2">
+                                <button class="btn-success btn-sm flex-1 text-xs">Prepare</button>
+                                <button class="btn-error btn-sm flex-1 text-xs">Reschedule</button>
+                                <button class="btn-outline btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="font-medium text-text-primary">Proposal Review - GlobalTech</div>
+                                    <div class="text-xs text-success flex items-center gap-1 mt-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Ready to Close</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-1">ID: 100035266</div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="text-text-secondary">Deal Value:</span>
+                                <span class="font-semibold">$75K</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                                <div class="bg-success h-1.5 rounded-full" style="width: 70%"></div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-3">70% probability</div>
+                            <div class="flex gap-2">
+                                <button class="btn-success btn-sm flex-1 text-xs">Finalize</button>
+                                <button class="btn-error btn-sm flex-1 text-xs">Review</button>
+                                <button class="btn-outline btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Item 4 -->
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="font-medium text-text-primary">Renewal - Innovation Labs</div>
+                                    <div class="text-xs text-success flex items-center gap-1 mt-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>On Track</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-1">ID: 100035267</div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="text-secondary">Annual Value:</span>
+                                <span class="font-semibold">$25K</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                                <div class="bg-success h-1.5 rounded-full" style="width: 70%"></div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-3">70% probability</div>
+                            <div class="flex gap-2">
+                                <button class="btn-success btn-sm flex-1 text-xs">Approve</button>
+                                <button class="btn-error btn-sm flex-1 text-xs">Reject</button>
+                                <button class="btn-outline btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Item 5 -->
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="font-medium text-text-primary">New Lead - StartupXYZ</div>
+                                    <div class="text-xs text-success flex items-center gap-1 mt-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Qualified</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-1">ID: 100035268</div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="text-text-secondary">Est. Value:</span>
+                                <span class="font-semibold">$100K</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                                <div class="bg-success h-1.5 rounded-full" style="width: 70%"></div>
+                            </div>
+                            <div class="text-xs text-text-secondary mb-3">70% probability</div>
+                            <div class="flex gap-2">
+                                <button class="btn-success btn-sm flex-1 text-xs">Approve</button>
+                                <button class="btn-error btn-sm flex-1 text-xs">Reject</button>
+                                <button class="btn-outline btn-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="text-primary hover:text-primary-600 text-sm font-medium">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Open Activities + Quick Links -->
+            <div class="space-y-4">
+                <!-- Open Activities -->
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-text-primary">Open Activities</h3>
+                            <p class="text-xs text-text-secondary">Sales Team Updates</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-primary">20</div>
+                                <div class="text-xs text-text-secondary">of 42</div>
+                            </div>
+                            <button class="text-text-secondary hover:text-primary">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="flex items-center gap-3 mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <svg class="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium text-text-primary mb-1">View All</div>
+                                <div class="text-xs text-text-secondary">See complete activity timeline</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-text-primary">Quick Links</h3>
+                        <span class="text-xs text-text-secondary">6 of 10</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="divide-y divide-border text-sm">
+                            <a href="#" class="flex items-center gap-3 p-3 hover:bg-gray-50">
+                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <span class="text-text-primary">My Sales Pipeline</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 p-3 hover:bg-gray-50">
+                                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                                <span class="text-text-primary">Sales Analytics</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 p-3 hover:bg-gray-50">
+                                <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122">
+                                    </path>
+                                </svg>
+                                <span class="text-text-primary">Launchpad</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 p-3 hover:bg-gray-50">
+                                <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                    </path>
+                                </svg>
+                                <span class="text-text-primary">Customer Resource Management</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 p-3 hover:bg-gray-50">
+                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                                    </path>
+                                </svg>
+                                <span class="text-text-primary">My Inbox</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 p-3 hover:bg-gray-50">
+                                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg>
+                                <span class="text-text-primary">Sales Products</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Column 3: Team Members + Contact -->
+            <div class="space-y-4">
+                <!-- Team Members -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-sm font-medium text-text-primary">Team Members</h3>
+                    </div>
+                    <div class="card-body p-0 divide-y divide-border">
+                        <!-- Member 1 -->
+                        <div class="p-3">
+                            <div class="flex items-start gap-2 mb-2">
+                                <div
+                                    class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xs font-medium text-blue-600">AC</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm text-primary">Alain Chevalier</div>
+                                    <div class="text-xs text-text-secondary">Credit Analyst</div>
+                                    <div class="text-xs text-text-secondary mt-1">7/22/2024 at 2:56 PM</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-text-secondary leading-relaxed">
+                                Responsible for analyzing customer accounts (approx. 4000 customers). Monitor credit
+                                risk. Performing checks on regular basis. Decide on credit blocked sales orders. Decide
+                                on credit limits for customers.
+                            </p>
+                            <p class="text-xs text-text-primary italic mt-2">
+                                "I almost always find a pragmatic solution that's acceptable for my customers and my
+                                company."
+                            </p>
+                        </div>
+
+                        <!-- Member 2 -->
+                        <div class="p-3">
+                            <div class="flex items-start gap-2 mb-2">
+                                <div
+                                    class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xs font-medium text-purple-600">LD</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm text-primary">Laurent Dubois</div>
+                                    <div class="text-xs text-text-secondary">Accounts Payable Manager</div>
+                                    <div class="text-xs text-text-secondary mt-1">7/22/2024 at 2:56 PM</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-text-secondary leading-relaxed">
+                                Plans, organizes and directs the operations and activities of accounts payable.
+                                Supervises employees and monitors activities. Does final check of accounts payable
+                                payments and signs off. Reports to the head of finance.
+                            </p>
+                            <p class="text-xs text-text-primary italic mt-2">
+                                "I am a diligent person. I pay great attention to detail."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-sm font-medium text-text-primary">Contact Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div
+                                class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-xl font-bold text-white">AC</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-text-primary mb-1">Alain Chevalier</div>
+                                <div class="text-sm text-text-secondary">Sales Executive</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <div class="text-xs text-text-secondary mb-1">Mobile:</div>
+                                <a href="tel:+15555555555" class="text-primary hover:underline">+1 555 555 5555</a>
+                            </div>
+                            <div>
+                                <div class="text-xs text-text-secondary mb-1">Email:</div>
+                                <a href="mailto:alain_chevalier@example.com"
+                                    class="text-primary hover:underline break-all">alain_chevalier@example.com</a>
+                            </div>
+                            <div>
+                                <div class="text-xs text-text-secondary mb-1">Address:</div>
+                                <div class="text-text-primary text-xs">781 Main Street, Anytown, SD 57401, USA</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-border">
+                            <div class="text-xs font-medium text-text-secondary mb-2">Sales Division</div>
+                            <div class="text-sm text-text-primary">Direct Manager: Sarah Johnson</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 4: Sales Performance + Calendar + Products -->
+            <div class="space-y-4">
+                <!-- Sales Performance -->
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-text-primary">Sales Performance Q4</h3>
+                            <p class="text-xs text-text-secondary">Revenue | USD</p>
+                        </div>
+                        <button class="text-text-secondary hover:text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="badge-success text-xs">Success</span>
+                            <span class="text-xs text-text-secondary">6 of 12</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="text-3xl font-bold text-text-primary mb-1">65.5 <span
+                                    class="text-sm font-normal text-text-secondary">MM</span></div>
+                            <div class="text-xs text-text-secondary">Q1, 2021</div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 text-xs mb-4">
+                            <div>
+                                <div class="text-text-secondary">Target</div>
+                                <div class="font-semibold text-text-primary">500K</div>
+                            </div>
+                            <div>
+                                <div class="text-text-secondary">Deviation</div>
+                                <div class="font-semibold text-text-primary">500K</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <div class="text-xs font-medium text-text-secondary mb-2">By Revenue and Cost</div>
+                        </div>
+
+                        <!-- Chart Placeholder -->
+                        <div
+                            class="h-40 bg-gradient-to-br from-blue-50 to-orange-50 rounded-lg flex items-center justify-center border border-dashed border-gray-300">
+                            <div class="text-center">
+                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                                <p class="text-xs text-gray-500">Revenue vs Cost Chart</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 mt-3 text-xs">
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 bg-blue-500 rounded"></div>
+                                <span class="text-text-secondary">Revenue</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 bg-orange-500 rounded"></div>
+                                <span class="text-text-secondary">Cost</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Calendar -->
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-text-primary">My Calendar</h3>
+                            <p class="text-xs text-text-secondary">For Today</p>
+                        </div>
+                        <button class="text-text-secondary hover:text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Month Navigation -->
+                        <div class="flex items-center justify-between mb-4">
+                            <button class="text-primary hover:text-primary-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="flex items-center gap-8">
+                                <div class="text-primary font-semibold text-lg">July</div>
+                                <div class="text-primary font-semibold text-lg">2023</div>
+                            </div>
+                            <button class="text-primary hover:text-primary-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Weekday Headers -->
+                        <div class="grid grid-cols-8 gap-1 text-center text-sm mb-2"
+                            style="display: grid; grid-template-columns: repeat(8, 1fr);">
+                            <div></div> <!-- Empty for week number column -->
+                            <div class="text-text-secondary font-medium">Mon</div>
+                            <div class="text-text-secondary font-medium">Tue</div>
+                            <div class="text-text-secondary font-medium">Wed</div>
+                            <div class="text-text-secondary font-medium">Thu</div>
+                            <div class="text-text-secondary font-medium">Fri</div>
+                            <div class="text-text-secondary font-medium">Sat</div>
+                            <div class="text-text-secondary font-medium">Sun</div>
+                        </div>
+
+                        <!-- Calendar Grid with Week Numbers -->
+                        <div class="grid grid-cols-8 gap-1 text-center text-sm"
+                            style="display: grid; grid-template-columns: repeat(8, 1fr);">
+                            <!-- Week 26 -->
+                            <div class="text-text-secondary text-xs py-2 flex items-center justify-center">26</div>
+                            <div class="py-2 text-text-secondary"></div>
+                            <div class="py-2 text-text-secondary">26</div>
+                            <div class="py-2 text-text-secondary">27</div>
+                            <div class="py-2 text-text-secondary">28</div>
+                            <div class="py-2 text-text-secondary">29</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary font-medium">30</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary font-medium">1</div>
+
+                            <!-- Week 27 -->
+                            <div class="text-text-secondary text-xs py-2 flex items-center justify-center">27</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary font-medium">2</div>
+                            <div class="py-2 text-text-primary">3</div>
+                            <div class="py-2 text-text-primary border-2 border-purple-500 rounded font-medium">4</div>
+                            <div class="py-2 text-text-primary">5</div>
+                            <div class="py-2 text-text-primary">6</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">7</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">8</div>
+
+                            <!-- Week 28 -->
+                            <div class="text-text-secondary text-xs py-2 flex items-center justify-center">28</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">9</div>
+                            <div class="py-2 text-text-primary">10</div>
+                            <div class="py-2 text-text-primary">11</div>
+                            <div class="py-2 text-text-primary">12</div>
+                            <div class="py-2 text-text-primary">13</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">14</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">15</div>
+
+                            <!-- Week 29 -->
+                            <div class="text-text-secondary text-xs py-2 flex items-center justify-center">29</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">16</div>
+                            <div class="py-2 text-text-primary">17</div>
+                            <div class="py-2 text-text-primary">18</div>
+                            <div class="py-2 text-text-primary">19</div>
+                            <div class="py-2 text-text-primary">20</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">21</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">22</div>
+
+                            <!-- Week 30 -->
+                            <div class="text-text-secondary text-xs py-2 flex items-center justify-center">30</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">23</div>
+                            <div class="py-2 text-text-primary">24</div>
+                            <div class="py-2 text-text-primary">25</div>
+                            <div class="py-2 text-text-primary">26</div>
+                            <div class="py-2 text-text-primary">27</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">28</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">29</div>
+
+                            <!-- Week 31 (partial) -->
+                            <div class="text-text-secondary text-xs py-2 flex items-center justify-center">31</div>
+                            <div class="py-2 bg-gray-100 rounded text-text-primary">30</div>
+                            <div class="py-2 text-text-primary">31</div>
+                            <div class="py-2"></div>
+                            <div class="py-2"></div>
+                            <div class="py-2"></div>
+                            <div class="py-2"></div>
+                            <div class="py-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-sm font-medium text-text-primary">Top Products</h3>
+                        <p class="text-xs text-text-secondary">Browse all available products</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex items-center justify-center p-8">
+                            <div class="text-center">
+                                <svg class="w-20 h-20 text-primary mx-auto mb-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <div class="text-sm font-medium text-text-primary">Product Catalog</div>
+                                <div class="text-xs text-text-secondary mt-1">View all products</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module" src="/src/js/components.js"></script>
+</body>
+
+</html>

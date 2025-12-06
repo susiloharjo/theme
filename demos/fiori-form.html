@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP Fiori Form Sample - SAP HANA Theme</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <style>
+        /* SAP Fiori Form Styles */
+        .fiori-form {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .form-group-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-background);
+        }
+
+        .form-group-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .form-group-subtitle {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .form-group-body {
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-field.col-12 {
+            grid-column: span 12;
+        }
+
+        .form-field.col-6 {
+            grid-column: span 6;
+        }
+
+        .form-field.col-4 {
+            grid-column: span 4;
+        }
+
+        .form-field.col-3 {
+            grid-column: span 3;
+        }
+
+        @media (max-width: 768px) {
+
+            .form-field.col-6,
+            .form-field.col-4,
+            .form-field.col-3 {
+                grid-column: span 12;
+            }
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .form-label-required::after {
+            content: '*';
+            color: var(--color-error);
+            margin-left: 0.25rem;
+        }
+
+        .form-value {
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            padding: 0.5rem 0;
+        }
+
+        .form-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-actions {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-top: 1px solid var(--color-border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-background">
+    <div class="p-8">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <nav class="text-sm text-text-secondary mb-2">
+                <a href="/" class="text-primary hover:text-primary-600">Home</a>
+                <span class="mx-2">/</span>
+                <a href="/demos/fiori-components.html" class="text-primary hover:text-primary-600">Components</a>
+                <span class="mx-2">/</span>
+                <span class="text-text-primary">Employee Form</span>
+            </nav>
+            <h1 class="text-h1 text-text-primary">Employee Information</h1>
+            <p class="text-text-secondary mt-1">Complete employee profile and details</p>
+        </div>
+
+        <!-- Form Toolbar -->
+        <div class="form-toolbar">
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-text-secondary">Status:</span>
+                <span class="badge-warning">Draft</span>
+            </div>
+            <div class="flex gap-2">
+                <button class="btn-outline btn-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Export
+                </button>
+                <button class="btn-outline btn-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                        </path>
+                    </svg>
+                    Print
+                </button>
+            </div>
+        </div>
+
+        <div class="fiori-form">
+            <!-- Personal Information Group -->
+            <div class="form-group">
+                <div class="form-group-header">
+                    <h2 class="form-group-title">Personal Information</h2>
+                    <p class="form-group-subtitle">Basic employee details and contact information</p>
+                </div>
+                <div class="form-group-body">
+                    <div class="form-row">
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">First Name</label>
+                            <input type="text" class="input" value="John" required>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label">Middle Name</label>
+                            <input type="text" class="input" value="Michael">
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">Last Name</label>
+                            <input type="text" class="input" value="Smith" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Email</label>
+                            <input type="email" class="input" value="john.smith@company.com" required>
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Phone Number</label>
+                            <input type="tel" class="input" value="+1 (555) 123-4567" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">Date of Birth</label>
+                            <input type="date" class="input" value="1990-05-15" required>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">Gender</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="male" selected>Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label">Nationality</label>
+                            <select class="input">
+                                <option value="">Select...</option>
+                                <option value="us" selected>United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Information Group -->
+            <div class="form-group">
+                <div class="form-group-header">
+                    <h2 class="form-group-title">Address Information</h2>
+                    <p class="form-group-subtitle">Current residential address</p>
+                </div>
+                <div class="form-group-body">
+                    <div class="form-row">
+                        <div class="form-field col-12">
+                            <label class="form-label form-label-required">Street Address</label>
+                            <input type="text" class="input" value="123 Main Street" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label">Address Line 2</label>
+                            <input type="text" class="input" placeholder="Apartment, suite, etc.">
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">City</label>
+                            <input type="text" class="input" value="San Francisco" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">State/Province</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="ca" selected>California</option>
+                                <option value="ny">New York</option>
+                                <option value="tx">Texas</option>
+                            </select>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">ZIP/Postal Code</label>
+                            <input type="text" class="input" value="94102" required>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">Country</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="us" selected>United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Details Group -->
+            <div class="form-group">
+                <div class="form-group-header">
+                    <h2 class="form-group-title">Employment Details</h2>
+                    <p class="form-group-subtitle">Job position and department information</p>
+                </div>
+                <div class="form-group-body">
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Employee ID</label>
+                            <input type="text" class="input" value="EMP-10234" readonly>
+                            <span class="helper-text">Auto-generated employee identifier</span>
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Join Date</label>
+                            <input type="date" class="input" value="2023-01-15" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Department</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="it" selected>Information Technology</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="finance">Finance</option>
+                                <option value="sales">Sales</option>
+                                <option value="marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Job Title</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="dev" selected>Senior Developer</option>
+                                <option value="manager">Manager</option>
+                                <option value="analyst">Business Analyst</option>
+                                <option value="designer">UX Designer</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Employment Type</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="full" selected>Full-time</option>
+                                <option value="part">Part-time</option>
+                                <option value="contract">Contract</option>
+                                <option value="intern">Intern</option>
+                            </select>
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Reporting Manager</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="1" selected>Sarah Johnson (IT Director)</option>
+                                <option value="2">Michael Brown (VP Engineering)</option>
+                                <option value="3">Emily Davis (CTO)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-12">
+                            <label class="form-label">Work Location</label>
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="workLocation" value="office" checked
+                                        class="w-4 h-4 text-primary">
+                                    <span class="text-sm">Office</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="workLocation" value="remote" class="w-4 h-4 text-primary">
+                                    <span class="text-sm">Remote</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="workLocation" value="hybrid" class="w-4 h-4 text-primary">
+                                    <span class="text-sm">Hybrid</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compensation Group -->
+            <div class="form-group">
+                <div class="form-group-header">
+                    <h2 class="form-group-title">Compensation & Benefits</h2>
+                    <p class="form-group-subtitle">Salary and benefits information</p>
+                </div>
+                <div class="form-group-body">
+                    <div class="form-row">
+                        <div class="form-field col-4">
+                            <label class="form-label form-label-required">Annual Salary</label>
+                            <input type="text" class="input" value="$95,000" required>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label">Currency</label>
+                            <select class="input">
+                                <option value="usd" selected>USD</option>
+                                <option value="eur">EUR</option>
+                                <option value="gbp">GBP</option>
+                            </select>
+                        </div>
+                        <div class="form-field col-4">
+                            <label class="form-label">Payment Frequency</label>
+                            <select class="input">
+                                <option value="">Select...</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-12">
+                            <label class="form-label">Benefits</label>
+                            <div class="grid grid-cols-2 gap-3 mt-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" checked class="w-4 h-4 text-primary rounded">
+                                    <span class="text-sm">Health Insurance</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" checked class="w-4 h-4 text-primary rounded">
+                                    <span class="text-sm">Dental Insurance</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" checked class="w-4 h-4 text-primary rounded">
+                                    <span class="text-sm">401(k) Retirement Plan</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 text-primary rounded">
+                                    <span class="text-sm">Stock Options</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" checked class="w-4 h-4 text-primary rounded">
+                                    <span class="text-sm">Paid Time Off</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 text-primary rounded">
+                                    <span class="text-sm">Gym Membership</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contact Group -->
+            <div class="form-group">
+                <div class="form-group-header">
+                    <h2 class="form-group-title">Emergency Contact</h2>
+                    <p class="form-group-subtitle">Person to contact in case of emergency</p>
+                </div>
+                <div class="form-group-body">
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Contact Name</label>
+                            <input type="text" class="input" value="Jane Smith" required>
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Relationship</label>
+                            <select class="input" required>
+                                <option value="">Select...</option>
+                                <option value="spouse" selected>Spouse</option>
+                                <option value="parent">Parent</option>
+                                <option value="sibling">Sibling</option>
+                                <option value="friend">Friend</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-6">
+                            <label class="form-label form-label-required">Phone Number</label>
+                            <input type="tel" class="input" value="+1 (555) 987-6543" required>
+                        </div>
+                        <div class="form-field col-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="input" value="jane.smith@email.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Notes Group -->
+            <div class="form-group">
+                <div class="form-group-header">
+                    <h2 class="form-group-title">Additional Information</h2>
+                    <p class="form-group-subtitle">Optional notes and comments</p>
+                </div>
+                <div class="form-group-body">
+                    <div class="form-row">
+                        <div class="form-field col-12">
+                            <label class="form-label">Notes</label>
+                            <textarea class="input" rows="4"
+                                placeholder="Enter any additional notes or comments..."></textarea>
+                            <span class="helper-text">Maximum 500 characters</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field col-12">
+                            <label class="form-label">Attachments</label>
+                            <div class="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                                <svg class="w-12 h-12 text-text-secondary mx-auto mb-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                                    </path>
+                                </svg>
+                                <p class="text-sm text-text-secondary mb-2">Drag and drop files here or click to browse
+                                </p>
+                                <button type="button" class="btn-outline btn-sm">Choose Files</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions (Sticky Footer) -->
+        <div class="form-actions">
+            <button class="btn-outline">Cancel</button>
+            <button class="btn-outline">Save as Draft</button>
+            <button class="btn-primary">Submit</button>
+        </div>
+    </div>
+
+    <script type="module" src="/src/js/components.js"></script>
+</body>
+
+</html>

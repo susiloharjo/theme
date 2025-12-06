@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SAP HANA Theme</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+
+<body class="bg-background">
+    <!-- Header -->
+    <header class="bg-surface border-b border-border shadow-sm sticky top-0 z-30">
+        <div class="flex items-center justify-between px-6 py-3">
+            <div class="flex items-center gap-4">
+                <button id="sidebar-toggle" class="lg:hidden text-text-secondary hover:text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-text-primary hidden sm:block">Enterprise Portal</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Search -->
+                <div class="hidden md:block">
+                    <div class="relative">
+                        <input type="text" placeholder="Search..." class="input w-64 pl-10">
+                        <svg class="w-5 h-5 text-text-secondary absolute left-3 top-1/2 -translate-y-1/2" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <button class="relative text-text-secondary hover:text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+
+                <!-- User Menu -->
+                <div class="relative">
+                    <button data-dropdown-trigger="user-menu"
+                        class="flex items-center gap-2 hover:bg-gray-50 rounded-md px-2 py-1">
+                        <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-medium text-primary">JD</span>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary hidden sm:block">John Doe</span>
+                        <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="user-menu" data-dropdown
+                        class="hidden absolute right-0 mt-2 w-48 bg-surface rounded-md shadow-lg border border-border py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Profile</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Settings</a>
+                        <hr class="my-1 border-border">
+                        <a href="/demos/login.html" class="block px-4 py-2 text-sm text-error hover:bg-gray-50">Sign
+                            Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed lg:sticky top-0 left-0 z-20 h-screen w-64 bg-surface border-r border-border transition-transform -translate-x-full lg:translate-x-0 overflow-y-auto">
+            <nav class="p-4 space-y-1">
+                <a href="#" class="nav-link-active">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/demos/table.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    Data Tables
+                </a>
+                <a href="/demos/form.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Forms
+                </a>
+                <a href="/demos/fiori-form.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                        </path>
+                    </svg>
+                    Fiori Form
+                </a>
+                <a href="/demos/fiori-components.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                        </path>
+                    </svg>
+                    Fiori Components
+                </a>
+                <a href="/demos/analytical-cards.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytical Cards
+                </a>
+                <a href="/demos/dynamic-page.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h14a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z">
+                        </path>
+                    </svg>
+                    Dynamic Page
+                </a>
+                <a href="/demos/flexible-column.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2">
+                        </path>
+                    </svg>
+                    Flexible Column
+                </a>
+                <a href="/demos/overview-page.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
+                        </path>
+                    </svg>
+                    Overview Page
+                </a>
+                <a href="/demos/analytics.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytics
+                </a>
+                <a href="/demos/users.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    Users
+                </a>
+                <a href="/demos/settings.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-h2 text-text-primary mb-2">Dashboard Overview</h1>
+                <p class="text-text-secondary">Welcome back, John! Here's what's happening today.</p>
+            </div>
+
+            <!-- KPI Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-widget">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">$45,231</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-change-positive">↑ 12.5% from last month</div>
+                </div>
+
+                <div class="stat-widget">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">1,429</div>
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-change-positive">↑ 8.2% from last month</div>
+                </div>
+
+                <div class="stat-widget">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">9,284</div>
+                    <div class="stat-label">Active Users</div>
+                    <div class="stat-change-positive">↑ 23.1% from last month</div>
+                </div>
+
+                <div class="stat-widget">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">54.2%</div>
+                    <div class="stat-label">Conversion Rate</div>
+                    <div class="stat-change-negative">↓ 2.3% from last month</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Revenue Chart -->
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <h3 class="text-h5 text-text-primary">Revenue Overview</h3>
+                        <select class="input w-32 text-sm">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div
+                            class="h-64 flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50 rounded-md">
+                            <p class="text-text-secondary">Chart placeholder - Integrate Chart.js or ECharts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales by Category -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Sales by Category</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Electronics</span>
+                                    <span class="text-sm text-text-secondary">$18,450</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Clothing</span>
+                                    <span class="text-sm text-text-secondary">$12,230</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-secondary h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Home & Garden</span>
+                                    <span class="text-sm text-text-secondary">$9,180</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-success h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Sports</span>
+                                    <span class="text-sm text-text-secondary">$5,371</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-warning h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Top Products -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <h3 class="text-h5 text-text-primary">Recent Orders</h3>
+                        <a href="/demos/table.html" class="text-sm text-primary hover:text-primary-600 font-medium">View
+                            all</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-medium">#ORD-1234</td>
+                                    <td>Alice Johnson</td>
+                                    <td>$245.00</td>
+                                    <td><span class="badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">#ORD-1233</td>
+                                    <td>Bob Smith</td>
+                                    <td>$189.50</td>
+                                    <td><span class="badge-warning">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">#ORD-1232</td>
+                                    <td>Carol White</td>
+                                    <td>$432.00</td>
+                                    <td><span class="badge-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">#ORD-1231</td>
+                                    <td>David Brown</td>
+                                    <td>$98.75</td>
+                                    <td><span class="badge-error">Cancelled</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Activity Timeline -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Recent Activity</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="space-y-4">
+                            <div class="flex gap-3">
+                                <div class="w-2 h-2 bg-success rounded-full mt-2"></div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-text-primary">New order received</p>
+                                    <p class="text-xs text-text-secondary">Order #ORD-1234 from Alice Johnson</p>
+                                    <p class="text-xs text-text-secondary mt-1">2 minutes ago</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-text-primary">Payment processed</p>
+                                    <p class="text-xs text-text-secondary">$189.50 received from Bob Smith</p>
+                                    <p class="text-xs text-text-secondary mt-1">15 minutes ago</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="w-2 h-2 bg-warning rounded-full mt-2"></div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-text-primary">Inventory alert</p>
+                                    <p class="text-xs text-text-secondary">Product "Wireless Headphones" low stock</p>
+                                    <p class="text-xs text-text-secondary mt-1">1 hour ago</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="w-2 h-2 bg-secondary rounded-full mt-2"></div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-text-primary">New user registered</p>
+                                    <p class="text-xs text-text-secondary">Emma Wilson joined the platform</p>
+                                    <p class="text-xs text-text-secondary mt-1">3 hours ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="/src/js/components.js"></script>
+</body>
+
+</html>

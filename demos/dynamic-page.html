@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Page Layout - SAP HANA Theme</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <style>
+        /* Dynamic Page Layout Specific Styles */
+        .dynamic-page-header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: white;
+            border-bottom: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+
+        .dynamic-page-header.collapsed .header-content {
+            display: none;
+        }
+
+        .dynamic-page-header.collapsed {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-title-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            min-height: 3.5rem;
+        }
+
+        .header-content {
+            padding: 0 2rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dynamic-page-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .page-subtitle {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .header-kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .header-kpi {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .header-kpi-label {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .header-kpi-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .header-kpi-trend {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+    </style>
+</head>
+
+<body class="bg-background">
+    <!-- Dynamic Page Header -->
+    <header class="dynamic-page-header" id="dynamicHeader">
+        <!-- Title Area (Always Visible) -->
+        <div class="header-title-area">
+            <div class="flex-1">
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb-nav">
+                    <a href="/" class="text-primary hover:text-primary-600">Home</a>
+                    <span>/</span>
+                    <a href="/demos/fiori-components.html" class="text-primary hover:text-primary-600">Components</a>
+                    <span>/</span>
+                    <span class="text-text-primary">Product Details</span>
+                </nav>
+
+                <!-- Title -->
+                <h1 class="page-title">Wireless Headphones Pro</h1>
+                <p class="page-subtitle">SKU: WH-PRO-001 • Last updated 2 hours ago</p>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <button class="btn-outline">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                        </path>
+                    </svg>
+                    Share
+                </button>
+                <button class="btn-outline">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                        </path>
+                    </svg>
+                    Edit
+                </button>
+                <button class="btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Approve
+                </button>
+                <button class="btn-icon text-text-secondary hover:text-primary" id="toggleHeader">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Header Content (Collapsible) -->
+        <div class="header-content">
+            <!-- KPIs -->
+            <div class="header-kpis">
+                <div class="header-kpi">
+                    <span class="header-kpi-label">Stock Quantity</span>
+                    <span class="header-kpi-value">245</span>
+                    <span class="header-kpi-trend text-success">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        +12% this month
+                    </span>
+                </div>
+                <div class="header-kpi">
+                    <span class="header-kpi-label">Total Sales</span>
+                    <span class="header-kpi-value">$73,425</span>
+                    <span class="header-kpi-trend text-success">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        +8.5% this month
+                    </span>
+                </div>
+                <div class="header-kpi">
+                    <span class="header-kpi-label">Units Sold</span>
+                    <span class="header-kpi-value">245</span>
+                    <span class="header-kpi-trend text-success">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        +15.2% this month
+                    </span>
+                </div>
+                <div class="header-kpi">
+                    <span class="header-kpi-label">Avg Rating</span>
+                    <span class="header-kpi-value">4.8 / 5.0</span>
+                    <span class="header-kpi-trend text-text-secondary">
+                        Based on 1,247 reviews
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dynamic Page Content -->
+    <main class="dynamic-page-content">
+        <!-- Product Information Section -->
+        <section class="mb-8">
+            <div class="section-header">
+                <h2 class="section-title">Product Information</h2>
+                <button class="btn-outline btn-sm">Edit Details</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Product Details Card -->
+                <div class="lg:col-span-2">
+                    <div class="object-card">
+                        <div class="object-card-header">
+                            <h3 class="object-card-title">Basic Information</h3>
+                        </div>
+                        <div class="object-card-body">
+                            <div class="object-card-attributes">
+                                <div class="object-card-attribute">
+                                    <span class="object-card-attribute-label">Product Name</span>
+                                    <span class="object-card-attribute-value">Wireless Headphones Pro</span>
+                                </div>
+                                <div class="object-card-attribute">
+                                    <span class="object-card-attribute-label">SKU</span>
+                                    <span class="object-card-attribute-value">WH-PRO-001</span>
+                                </div>
+                                <div class="object-card-attribute">
+                                    <span class="object-card-attribute-label">Category</span>
+                                    <span class="object-card-attribute-value">Electronics</span>
+                                </div>
+                                <div class="object-card-attribute">
+                                    <span class="object-card-attribute-label">Brand</span>
+                                    <span class="object-card-attribute-value">TechSound</span>
+                                </div>
+                                <div class="object-card-attribute">
+                                    <span class="object-card-attribute-label">Price</span>
+                                    <span class="object-card-attribute-value">$299.99</span>
+                                </div>
+                                <div class="object-card-attribute">
+                                    <span class="object-card-attribute-label">Status</span>
+                                    <span class="badge-success">In Stock</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Card -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Status</h3>
+                        </div>
+                        <div class="card-body space-y-4">
+                            <div>
+                                <div class="text-sm text-text-secondary mb-2">Availability</div>
+                                <span class="badge-success">In Stock</span>
+                            </div>
+                            <div>
+                                <div class="text-sm text-text-secondary mb-2">Warehouse</div>
+                                <div class="font-medium">Warehouse A</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-text-secondary mb-2">Supplier</div>
+                                <div class="font-medium">Tech Solutions Inc.</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-text-secondary mb-2">Last Restocked</div>
+                                <div class="font-medium">Dec 1, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sales Analytics Section -->
+        <section class="mb-8">
+            <div class="section-header">
+                <h2 class="section-title">Sales Analytics</h2>
+                <div class="flex gap-2">
+                    <button class="btn-outline btn-sm">Last 7 Days</button>
+                    <button class="btn-outline btn-sm">Last 30 Days</button>
+                    <button class="btn-primary btn-sm">Last 90 Days</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">$73.4K</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-2">Total Revenue</div>
+                        <div class="analytical-card-trend-positive">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            <span>8.5% vs last period</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">245</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-2">Units Sold</div>
+                        <div class="analytical-card-trend-positive">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            <span>15.2% vs last period</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">$299</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-2">Avg Order Value</div>
+                        <div class="analytical-card-trend-negative">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                            <span>2.1% vs last period</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytical-card">
+                    <div class="card-body">
+                        <div class="analytical-card-kpi">
+                            <span class="analytical-card-value">4.8</span>
+                        </div>
+                        <div class="text-sm text-text-secondary mb-2">Customer Rating</div>
+                        <div class="text-xs text-text-secondary mt-2">1,247 reviews</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Orders Section -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Recent Orders</h2>
+                <button class="btn-outline btn-sm">View All Orders</button>
+            </div>
+
+            <div class="card">
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="group">
+                                <td><span class="text-primary font-medium">#ORD-1234</span></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Alice Johnson</span>
+                                        <span class="table-object-cell-subtitle">alice@example.com</span>
+                                    </div>
+                                </td>
+                                <td>Dec 5, 2025</td>
+                                <td>2</td>
+                                <td class="font-semibold">$599.98</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-success"></span>
+                                        <span>Delivered</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="group">
+                                <td><span class="text-primary font-medium">#ORD-1233</span></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Bob Smith</span>
+                                        <span class="table-object-cell-subtitle">bob@example.com</span>
+                                    </div>
+                                </td>
+                                <td>Dec 4, 2025</td>
+                                <td>1</td>
+                                <td class="font-semibold">$299.99</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-info"></span>
+                                        <span>Shipped</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="group">
+                                <td><span class="text-primary font-medium">#ORD-1232</span></td>
+                                <td>
+                                    <div class="table-object-cell">
+                                        <span class="table-object-cell-title">Carol White</span>
+                                        <span class="table-object-cell-subtitle">carol@example.com</span>
+                                    </div>
+                                </td>
+                                <td>Dec 3, 2025</td>
+                                <td>3</td>
+                                <td class="font-semibold">$899.97</td>
+                                <td>
+                                    <div class="table-status">
+                                        <span class="table-status-icon-warning"></span>
+                                        <span>Processing</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="/src/js/components.js"></script>
+    <script>
+        // Toggle header collapse
+        const header = document.getElementById('dynamicHeader');
+        const toggleBtn = document.getElementById('toggleHeader');
+
+        toggleBtn.addEventListener('click', () => {
+            header.classList.toggle('collapsed');
+            const icon = toggleBtn.querySelector('svg path');
+            if (header.classList.contains('collapsed')) {
+                icon.setAttribute('d', 'M5 15l7-7 7 7');
+            } else {
+                icon.setAttribute('d', 'M19 9l-7 7-7-7');
+            }
+        });
+
+        // Auto-collapse on scroll
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 100 && currentScroll > lastScroll) {
+                header.classList.add('collapsed');
+                const icon = toggleBtn.querySelector('svg path');
+                icon.setAttribute('d', 'M5 15l7-7 7 7');
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+
+</html>

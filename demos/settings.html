@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - SAP HANA Theme</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+
+<body class="bg-background">
+    <!-- Header -->
+    <header class="bg-surface border-b border-border shadow-sm sticky top-0 z-30">
+        <div class="flex items-center justify-between px-6 py-3">
+            <div class="flex items-center gap-4">
+                <button id="sidebar-toggle" class="lg:hidden text-text-secondary hover:text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-text-primary hidden sm:block">Enterprise Portal</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="relative text-text-secondary hover:text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+
+                <div class="relative">
+                    <button data-dropdown-trigger="user-menu"
+                        class="flex items-center gap-2 hover:bg-gray-50 rounded-md px-2 py-1">
+                        <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-medium text-primary">JD</span>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary hidden sm:block">John Doe</span>
+                        <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="user-menu" data-dropdown
+                        class="hidden absolute right-0 mt-2 w-48 bg-surface rounded-md shadow-lg border border-border py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Profile</a>
+                        <a href="/demos/settings.html"
+                            class="block px-4 py-2 text-sm text-text-primary hover:bg-gray-50">Settings</a>
+                        <hr class="my-1 border-border">
+                        <a href="/demos/login.html" class="block px-4 py-2 text-sm text-error hover:bg-gray-50">Sign
+                            Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed lg:sticky top-0 left-0 z-20 h-screen w-64 bg-surface border-r border-border transition-transform -translate-x-full lg:translate-x-0 overflow-y-auto">
+            <nav class="p-4 space-y-1">
+                <a href="/demos/dashboard.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/demos/table.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    Data Tables
+                </a>
+                <a href="/demos/form.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Forms
+                </a>
+                <a href="/demos/fiori-form.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2-2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                        </path>
+                    </svg>
+                    Fiori Form
+                </a>
+                <a href="/demos/fiori-components.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                        </path>
+                    </svg>
+                    Fiori Components
+                </a>
+                <a href="/demos/analytical-cards.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytical Cards
+                </a>
+                <a href="/demos/dynamic-page.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h14a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z">
+                        </path>
+                    </svg>
+                    Dynamic Page
+                </a>
+                <a href="/demos/flexible-column.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2">
+                        </path>
+                    </svg>
+                    Flexible Column
+                </a>
+                <a href="/demos/analytics.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytics
+                </a>
+                <a href="/demos/users.html" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    Users
+                </a>
+                <a href="/demos/settings.html" class="nav-link-active">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-h2 text-text-primary mb-2">Settings</h1>
+                <p class="text-text-secondary">Manage your application preferences and configurations</p>
+            </div>
+
+            <!-- Settings Tabs -->
+            <div class="mb-6">
+                <div class="border-b border-border">
+                    <nav class="flex gap-8" data-tab-group>
+                        <button data-tab-trigger="general" class="tab-link tab-link-active">General</button>
+                        <button data-tab-trigger="notifications" class="tab-link">Notifications</button>
+                        <button data-tab-trigger="security" class="tab-link">Security</button>
+                        <button data-tab-trigger="appearance" class="tab-link">Appearance</button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- General Settings -->
+            <div data-tab-content="general" class="space-y-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Profile Information</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">Full Name</label>
+                                <input type="text" class="input" value="John Doe">
+                            </div>
+                            <div>
+                                <label class="label">Email Address</label>
+                                <input type="email" class="input" value="john.doe@company.com">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="label">Job Title</label>
+                            <input type="text" class="input" value="Senior Developer">
+                        </div>
+                        <div>
+                            <label class="label">Department</label>
+                            <select class="input">
+                                <option>Engineering</option>
+                                <option>Sales</option>
+                                <option>Marketing</option>
+                                <option>HR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-end gap-2">
+                        <button class="btn-outline">Cancel</button>
+                        <button class="btn-primary">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Regional Settings</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">Language</label>
+                                <select class="input">
+                                    <option>English (US)</option>
+                                    <option>English (UK)</option>
+                                    <option>German</option>
+                                    <option>French</option>
+                                    <option>Spanish</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="label">Timezone</label>
+                                <select class="input">
+                                    <option>UTC-8 (Pacific Time)</option>
+                                    <option>UTC-5 (Eastern Time)</option>
+                                    <option>UTC+0 (GMT)</option>
+                                    <option>UTC+1 (CET)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">Date Format</label>
+                                <select class="input">
+                                    <option>MM/DD/YYYY</option>
+                                    <option>DD/MM/YYYY</option>
+                                    <option>YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="label">Currency</label>
+                                <select class="input">
+                                    <option>USD ($)</option>
+                                    <option>EUR (€)</option>
+                                    <option>GBP (£)</option>
+                                    <option>JPY (¥)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-end gap-2">
+                        <button class="btn-outline">Cancel</button>
+                        <button class="btn-primary">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Settings -->
+            <div data-tab-content="notifications" class="hidden space-y-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Email Notifications</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">System Updates</div>
+                                <div class="text-sm text-text-secondary">Receive emails about system updates and
+                                    maintenance</div>
+                            </div>
+                            <input type="checkbox" checked class="toggle">
+                        </label>
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Weekly Reports</div>
+                                <div class="text-sm text-text-secondary">Get weekly summary of your activity</div>
+                            </div>
+                            <input type="checkbox" checked class="toggle">
+                        </label>
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Marketing Emails</div>
+                                <div class="text-sm text-text-secondary">Receive promotional content and newsletters
+                                </div>
+                            </div>
+                            <input type="checkbox" class="toggle">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Push Notifications</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Task Assignments</div>
+                                <div class="text-sm text-text-secondary">Get notified when tasks are assigned to you
+                                </div>
+                            </div>
+                            <input type="checkbox" checked class="toggle">
+                        </label>
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Comments & Mentions</div>
+                                <div class="text-sm text-text-secondary">Notifications when someone mentions you</div>
+                            </div>
+                            <input type="checkbox" checked class="toggle">
+                        </label>
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Status Changes</div>
+                                <div class="text-sm text-text-secondary">Updates on task and project status changes
+                                </div>
+                            </div>
+                            <input type="checkbox" class="toggle">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div data-tab-content="security" class="hidden space-y-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Change Password</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div>
+                            <label class="label">Current Password</label>
+                            <input type="password" class="input" placeholder="Enter current password">
+                        </div>
+                        <div>
+                            <label class="label">New Password</label>
+                            <input type="password" class="input" placeholder="Enter new password">
+                        </div>
+                        <div>
+                            <label class="label">Confirm New Password</label>
+                            <input type="password" class="input" placeholder="Confirm new password">
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-end gap-2">
+                        <button class="btn-outline">Cancel</button>
+                        <button class="btn-primary">Update Password</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Two-Factor Authentication</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="font-medium text-text-primary mb-1">Enable 2FA</div>
+                                <div class="text-sm text-text-secondary">Add an extra layer of security to your account
+                                </div>
+                            </div>
+                            <button class="btn-primary">Enable</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Active Sessions</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <div class="flex items-center justify-between pb-4 border-b border-border">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">Chrome on Windows</div>
+                                    <div class="text-sm text-text-secondary">San Francisco, CA • Current session</div>
+                                </div>
+                            </div>
+                            <span class="badge-success">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">Safari on iPhone</div>
+                                    <div class="text-sm text-text-secondary">New York, NY • Last active 2 days ago</div>
+                                </div>
+                            </div>
+                            <button class="text-error hover:underline text-sm">Revoke</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance Settings -->
+            <div data-tab-content="appearance" class="hidden space-y-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Theme</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="theme" value="light" checked class="sr-only peer">
+                                <div
+                                    class="border-2 border-border peer-checked:border-primary rounded-lg p-4 transition-colors">
+                                    <div class="bg-white rounded-md h-24 mb-3 border border-gray-200"></div>
+                                    <div class="font-medium text-text-primary">Light</div>
+                                    <div class="text-sm text-text-secondary">Clean and bright interface</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="theme" value="dark" class="sr-only peer">
+                                <div
+                                    class="border-2 border-border peer-checked:border-primary rounded-lg p-4 transition-colors">
+                                    <div class="bg-gray-800 rounded-md h-24 mb-3 border border-gray-700"></div>
+                                    <div class="font-medium text-text-primary">Dark</div>
+                                    <div class="text-sm text-text-secondary">Easy on the eyes</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="theme" value="auto" class="sr-only peer">
+                                <div
+                                    class="border-2 border-border peer-checked:border-primary rounded-lg p-4 transition-colors">
+                                    <div
+                                        class="bg-gradient-to-r from-white to-gray-800 rounded-md h-24 mb-3 border border-gray-300">
+                                    </div>
+                                    <div class="font-medium text-text-primary">Auto</div>
+                                    <div class="text-sm text-text-secondary">Match system preference</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-end gap-2">
+                        <button class="btn-outline">Cancel</button>
+                        <button class="btn-primary">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-h5 text-text-primary">Display Preferences</h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Compact Mode</div>
+                                <div class="text-sm text-text-secondary">Reduce spacing for a denser layout</div>
+                            </div>
+                            <input type="checkbox" class="toggle">
+                        </label>
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <div class="font-medium text-text-primary">Show Sidebar by Default</div>
+                                <div class="text-sm text-text-secondary">Keep sidebar expanded on page load</div>
+                            </div>
+                            <input type="checkbox" checked class="toggle">
+                        </label>
+                        <div>
+                            <label class="label">Font Size</label>
+                            <select class="input">
+                                <option>Small</option>
+                                <option selected>Medium</option>
+                                <option>Large</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="/src/js/components.js"></script>
+</body>
+
+</html>
