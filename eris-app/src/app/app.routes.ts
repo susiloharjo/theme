@@ -20,6 +20,12 @@ export const routes: Routes = [
             { path: 'purchase/request', component: PurchaseRequestComponent },
             { path: 'purchase/list', component: PurchaseListComponent },
             {
+                path: 'pmo',
+                children: [
+                    { path: 'projects', loadComponent: () => import('./pages/pmo/project-list/project-list').then(m => m.ProjectListComponent) },
+                ]
+            },
+            {
                 path: 'crm',
                 children: [
                     { path: 'dashboard', loadComponent: () => import('./pages/crm/dashboard/dashboard.component').then(m => m.CrmDashboardComponent) },

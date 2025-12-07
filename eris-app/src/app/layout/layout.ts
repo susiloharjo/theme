@@ -49,7 +49,7 @@ export class Layout implements OnInit {
     },
     {
       id: 'pmo', label: 'PMO', icon: 'briefcase', submenus: [
-        { label: 'Projects', route: '#' },
+        { label: 'Projects', route: '/pmo/projects' },
         { label: 'Tasks', route: '#' },
         { label: 'Milestones', route: '#' },
         { label: 'Resources', route: '#' }
