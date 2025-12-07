@@ -20,6 +20,9 @@ export class PipelineComponent implements OnInit {
     selectedOpportunity: Opportunity | null = null;
     activeTab: 'details' | 'items' | 'activities' = 'details';
 
+    // View Mode
+    viewMode: 'kanban' | 'table' = 'kanban';
+
     constructor(private crmService: CrmDataService) { }
 
     ngOnInit() {
@@ -83,5 +86,9 @@ export class PipelineComponent implements OnInit {
 
     setActiveTab(tab: 'details' | 'items' | 'activities') {
         this.activeTab = tab;
+    }
+
+    setViewMode(mode: 'kanban' | 'table') {
+        this.viewMode = mode;
     }
 }

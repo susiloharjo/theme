@@ -17,7 +17,8 @@
         </div>
 
         <!-- Filter Strip -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 flex-grow">
+            <!-- Filter Controls -->
             <div class="relative">
                 <select
                     class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -41,16 +42,36 @@
                     </svg>
                 </div>
             </div>
-            <!-- Date Range Placeholder -->
             <button
                 class="bg-white border border-gray-300 text-gray-700 py-1.5 px-3 rounded-full text-sm hover:bg-gray-50">
                 This Quarter
             </button>
+            <div class="flex-grow"></div>
+            <!-- View Toggle -->
+            <div class="flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200">
+                <button (click)="setViewMode('kanban')" [class.bg-white]="viewMode === 'kanban'"
+                    [class.shadow-sm]="viewMode === 'kanban'" [class.text-blue-600]="viewMode === 'kanban'"
+                    class="p-1.5 rounded-md text-gray-500 hover:text-gray-700 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2">
+                        </path>
+                    </svg>
+                </button>
+                <button (click)="setViewMode('table')" [class.bg-white]="viewMode === 'table'"
+                    [class.shadow-sm]="viewMode === 'table'" [class.text-blue-600]="viewMode === 'table'"
+                    class="p-1.5 rounded-md text-gray-500 hover:text-gray-700 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Kanban Board -->
-    <div class="flex-1 overflow-x-auto overflow-y-hidden pb-2">
+    <div class="flex-1 overflow-x-auto overflow-y-hidden pb-2" *ngIf="viewMode === 'kanban'">
         <div class="flex h-full gap-2 w-full">
             <!-- Column Loop -->
             <div *ngFor="let stage of stages"
@@ -141,6 +162,79 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="flex-1 overflow-auto bg-white border border-gray-200 rounded-lg shadow-sm" *ngIf="viewMode === 'table'">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 sticky top-0 z-10">
+                <tr>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Opportunity Name</th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stage
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Value
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Prob.
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Close
+                        Date</th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let opp of opportunities" class="hover:bg-gray-50 transition-colors cursor-pointer"
+                    (click)="selectOpportunity(opp)">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ opp.name }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ opp.customerName }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            {{ opp.stageName }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <div class="text-sm text-gray-900 font-mono">{{ opp.expectedValue |
+                            currency:'IDR':'symbol':'1.0-0' }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <div class="text-sm text-gray-500">{{ opp.probability }}%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ opp.expectedCloseDate | date:'mediumDate' }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div
+                                class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700 mr-2">
+                                {{ (opp.ownerName || 'U').charAt(0) }}
+                            </div>
+                            <div class="text-sm text-gray-500">{{ opp.ownerName }}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <!-- Right Drawer (Overlay) -->
