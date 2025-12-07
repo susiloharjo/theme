@@ -1,0 +1,239 @@
+<div class="h-[calc(100vh-64px)] overflow-hidden flex flex-col p-6">
+
+    <!-- Header -->
+    <div class="flex flex-col gap-4 mb-6 flex-shrink-0">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Opportunities</h1>
+                <p class="text-gray-600">Track deals through your sales pipeline.</p>
+            </div>
+            <button
+                class="btn bg-[#0a6ed1] text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold shadow-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                New Opportunity
+            </button>
+        </div>
+
+        <!-- Filter Strip -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+            <div class="relative">
+                <select
+                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option>All Owners</option>
+                    <option>Me</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="relative">
+                <select
+                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option>All Customers</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            <!-- Date Range Placeholder -->
+            <button
+                class="bg-white border border-gray-300 text-gray-700 py-1.5 px-3 rounded-full text-sm hover:bg-gray-50">
+                This Quarter
+            </button>
+        </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="flex-1 overflow-x-auto overflow-y-hidden pb-2">
+        <div class="flex h-full gap-4 min-w-max">
+            <!-- Column Loop -->
+            <div *ngFor="let stage of stages"
+                class="w-80 flex flex-col h-full rounded-lg bg-gray-100/50 border border-gray-200/60"
+                (dragover)="onDragOver($event)" (drop)="onDrop($event, stage.id)">
+
+                <!-- Column Header -->
+                <div class="p-3 border-b border-gray-200 flex flex-col gap-1 bg-white rounded-t-lg sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-gray-800">{{ stage.name }}</span>
+                        <span
+                            class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs font-medium border border-gray-200">
+                            {{ getOpportunitiesByStage(stage.id).length }}
+                        </span>
+                    </div>
+                    <div class="text-xs text-gray-500 font-medium font-mono">
+                        {{ getStageTotal(stage.id) | currency:'IDR':'symbol':'1.0-0' }}
+                    </div>
+                    <!-- Progress bar decoration -->
+                    <div class="w-full h-1 bg-gray-100 rounded-full mt-1 overflow-hidden">
+                        <div class="h-full rounded-full" [ngClass]="{
+                                'bg-blue-500': stage.sortOrder === 1,
+                                'bg-indigo-500': stage.sortOrder === 2,
+                                'bg-purple-500': stage.sortOrder === 3,
+                                'bg-green-500': stage.sortOrder === 4,
+                                'bg-gray-400': stage.sortOrder === 5
+                            }" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <!-- Cards Container -->
+                <div class="p-2 overflow-y-auto flex-1 flex flex-col gap-2 custom-scrollbar">
+
+                    <!-- Opportunity Card -->
+                    <div *ngFor="let opp of getOpportunitiesByStage(stage.id)"
+                        class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all cursor-grab active:cursor-grabbing group relative"
+                        draggable="true" (dragstart)="onDragStart($event, opp)" (click)="selectOpportunity(opp)">
+
+                        <!-- Title & Customer -->
+                        <div class="mb-2">
+                            <h3
+                                class="text-sm font-semibold text-gray-800 leading-tight mb-0.5 hover:text-blue-600 cursor-pointer">
+                                {{ opp.name }}</h3>
+                            <p class="text-xs text-gray-500">{{ opp.customerName || 'Unknown Customer' }}</p>
+                        </div>
+
+                        <!-- Value & Date -->
+                        <div class="mb-3">
+                            <div class="text-sm font-bold text-gray-900 font-mono">
+                                {{ opp.expectedValue | currency:'IDR':'symbol':'1.0-0' }}
+                            </div>
+                            <div class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                {{ opp.expectedCloseDate | date:'mediumDate' }}
+                            </div>
+                        </div>
+
+                        <!-- Footer: Badges & Owner -->
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
+                            <!-- Probability Badge -->
+                            <div class="flex items-center gap-1">
+                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded border" [ngClass]="{
+                                        'bg-red-50 text-red-700 border-red-100': opp.probability < 30,
+                                        'bg-yellow-50 text-yellow-700 border-yellow-100': opp.probability >= 30 && opp.probability < 70,
+                                        'bg-green-50 text-green-700 border-green-100': opp.probability >= 70
+                                    }">
+                                    {{ opp.probability }}%
+                                </span>
+                            </div>
+
+                            <!-- Owner Avatar & Activity -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-gray-400 hidden group-hover:block transition-opacity">
+                                    2d ago
+                                </span>
+                                <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 border border-white ring-1 ring-gray-100"
+                                    title="{{ opp.ownerName }}">
+                                    {{ (opp.ownerName || 'Unknown').charAt(0) }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Drawer (Overlay) -->
+    <div *ngIf="selectedOpportunity" class="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeDrawer()"></div>
+
+        <!-- Panel -->
+        <div class="relative w-full max-w-md bg-white h-full shadow-xl flex flex-col transform transition-transform">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">{{ selectedOpportunity.name }}</h2>
+                    <p class="text-sm text-gray-500">{{ selectedOpportunity.customerName }}</p>
+                </div>
+                <button (click)="closeDrawer()" class="text-gray-400 hover:text-gray-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 px-6">
+                <nav class="-mb-px flex space-x-6">
+                    <button (click)="setActiveTab('details')"
+                        [ngClass]="{'border-[#0a6ed1] text-[#0a6ed1]': activeTab === 'details', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'details'}"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Details</button>
+                    <button (click)="setActiveTab('items')"
+                        [ngClass]="{'border-[#0a6ed1] text-[#0a6ed1]': activeTab === 'items', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'items'}"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Items</button>
+                    <button (click)="setActiveTab('activities')"
+                        [ngClass]="{'border-[#0a6ed1] text-[#0a6ed1]': activeTab === 'activities', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'activities'}"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Activities</button>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-6" [ngSwitch]="activeTab">
+                <!-- Details Tab -->
+                <div *ngSwitchCase="'details'" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Deal Value</label>
+                        <div class="text-sm font-semibold text-gray-900 mt-1">{{ selectedOpportunity.expectedValue |
+                            currency:'IDR':'symbol':'1.0-0' }}</div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Start Date</label>
+                        <div class="text-sm text-gray-900 mt-1">{{ selectedOpportunity.createdAt | date:'mediumDate' }}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Expected Close</label>
+                        <div class="text-sm text-gray-900 mt-1">{{ selectedOpportunity.expectedCloseDate |
+                            date:'mediumDate' }}</div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Probability</label>
+                        <div class="text-sm text-gray-900 mt-1">{{ selectedOpportunity.probability }}%</div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Owner</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div
+                                class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">
+                                {{ (selectedOpportunity.ownerName || 'U').charAt(0) }}</div>
+                            <span class="text-sm text-gray-900">{{ selectedOpportunity.ownerName }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Tab -->
+                <div *ngSwitchCase="'items'" class="text-center py-8 text-gray-500">
+                    <p>No items added to this opportunity yet.</p>
+                    <button class="mt-4 text-blue-600 text-sm font-medium hover:underline">+ Add Product</button>
+                </div>
+
+                <!-- Activities Tab -->
+                <div *ngSwitchCase="'activities'" class="text-center py-8 text-gray-500">
+                    <p>No recent activities.</p>
+                    <button class="mt-4 text-blue-600 text-sm font-medium hover:underline">+ Log Call/Meeting</button>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="border-t border-gray-200 px-6 py-4 bg-gray-50 flex justify-end gap-3">
+                <button
+                    class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-white"
+                    (click)="closeDrawer()">Cancel</button>
+                <button class="px-4 py-2 bg-[#0a6ed1] text-white rounded-md text-sm font-medium hover:bg-blue-700">Save
+                    Changes</button>
+            </div>
+        </div>
+    </div>
+</div>

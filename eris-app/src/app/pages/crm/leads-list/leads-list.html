@@ -1,0 +1,214 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Row 1: Header Bar -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Leads</h1>
+            <p class="text-gray-600">Track and manage potential business opportunities.</p>
+        </div>
+        <button
+            class="btn bg-[#0a6ed1] text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold shadow-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            New Lead
+        </button>
+    </div>
+
+    <!-- Row 2: Filter Bar -->
+    <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+            <!-- Search -->
+            <div class="lg:col-span-2">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Search</label>
+                <div class="relative">
+                    <input type="text"
+                        class="input w-full py-2 pl-9 pr-3 text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Company or Contact...">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Lead Source -->
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Lead Source</label>
+                <select
+                    class="input w-full py-2 pl-3 pr-8 text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Sources</option>
+                    <option value="src1">Website</option>
+                    <option value="src2">Referral</option>
+                    <option value="src3">LinkedIn</option>
+                    <!-- More options handled by logic normally -->
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                <select
+                    class="input w-full py-2 pl-3 pr-8 text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Status</option>
+                    <option value="New">New</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Lost">Lost</option>
+                </select>
+            </div>
+
+            <!-- Owner -->
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Owner</label>
+                <select
+                    class="input w-full py-2 pl-3 pr-8 text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Owners</option>
+                    <option value="u1">John Sales</option>
+                    <option value="u2">Jane Manager</option>
+                </select>
+            </div>
+
+            <!-- Score Range (Simple approach) -->
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Min Score</label>
+                <input type="number" min="0" max="100" placeholder="0"
+                    class="input w-full py-2 px-3 text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Row 3: Table -->
+    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+        <div class="overflow-x-auto min-h-[300px]">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col.visible" scope="col"
+                                class="px-6 py-3 font-semibold text-gray-700 whitespace-nowrap"
+                                [ngClass]="{'w-8': col.key === 'select', 'text-right': col.key === 'actions'}">
+                                <ng-container [ngSwitch]="col.key">
+                                    <input *ngSwitchCase="'select'" type="checkbox"
+                                        class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span *ngSwitchDefault>{{ col.label }}</span>
+                                </ng-container>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngFor="let lead of paginatedLeads" class="hover:bg-gray-50 transition-colors">
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col.visible" class="px-6 py-4 whitespace-nowrap text-gray-800"
+                                [ngClass]="{'text-right': col.key === 'actions'}">
+                                <ng-container [ngSwitch]="col.key">
+                                    <!-- Select Checkbox -->
+                                    <input *ngSwitchCase="'select'" type="checkbox"
+                                        class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+
+                                    <!-- Company / Contact Name -->
+                                    <div *ngSwitchCase="'companyName'">
+                                        <div class="font-medium text-[#0a6ed1] cursor-pointer hover:underline">{{
+                                            lead.companyName }}</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">{{ lead.contactName }}</div>
+                                    </div>
+
+                                    <!-- Lead Source -->
+                                    <span *ngSwitchCase="'sourceName'">{{ lead.sourceName || '-' }}</span>
+
+                                    <!-- Lead Score (Visual Bar) -->
+                                    <div *ngSwitchCase="'leadScore'" class="w-32">
+                                        <div class="flex items-center justify-between text-xs mb-1">
+                                            <span class="font-medium" [ngClass]="{
+                                                    'text-red-600': lead.leadScore < 40,
+                                                    'text-yellow-600': lead.leadScore >= 40 && lead.leadScore < 70,
+                                                    'text-green-600': lead.leadScore >= 70
+                                                }">
+                                                {{ lead.leadScore }}
+                                            </span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div class="h-1.5 rounded-full" [style.width.%]="lead.leadScore" [ngClass]="{
+                                                    'bg-red-500': lead.leadScore < 40,
+                                                    'bg-yellow-500': lead.leadScore >= 40 && lead.leadScore < 70,
+                                                    'bg-green-500': lead.leadScore >= 70
+                                                }">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <span *ngSwitchCase="'status'"
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase"
+                                        [ngClass]="{
+                                            'bg-blue-100 text-blue-800': lead.status === 'New',
+                                            'bg-yellow-100 text-yellow-800': lead.status === 'Contacted',
+                                            'bg-green-100 text-green-800': lead.status === 'Qualified',
+                                            'bg-red-100 text-red-800': lead.status === 'Lost'
+                                        }">
+                                        {{ lead.status }}
+                                    </span>
+
+                                    <!-- Added Date -->
+                                    <span *ngSwitchCase="'createdAt'">
+                                        {{ lead.createdAt | date:'mediumDate' }}
+                                    </span>
+
+                                    <!-- Actions -->
+                                    <div *ngSwitchCase="'actions'" class="flex items-center justify-end gap-2">
+                                        <button
+                                            class="text-xs bg-white border border-[#0a6ed1] text-[#0a6ed1] hover:bg-blue-50 px-2 py-1 rounded font-medium transition-colors">
+                                            Convert
+                                        </button>
+                                        <!-- 3-dot menu trigger -->
+                                        <button
+                                            class="p-1 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Default -->
+                                    <span *ngSwitchDefault>{{ $any(lead)[col.key] }}</span>
+                                </ng-container>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+            class="px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
+            <p class="text-sm text-gray-500">
+                Showing <span class="font-medium">{{ startIndex }}</span> to <span class="font-medium">{{ endIndex
+                    }}</span> of <span class="font-medium">{{ leads.length }}</span> results
+            </p>
+            <div class="flex gap-2">
+                <button (click)="prevPage()" [disabled]="currentPage === 1"
+                    class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 transition-colors">
+                    Previous
+                </button>
+
+                <ng-container *ngFor="let p of [].constructor(totalPages); let i = index">
+                    <button (click)="goToPage(i + 1)" class="px-3 py-1 text-sm border rounded transition-colors"
+                        [ngClass]="{'bg-[#0a6ed1] text-white border-[#0a6ed1]': currentPage === i + 1, 'border-gray-300 text-gray-600 hover:bg-gray-50': currentPage !== i + 1}">
+                        {{ i + 1 }}
+                    </button>
+                </ng-container>
+
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+                    class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 transition-colors">
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

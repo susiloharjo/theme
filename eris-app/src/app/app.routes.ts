@@ -19,6 +19,17 @@ export const routes: Routes = [
             { path: 'training/list', component: TrainingListComponent },
             { path: 'purchase/request', component: PurchaseRequestComponent },
             { path: 'purchase/list', component: PurchaseListComponent },
+            {
+                path: 'crm',
+                children: [
+                    { path: 'dashboard', loadComponent: () => import('./pages/crm/dashboard/dashboard.component').then(m => m.CrmDashboardComponent) },
+                    { path: 'customers', loadComponent: () => import('./pages/crm/customer-list/customer-list.component').then(m => m.CustomerListComponent) },
+                    { path: 'customers/:id', loadComponent: () => import('./pages/crm/customer-detail/customer-detail.component').then(m => m.CustomerDetailComponent) },
+                    { path: 'leads', loadComponent: () => import('./pages/crm/leads-list/leads-list.component').then(m => m.LeadsListComponent) },
+                    { path: 'pipeline', loadComponent: () => import('./pages/crm/pipeline/pipeline.component').then(m => m.PipelineComponent) },
+                    { path: 'opportunities', loadComponent: () => import('./pages/crm/opportunities-list/opportunities-list.component').then(m => m.OpportunitiesListComponent) },
+                ]
+            },
         ]
     }
 ];
