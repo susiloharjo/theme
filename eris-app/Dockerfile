@@ -21,9 +21,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the build artifacts from the builder stage
-# Adjust the source path if the build output structure is different
-# Using the output path observed in previous steps: dist/eris-app
-COPY --from=builder /app/dist/eris-app/browser /usr/share/nginx/html 2>/dev/null || COPY --from=builder /app/dist/eris-app /usr/share/nginx/html
+COPY --from=builder /app/dist/eris-app/browser /usr/share/nginx/html
 
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
