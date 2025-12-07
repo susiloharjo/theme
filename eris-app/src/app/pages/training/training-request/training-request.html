@@ -1,0 +1,147 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Object Header -->
+    <div class="mb-8 border-b border-gray-200 pb-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-900">Training Request</h1>
+                <p class="mt-1 text-sm text-gray-500">Create a new request for professional development.</p>
+            </div>
+            <!-- Header Actions -->
+            <div class="flex gap-3">
+                <button class="btn btn-secondary">Save Draft</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Layout: Standard Fiori Pattern (Groups) -->
+    <div class="space-y-6">
+
+        <!-- Group: General Information -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">General Information</h3>
+            </div>
+            <div class="p-6">
+                <form class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Field: Topic -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="topic" class="block text-sm font-medium text-gray-700 md:text-right">
+                            Training Topic <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2">
+                            <input type="text" id="topic" class="input w-full"
+                                placeholder="e.g. Advanced Angular Development">
+                        </div>
+                    </div>
+
+                    <!-- Field: Type -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="type" class="block text-sm font-medium text-gray-700 md:text-right">
+                            Training Type <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2">
+                            <select id="type" class="input w-full">
+                                <option>Technical Skills</option>
+                                <option>Soft Skills</option>
+                                <option>Management</option>
+                                <option>Compliance</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Field: Provider -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="provider" class="block text-sm font-medium text-gray-700 md:text-right">
+                            Provider
+                        </label>
+                        <div class="md:col-span-2">
+                            <input type="text" id="provider" class="input w-full"
+                                placeholder="e.g. Udemy, Internal, etc.">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Group: Schedule & Location -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Schedule & Location</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Field: Start Date -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="startDate" class="block text-sm font-medium text-gray-700 md:text-right">
+                            Start Date <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2">
+                            <input type="date" id="startDate" class="input w-full">
+                        </div>
+                    </div>
+
+                    <!-- Field: End Date -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="endDate" class="block text-sm font-medium text-gray-700 md:text-right">
+                            End Date <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2">
+                            <input type="date" id="endDate" class="input w-full">
+                        </div>
+                    </div>
+
+                    <!-- Field: Location -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="location" class="block text-sm font-medium text-gray-700 md:text-right">
+                            Location / URL
+                        </label>
+                        <div class="md:col-span-2">
+                            <input type="text" id="location" class="input w-full" placeholder="e.g. Jakarta Office">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group: Cost & Justification -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Cost & Justification</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Field: Cost -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="cost" class="block text-sm font-medium text-gray-700 md:text-right">
+                            Estimated Cost
+                        </label>
+                        <div class="md:col-span-2 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">IDR</span>
+                            </div>
+                            <input type="number" id="cost" class="input w-full pl-12" placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- Field: Justification -->
+                    <div class="md:col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                        <label for="justification" class="block text-sm font-medium text-gray-700 md:text-right pt-2">
+                            Business Justification <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2">
+                            <textarea id="justification" rows="4" class="input w-full"
+                                placeholder="Explain the business value..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Action Bar -->
+    <div class="mt-8 pt-5 border-t border-gray-200 flex justify-end gap-3">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Submit Request</button>
+    </div>
+</div>

@@ -140,6 +140,13 @@ export function initDropdowns() {
             d.classList.add('hidden');
         });
     });
+
+    // Prevent closing when clicking inside dropdown
+    document.querySelectorAll('[data-dropdown]').forEach(dropdown => {
+        dropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    });
 }
 
 // Tab Navigation

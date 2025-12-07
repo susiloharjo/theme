@@ -1,0 +1,454 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --color-primary: #0A6ED1;
+        --color-secondary: #21A1C4;
+        --color-background: #F5F6F7;
+        --color-surface: #FFFFFF;
+        --color-border: #D1D5DB;
+        --color-text-primary: #222222;
+        --color-text-secondary: #6B7280;
+        --color-success: #0FA958;
+        --color-warning: #EAB308;
+        --color-error: #DC2626;
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-text-primary font-sans antialiased;
+    }
+
+    h1 {
+        @apply text-h1;
+    }
+
+    h2 {
+        @apply text-h2;
+    }
+
+    h3 {
+        @apply text-h3;
+    }
+
+    h4 {
+        @apply text-h4;
+    }
+
+    h5 {
+        @apply text-h5;
+    }
+
+    h6 {
+        @apply text-h6;
+    }
+}
+
+@layer components {
+
+    /* Button Base */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-primary {
+        @apply btn bg-primary text-white hover:bg-primary-600 focus:ring-primary-500 shadow-sm;
+    }
+
+    .btn-secondary {
+        @apply btn bg-secondary text-white hover:bg-secondary-600 focus:ring-secondary-500 shadow-sm;
+    }
+
+    .btn-outline {
+        @apply btn border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary-500;
+    }
+
+    .btn-ghost {
+        @apply btn text-primary hover:bg-primary-50 focus:ring-primary-500;
+    }
+
+    .btn-icon {
+        @apply btn p-2 aspect-square;
+    }
+
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs;
+    }
+
+    .btn-lg {
+        @apply px-6 py-3 text-base;
+    }
+
+    /* Form Input Base */
+    .input {
+        @apply w-full px-3 py-2 text-sm bg-surface border border-border rounded-md transition-colors duration-200 placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed;
+    }
+
+    .input-error {
+        @apply border-error focus:ring-error;
+    }
+
+    .input-success {
+        @apply border-success focus:ring-success;
+    }
+
+    .label {
+        @apply block text-sm font-medium text-text-primary mb-1.5;
+    }
+
+    .helper-text {
+        @apply text-xs text-text-secondary mt-1;
+    }
+
+    .error-text {
+        @apply text-xs text-error mt-1;
+    }
+
+    /* Card */
+    .card {
+        @apply bg-surface rounded-lg shadow-md border border-border overflow-hidden;
+    }
+
+    .card-header {
+        @apply px-6 py-4 border-b border-border flex items-center justify-between;
+    }
+
+    .card-title {
+        @apply text-h5 text-text-primary font-semibold;
+    }
+
+    .card-subtitle {
+        @apply text-sm text-text-secondary mt-1;
+    }
+
+    .card-body {
+        @apply px-6 py-4;
+    }
+
+    .card-footer {
+        @apply px-6 py-4 border-t border-border bg-gray-50;
+    }
+
+    /* Object Card - SAP Fiori pattern */
+    .object-card {
+        @apply card;
+    }
+
+    .object-card-header {
+        @apply px-6 py-4 border-b border-border;
+    }
+
+    .object-card-title {
+        @apply text-lg font-semibold text-text-primary mb-1;
+    }
+
+    .object-card-subtitle {
+        @apply text-sm text-text-secondary;
+    }
+
+    .object-card-body {
+        @apply px-6 py-4;
+    }
+
+    .object-card-attributes {
+        @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+    }
+
+    .object-card-attribute {
+        @apply flex flex-col gap-1;
+    }
+
+    .object-card-attribute-label {
+        @apply text-xs text-text-secondary uppercase tracking-wide;
+    }
+
+    .object-card-attribute-value {
+        @apply text-sm font-medium text-text-primary;
+    }
+
+    /* List Card - SAP Fiori pattern */
+    .list-card {
+        @apply card;
+    }
+
+    .list-card-item {
+        @apply px-6 py-3 border-b border-border last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer;
+    }
+
+    .list-card-item-content {
+        @apply flex items-center justify-between gap-4;
+    }
+
+    .list-card-item-main {
+        @apply flex-1;
+    }
+
+    .list-card-item-title {
+        @apply font-medium text-text-primary;
+    }
+
+    .list-card-item-description {
+        @apply text-sm text-text-secondary mt-0.5;
+    }
+
+    .list-card-item-meta {
+        @apply text-sm text-text-secondary;
+    }
+
+    /* Analytical Card - SAP Fiori pattern */
+    .analytical-card {
+        @apply card;
+    }
+
+    .analytical-card-kpi {
+        @apply flex items-baseline gap-2 mb-2;
+    }
+
+    .analytical-card-value {
+        @apply text-3xl font-bold text-text-primary;
+    }
+
+    .analytical-card-unit {
+        @apply text-sm text-text-secondary;
+    }
+
+    .analytical-card-trend {
+        @apply flex items-center gap-1 text-sm;
+    }
+
+    .analytical-card-trend svg {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+
+    .analytical-card-trend-positive {
+        @apply analytical-card-trend text-success;
+    }
+
+    .analytical-card-trend-negative {
+        @apply analytical-card-trend text-error;
+    }
+
+    /* Badge */
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .badge-primary {
+        @apply badge bg-primary-100 text-primary-700;
+    }
+
+    .badge-secondary {
+        @apply badge bg-secondary-100 text-secondary-700;
+    }
+
+    .badge-success {
+        @apply badge bg-success-100 text-success-700;
+    }
+
+    .badge-warning {
+        @apply badge bg-warning-100 text-warning-700;
+    }
+
+    .badge-error {
+        @apply badge bg-error-100 text-error-700;
+    }
+
+    /* Table */
+    .table {
+        @apply w-full text-sm text-left;
+    }
+
+    .table thead {
+        @apply bg-gray-50 border-b-2 border-border;
+    }
+
+    .table th {
+        @apply px-6 py-2 font-semibold text-text-primary text-xs uppercase tracking-wider;
+    }
+
+    .table td {
+        @apply px-6 py-2.5 border-b border-border;
+    }
+
+    .table tbody tr {
+        @apply hover:bg-gray-50 transition-colors cursor-pointer;
+    }
+
+    .table tbody tr.selected {
+        @apply bg-primary-50 border-l-4 border-primary;
+    }
+
+    .table-striped tbody tr:nth-child(even) {
+        @apply bg-gray-50;
+    }
+
+    .table-dense th,
+    .table-dense td {
+        @apply px-4 py-1.5;
+    }
+
+    /* Table Object Cell - SAP Fiori pattern */
+    .table-object-cell {
+        @apply flex flex-col gap-0.5;
+    }
+
+    .table-object-cell-title {
+        @apply font-medium text-text-primary;
+    }
+
+    .table-object-cell-subtitle {
+        @apply text-xs text-text-secondary;
+    }
+
+    /* Table Status Column */
+    .table-status {
+        @apply inline-flex items-center gap-1.5;
+    }
+
+    .table-status-icon {
+        @apply w-2 h-2 rounded-full;
+    }
+
+    .table-status-icon-success {
+        @apply table-status-icon bg-success;
+    }
+
+    .table-status-icon-warning {
+        @apply table-status-icon bg-warning;
+    }
+
+    .table-status-icon-error {
+        @apply table-status-icon bg-error;
+    }
+
+    .table-status-icon-info {
+        @apply table-status-icon bg-primary;
+    }
+
+    /* Table Row Actions */
+    .table-row-actions {
+        @apply flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity;
+    }
+
+    .table tbody tr:hover .table-row-actions {
+        @apply opacity-100;
+    }
+
+    /* Alert */
+    .alert {
+        @apply p-4 rounded-md border;
+    }
+
+    .alert-info {
+        @apply alert bg-primary-50 border-primary-200 text-primary-800;
+    }
+
+    .alert-success {
+        @apply alert bg-success-50 border-success-200 text-success-800;
+    }
+
+    .alert-warning {
+        @apply alert bg-warning-50 border-warning-200 text-warning-800;
+    }
+
+    .alert-error {
+        @apply alert bg-error-50 border-error-200 text-error-800;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        @apply fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity;
+    }
+
+    .modal {
+        @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+    }
+
+    .modal-content {
+        @apply bg-surface rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-auto;
+    }
+
+    .modal-header {
+        @apply px-6 py-4 border-b border-border;
+    }
+
+    .modal-body {
+        @apply px-6 py-4;
+    }
+
+    .modal-footer {
+        @apply px-6 py-4 border-t border-border flex justify-end gap-3;
+    }
+
+    /* Navigation */
+    .nav-link {
+        @apply flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-secondary rounded-md transition-colors hover:bg-primary-50 hover:text-primary;
+    }
+
+    .nav-link-active {
+        @apply nav-link bg-primary-50 text-primary border-l-4 border-primary;
+    }
+
+    /* Stat Widget */
+    .stat-widget {
+        @apply card p-6;
+    }
+
+    .stat-value {
+        @apply text-3xl font-bold text-text-primary;
+    }
+
+    .stat-label {
+        @apply text-sm text-text-secondary mt-1;
+    }
+
+    .stat-change {
+        @apply text-xs font-medium mt-2;
+    }
+
+    .stat-change-positive {
+        @apply stat-change text-success;
+    }
+
+    .stat-change-negative {
+        @apply stat-change text-error;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    /* Typography Utilities */
+    .text-h1 {
+        @apply text-4xl font-bold tracking-tight text-text-primary;
+    }
+
+    .text-h2 {
+        @apply text-3xl font-bold tracking-tight text-text-primary;
+    }
+
+    .text-h3 {
+        @apply text-2xl font-bold text-text-primary;
+    }
+
+    .text-h4 {
+        @apply text-xl font-bold text-text-primary;
+    }
+
+    .text-h5 {
+        @apply text-lg font-semibold text-text-primary;
+    }
+
+    .text-h6 {
+        @apply text-base font-semibold text-text-primary;
+    }
+}

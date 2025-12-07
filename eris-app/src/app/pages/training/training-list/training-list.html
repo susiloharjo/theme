@@ -1,0 +1,215 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Toolbar Area (Header + Actions) -->
+    <div
+        class="bg-white border border-gray-200 rounded-t-lg border-b-0 p-2 flex flex-col md:flex-row items-center justify-between gap-4">
+
+        <!-- Search (Left) -->
+        <div class="relative w-full md:w-64">
+            <input type="text"
+                class="input py-1.5 pl-3 pr-8 text-sm italic text-gray-500 border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search">
+            <button class="absolute inset-y-0 right-0 px-2 text-gray-500 hover:text-gray-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Actions (Right) -->
+        <div class="flex items-center gap-1 w-full md:w-auto relative">
+
+            <!-- Create Button -->
+            <button
+                class="btn border border-[#0a6ed1] text-[#0a6ed1] hover:bg-blue-50 px-3 py-1 rounded text-sm font-semibold mr-2"
+                routerLink="/training/request">
+                Create
+            </button>
+
+            <!-- Text Actions -->
+            <button class="text-sm font-semibold text-[#0a6ed1] hover:text-[#0854a0] px-2">Edit</button>
+            <button
+                class="text-sm font-semibold text-[#0a6ed1] hover:text-[#0854a0] px-2 opacity-50 cursor-not-allowed">Delete</button>
+            <button class="text-sm font-semibold text-[#0a6ed1] hover:text-[#0854a0] px-2">Copy</button>
+            <button class="text-sm font-semibold text-[#0a6ed1] hover:text-[#0854a0] px-2">Paste</button>
+
+            <!-- Separator -->
+            <div class="h-5 w-px bg-gray-300 mx-2"></div>
+
+            <!-- Settings Icon (Toggle) -->
+            <div class="relative z-10 cursor-pointer">
+                <button #settingsButton (click)="toggleSettings()" class="p-1.5 text-[#0a6ed1] hover:bg-blue-50 rounded"
+                    title="Settings">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </button>
+
+                <!-- Backdrop Overlay -->
+                <div *ngIf="isSettingsOpen" (click)="closeSettings()"
+                    class="fixed inset-0 z-[90] bg-transparent cursor-default"></div>
+
+                <!-- Settings Popover (Option B) -->
+                <div #settingsMenu *ngIf="isSettingsOpen"
+                    class="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-[100] p-2">
+                    <div class="px-3 py-2 border-b border-gray-100 mb-2">
+                        <span class="text-sm font-semibold text-gray-700">Show Columns</span>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto">
+                        <ng-container *ngFor="let col of columns">
+                            <label *ngIf="col.key !== 'select' && col.key !== 'actions'"
+                                class="flex items-center space-x-2 px-3 py-1.5 hover:bg-gray-50 rounded cursor-pointer relative z-[101]">
+                                <input type="checkbox" [checked]="col.visible" (change)="toggleColumn(col.key)"
+                                    class="rounded text-blue-600 focus:ring-blue-500 border-gray-300 h-4 w-4">
+                                <span class="text-sm text-gray-700">{{ col.label }}</span>
+                            </label>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separator -->
+            <div class="h-5 w-px bg-gray-300 mx-2"></div>
+
+            <!-- Table/View Settings -->
+            <button (click)="toggleSettings()"
+                class="p-1.5 text-[#0a6ed1] hover:bg-blue-50 rounded flex items-center gap-0.5" title="View Settings">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <!-- Separator -->
+            <div class="h-5 w-px bg-gray-300 mx-2"></div>
+
+            <!-- Print -->
+            <button class="p-1.5 text-[#0a6ed1] hover:bg-blue-50 rounded" title="Print">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                    </path>
+                </svg>
+            </button>
+
+            <!-- Separator -->
+            <div class="h-5 w-px bg-gray-300 mx-2"></div>
+
+            <!-- Fullscreen -->
+            <button class="p-1.5 text-[#0a6ed1] hover:bg-blue-50 rounded" title="Fullscreen">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white border border-gray-200 border-t-0 rounded-b-lg overflow-hidden">
+        <div class="overflow-x-auto min-h-[300px]"> <!-- Added min-height to ensure visible -->
+            <table class="w-full text-sm text-left">
+                <thead class="bg-white border-b border-gray-200">
+                    <tr>
+                        <!-- Header Loop -->
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col.visible" scope="col" class="px-3 py-3 font-semibold text-gray-700"
+                                [ngClass]="{'w-8 p-3': col.key === 'select', 'text-right w-32': col.key === 'actions'}">
+                                <ng-container [ngSwitch]="col.key">
+                                    <input *ngSwitchCase="'select'" type="checkbox"
+                                        class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span *ngSwitchDefault>{{ col.label }}</span>
+                                </ng-container>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngFor="let item of paginatedTrainings" class="hover:bg-gray-50 transition-colors">
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col.visible" class="px-3 py-3 text-gray-800"
+                                [ngClass]="{'p-3': col.key === 'select', 'text-right': col.key === 'actions'}">
+                                <!-- Render Cell Content Based on Key -->
+                                <ng-container [ngSwitch]="col.key">
+
+                                    <!-- Checkbox -->
+                                    <input *ngSwitchCase="'select'" type="checkbox"
+                                        class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+
+                                    <!-- Topic (With Provider) -->
+                                    <div *ngSwitchCase="'topic'"
+                                        class="font-semibold text-[#0a6ed1] cursor-pointer hover:underline">
+                                        {{ item.topic }}
+                                        <div class="text-xs font-normal text-gray-500 mt-0.5">{{ item.provider }}</div>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div *ngSwitchCase="'actions'"
+                                        class="flex items-center justify-end gap-2 text-[#0a6ed1]">
+                                        <button class="hover:bg-blue-100 p-1 rounded transition-colors"><svg
+                                                class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                </path>
+                                            </svg></button>
+                                        <button class="hover:bg-blue-100 p-1 rounded transition-colors"><svg
+                                                class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg></button>
+                                        <button class="hover:bg-blue-100 p-1 rounded transition-colors"><svg
+                                                class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 5l7 7-7 7"></path>
+                                            </svg></button>
+                                    </div>
+
+                                    <!-- Default Text -->
+                                    <span *ngSwitchDefault>{{ $any(item)[col.key] }}</span>
+
+                                </ng-container>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+            class="px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
+            <p class="text-sm text-gray-500">
+                Showing <span class="font-medium">{{ startIndex }}</span> to <span class="font-medium">{{ endIndex
+                    }}</span> of <span class="font-medium">{{ trainings.length }}</span> results
+            </p>
+            <div class="flex gap-2">
+                <button (click)="prevPage()" [disabled]="currentPage === 1"
+                    class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 transition-colors">
+                    Previous
+                </button>
+
+                <ng-container *ngFor="let p of [].constructor(totalPages); let i = index">
+                    <button (click)="goToPage(i + 1)" class="px-3 py-1 text-sm border rounded transition-colors"
+                        [ngClass]="{'bg-[#0a6ed1] text-white border-[#0a6ed1]': currentPage === i + 1, 'border-gray-300 text-gray-600 hover:bg-gray-50': currentPage !== i + 1}">
+                        {{ i + 1 }}
+                    </button>
+                </ng-container>
+
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+                    class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 transition-colors">
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
