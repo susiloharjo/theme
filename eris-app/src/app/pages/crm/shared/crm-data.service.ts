@@ -140,15 +140,133 @@ export class CrmDataService {
     ];
 
     private activities: Activity[] = [
+        // Email activities
         {
-            id: 'a1', customerId: 'c1', opportunityId: 'o1', type: 'call',
-            subject: 'Discuss License Requirements', notes: 'Client needs 50 more seats.',
-            activityDate: '2023-11-05T10:00:00', assignedToUserId: 'u1', createdByUserId: 'u1', createdAt: '2023-11-05T10:00:00'
+            id: 'a1', customerId: 'c1', opportunityId: 'o1', type: 'email',
+            subject: 'Proposal for Q4 License Expansion',
+            notes: 'Hi Team, I wanted to check on the status of our proposal for the Q4 license expansion. Please let me know if you need any additional information.',
+            sender: 'Alice CTO <alice@techsolutions.com>',
+            preview: 'Hi Team, I wanted to check on the status of our proposal for the Q4 license expansion...',
+            isRead: true,
+            activityDate: '2023-11-07T14:30:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-07T14:30:00'
         },
         {
             id: 'a2', customerId: 'c1', type: 'email',
-            subject: 'Sent Proposal Draft', notes: 'Sent draft v1 via email.',
-            activityDate: '2023-11-07T14:00:00', assignedToUserId: 'u1', createdByUserId: 'u1', createdAt: '2023-11-07T14:00:00'
+            subject: 'Re: Proposal for Q4 License Expansion',
+            notes: 'Thank you for your interest. We have reviewed your requirements and will send the updated proposal by end of day.',
+            sender: 'John Sales <john@eris.com>',
+            preview: 'Thank you for your interest. We have reviewed your requirements and will send the updated...',
+            isRead: false,
+            activityDate: '2023-11-07T16:45:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-07T16:45:00'
+        },
+        {
+            id: 'a3', customerId: 'c1', type: 'email',
+            subject: 'Meeting Invitation: Demo Session',
+            notes: 'Dear Alice, Would you be available for a product demo next Tuesday at 10 AM? Looking forward to showing you our latest features.',
+            sender: 'John Sales <john@eris.com>',
+            preview: 'Dear Alice, Would you be available for a product demo next Tuesday at 10 AM?...',
+            isRead: true,
+            activityDate: '2023-11-05T09:15:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-05T09:15:00'
+        },
+        {
+            id: 'a4', customerId: 'c1', type: 'email',
+            subject: 'Contract Terms Discussion',
+            notes: 'Hi John, We would like to discuss the payment terms mentioned in the proposal. Can we schedule a call this week?',
+            sender: 'Alice CTO <alice@techsolutions.com>',
+            preview: 'Hi John, We would like to discuss the payment terms mentioned in the proposal...',
+            isRead: false,
+            activityDate: '2023-11-08T11:20:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-08T11:20:00'
+        },
+
+        // WhatsApp activities
+        {
+            id: 'a5', customerId: 'c1', type: 'whatsapp',
+            subject: 'Quick question about pricing',
+            notes: 'Can you send me the detailed pricing breakdown for the additional licenses?',
+            messageText: 'Can you send me the detailed pricing breakdown for the additional licenses?',
+            direction: 'received',
+            activityDate: '2023-11-06T10:30:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-06T10:30:00'
+        },
+        {
+            id: 'a6', customerId: 'c1', type: 'whatsapp',
+            subject: 'Pricing breakdown sent',
+            notes: 'Sure! I just sent you the detailed breakdown via email. Let me know if you have any questions.',
+            messageText: 'Sure! I just sent you the detailed breakdown via email. Let me know if you have any questions.',
+            direction: 'sent',
+            activityDate: '2023-11-06T10:35:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-06T10:35:00'
+        },
+        {
+            id: 'a7', customerId: 'c1', type: 'whatsapp',
+            subject: 'Thank you',
+            notes: 'Thanks John! The pricing looks good. We will discuss internally and get back to you.',
+            messageText: 'Thanks John! The pricing looks good. We will discuss internally and get back to you.',
+            direction: 'received',
+            activityDate: '2023-11-06T10:38:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-06T10:38:00'
+        },
+        {
+            id: 'a8', customerId: 'c1', type: 'whatsapp',
+            subject: 'Follow up',
+            notes: 'Perfect! Feel free to reach out if you need anything else. Happy to help! 😊',
+            messageText: 'Perfect! Feel free to reach out if you need anything else. Happy to help! 😊',
+            direction: 'sent',
+            activityDate: '2023-11-06T10:40:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-06T10:40:00'
+        },
+        {
+            id: 'a9', customerId: 'c1', type: 'whatsapp',
+            subject: 'Meeting confirmation',
+            notes: 'Hi John, confirming our meeting for tomorrow at 2 PM. See you then!',
+            messageText: 'Hi John, confirming our meeting for tomorrow at 2 PM. See you then!',
+            direction: 'received',
+            activityDate: '2023-11-08T15:20:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-08T15:20:00'
+        },
+        {
+            id: 'a10', customerId: 'c1', type: 'whatsapp',
+            subject: 'Confirmed',
+            notes: 'Great! Looking forward to it. I will send you the meeting link shortly.',
+            messageText: 'Great! Looking forward to it. I will send you the meeting link shortly.',
+            direction: 'sent',
+            activityDate: '2023-11-08T15:22:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-08T15:22:00'
+        },
+
+        // Other activity types
+        {
+            id: 'a11', customerId: 'c1', opportunityId: 'o1', type: 'call',
+            subject: 'Discuss License Requirements',
+            notes: 'Client needs 50 more seats. Discussed budget and timeline.',
+            activityDate: '2023-11-05T10:00:00',
+            assignedToUserId: 'u1',
+            createdByUserId: 'u1',
+            createdAt: '2023-11-05T10:00:00'
         }
     ];
 

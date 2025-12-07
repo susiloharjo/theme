@@ -41,4 +41,13 @@ export class CustomerDetailComponent implements OnInit {
         this.crmService.getOpportunitiesByCustomerId(id).subscribe(data => this.opportunities = data);
         // Quotations fetch in future
     }
+
+    // Filter activities by type for different tab views
+    get emailActivities(): Activity[] {
+        return this.activities.filter(a => a.type === 'email');
+    }
+
+    get whatsappActivities(): Activity[] {
+        return this.activities.filter(a => a.type === 'whatsapp');
+    }
 }

@@ -130,7 +130,7 @@ export interface OpportunityItem {
     notes?: string;
 }
 
-export type ActivityType = 'call' | 'meeting' | 'email' | 'visit' | 'demo';
+export type ActivityType = 'call' | 'meeting' | 'email' | 'visit' | 'demo' | 'whatsapp';
 
 export interface Activity {
     id: string;
@@ -146,6 +146,15 @@ export interface Activity {
     assignedToUserId: string;
     createdByUserId: string;
     createdAt: string;
+
+    // Email-specific fields
+    sender?: string;        // For email inbox display
+    preview?: string;       // Short preview of email content
+    isRead?: boolean;       // Read/unread state for emails
+
+    // WhatsApp-specific fields
+    direction?: 'sent' | 'received';  // Message direction
+    messageText?: string;   // Full message text for chat bubbles
 
     // UI Helpers
     assigneeName?: string;
