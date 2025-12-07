@@ -18,6 +18,7 @@ export class CustomerDetailComponent implements OnInit {
     quotations: Quotation[] = [];
 
     activeTab: 'overview' | 'contacts' | 'activities' | 'opportunities' | 'quotations' | 'documents' = 'overview';
+    composerTab: 'email' | 'whatsapp' = 'email';
 
     constructor(
         private route: ActivatedRoute,
