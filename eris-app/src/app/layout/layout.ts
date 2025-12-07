@@ -1,6 +1,7 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, ElementRef, HostListener, ViewChild, OnInit } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
@@ -8,15 +9,20 @@ import { CommonModule } from '@angular/common';
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })
-export class Layout {
+export class Layout implements OnInit {
   activeMenu: string | null = null;
   isNotificationsOpen = false;
   isSidebarOpen = false;
   expandedMenus: Set<string> = new Set();
 
+  // Dynamic Top Menu State
+  currentTopMenu: any[] = [];
+  activeModuleTitle: string = 'My Home';
+
   menuItems = [
     {
       id: 'self-service', label: 'Self Service', icon: 'user', submenus: [
+        { label: 'My Home', route: '/' },
         { label: 'My Profile', route: '/profile' },
         { label: 'Training', route: '/training/list' },
         { label: 'Purchase', route: '/purchase/list' },
@@ -108,6 +114,43 @@ export class Layout {
   ];
   isUserMenuOpen = false;
   @ViewChild('navContainer') navContainer!: ElementRef;
+
+  constructor(private router: Router) { }
+
+  ngOnInit() {
+    // Initialize based on current URL
+    this.updateTopMenu(this.router.url);
+
+    // Listen to navigation changes
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.updateTopMenu(event.urlAfterRedirects || event.url);
+    });
+  }
+
+  updateTopMenu(url: string) {
+    // 1. Find the module corresponding to the URL
+    // Heuristic: check if URL contains the route of any submenu
+    let foundModule = this.menuItems.find(menu =>
+      menu.submenus.some(sub => sub.route !== '#' && sub.route !== '/' && url.startsWith(sub.route))
+    );
+
+    // Special case for root/home/profile falling under Self Service
+    if (!foundModule && (url === '/' || url.startsWith('/profile') || url.startsWith('/training'))) {
+      foundModule = this.menuItems.find(m => m.id === 'self-service');
+    }
+
+    if (foundModule) {
+      this.currentTopMenu = foundModule.submenus;
+      this.activeModuleTitle = foundModule.label;
+    } else {
+      // Fallback to Self Service if no module logic matches
+      const defaultModule = this.menuItems.find(m => m.id === 'self-service');
+      this.currentTopMenu = defaultModule ? defaultModule.submenus : [];
+      this.activeModuleTitle = defaultModule?.label || 'Menu';
+    }
+  }
 
   toggleMenu(menuName: string) {
     this.activeMenu = this.activeMenu === menuName ? null : menuName;

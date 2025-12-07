@@ -346,153 +346,45 @@
         <!-- Secondary Navigation (Menu Bar) -->
         <div class="bg-white border-b border-gray-200 px-4 lg:px-6">
             <div class="flex items-center gap-2 overflow-x-auto lg:overflow-visible no-scrollbar" #navContainer>
-                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-                    class="nav-item">My Home</a>
-                <a routerLink="/profile" routerLinkActive="active" class="nav-item flex items-center gap-1">
-                    <span>Profile</span>
-                </a>
 
-                <!-- Training Dropdown -->
-                <div class="relative">
-                    <button (click)="toggleMenu('training')" class="nav-item flex items-center gap-1"
-                        [class.text-[#0A6ED1]]="activeMenu === 'training'"
-                        [class.bg-[#f5f7fa]]="activeMenu === 'training'">
-                        <span>Training</span>
-                        <svg [class.rotate-180]="activeMenu === 'training'"
-                            class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    @if (activeMenu === 'training') {
-                    <div
-                        class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
-                        <a routerLink="/training/request"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Training Request
-                        </a>
-                        <a routerLink="/training/list"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Training List
-                        </a>
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Certification
-                        </a>
-                    </div>
-                    }
-                </div>
+                <!-- Dynamic Top Menu Items -->
+                <ng-container *ngFor="let item of currentTopMenu">
+                    <!-- Standard Link -->
+                    <a *ngIf="item.route !== '#'" [routerLink]="item.route" routerLinkActive="active"
+                        [routerLinkActiveOptions]="item.route === '/' ? {exact: true} : {exact: false}"
+                        class="nav-item whitespace-nowrap">
+                        {{ item.label }}
+                    </a>
 
-                <!-- Business Travel Dropdown -->
-                <div class="relative">
-                    <button (click)="toggleMenu('bustrav')" class="nav-item flex items-center gap-1"
-                        [class.text-[#0A6ED1]]="activeMenu === 'bustrav'"
-                        [class.bg-[#f5f7fa]]="activeMenu === 'bustrav'">
-                        <span>Business Travel</span>
-                        <svg [class.rotate-180]="activeMenu === 'bustrav'"
-                            class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    @if (activeMenu === 'bustrav') {
-                    <div
-                        class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Bustrav request
-                        </a>
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Bustrav list
-                        </a>
-                    </div>
-                    }
-                </div>
+                    <!-- Dropdown/Placeholder (if route is #) -->
+                    <div *ngIf="item.route === '#'" class="relative">
+                        <button (click)="toggleMenu(item.label)"
+                            class="nav-item flex items-center gap-1 whitespace-nowrap"
+                            [class.text-[#0A6ED1]]="activeMenu === item.label"
+                            [class.bg-[#f5f7fa]]="activeMenu === item.label">
+                            <span>{{ item.label }}</span>
+                            <svg [class.rotate-180]="activeMenu === item.label"
+                                class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
 
-                <!-- Reimbursements Dropdown -->
-                <div class="relative">
-                    <button (click)="toggleMenu('reimbursement')" class="nav-item flex items-center gap-1"
-                        [class.text-[#0A6ED1]]="activeMenu === 'reimbursement'"
-                        [class.bg-[#f5f7fa]]="activeMenu === 'reimbursement'">
-                        <span>Reimbursements</span>
-                        <svg [class.rotate-180]="activeMenu === 'reimbursement'"
-                            class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    @if (activeMenu === 'reimbursement') {
-                    <div
-                        class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Reimbursement request
-                        </a>
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            Reimbursement list
-                        </a>
+                        <!-- Simple Dropdown Content Placeholder -->
+                        <div *ngIf="activeMenu === item.label"
+                            class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
+                            <div class="px-4 py-2 text-xs text-gray-400 uppercase">Actions</div>
+                            <a href="#"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">Create
+                                New</a>
+                            <a href="#"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">View
+                                All</a>
+                        </div>
                     </div>
-                    }
-                </div>
+                </ng-container>
 
-                <!-- PR Online Dropdown -->
-                <div class="relative">
-                    <button (click)="toggleMenu('pr')" class="nav-item flex items-center gap-1"
-                        [class.text-[#0A6ED1]]="activeMenu === 'pr'" [class.bg-[#f5f7fa]]="activeMenu === 'pr'">
-                        <span>PR Online</span>
-                        <svg [class.rotate-180]="activeMenu === 'pr'"
-                            class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    @if (activeMenu === 'pr') {
-                    <div
-                        class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
-                        <a routerLink="/purchase/request"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            PR request
-                        </a>
-                        <a routerLink="/purchase/list"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            PR list
-                        </a>
-                    </div>
-                    }
-                </div>
-
-                <!-- Cash Advance Dropdown -->
-                <div class="relative">
-                    <button (click)="toggleMenu('ca')" class="nav-item flex items-center gap-1"
-                        [class.text-[#0A6ED1]]="activeMenu === 'ca'" [class.bg-[#f5f7fa]]="activeMenu === 'ca'">
-                        <span>Cash Advance</span>
-                        <svg [class.rotate-180]="activeMenu === 'ca'"
-                            class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    @if (activeMenu === 'ca') {
-                    <div
-                        class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            CA request
-                        </a>
-                        <a routerLink="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
-                            CA list
-                        </a>
-                    </div>
-                    }
-                </div>
             </div>
         </div>
     </header>
