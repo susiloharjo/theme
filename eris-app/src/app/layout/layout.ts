@@ -1,7 +1,13 @@
 import { Component, ElementRef, HostListener, ViewChild, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+
+export interface Breadcrumb {
+  label: string;
+  route: string;
+  isActive: boolean;
+}
 
 @Component({
   selector: 'app-layout',
@@ -18,6 +24,26 @@ export class Layout implements OnInit {
   // Dynamic Top Menu State
   currentTopMenu: any[] = [];
   activeModuleTitle: string = 'My Home';
+
+  // Breadcrumb State
+  breadcrumbs: Breadcrumb[] = [];
+
+  // Route labels mapping
+  private routeLabels: { [key: string]: string } = {
+    'crm': 'CRM',
+    'customers': 'Customers',
+    'leads': 'Leads',
+    'pipeline': 'Sales Pipeline',
+    'opportunities': 'Opportunities',
+    'dashboard': 'Dashboard',
+    'pmo': 'PMO',
+    'projects': 'Projects',
+    'profile': 'My Profile',
+    'training': 'Training',
+    'request': 'Request',
+    'list': 'List',
+    'purchase': 'Purchase'
+  };
 
   menuItems = [
     {
@@ -128,12 +154,15 @@ export class Layout implements OnInit {
   ngOnInit() {
     // Initialize based on current URL
     this.updateTopMenu(this.router.url);
+    this.generateBreadcrumbs(this.router.url);
 
     // Listen to navigation changes
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      this.updateTopMenu(event.urlAfterRedirects || event.url);
+      const url = event.urlAfterRedirects || event.url;
+      this.updateTopMenu(url);
+      this.generateBreadcrumbs(url);
     });
   }
 
@@ -158,6 +187,65 @@ export class Layout implements OnInit {
       this.currentTopMenu = defaultModule ? defaultModule.submenus : [];
       this.activeModuleTitle = defaultModule?.label || 'Menu';
     }
+  }
+
+  generateBreadcrumbs(url: string) {
+    const crumbs: Breadcrumb[] = [];
+
+    console.log('Generating breadcrumbs for URL:', url);
+
+    // Always start with home
+    if (url !== '/') {
+      crumbs.push({
+        label: 'Home',
+        route: '/',
+        isActive: false
+      });
+    }
+
+    // Parse URL segments
+    const segments = url.split('/').filter(s => s);
+
+    if (segments.length === 0) {
+      this.breadcrumbs = [];
+      console.log('No segments, breadcrumbs:', this.breadcrumbs);
+      return;
+    }
+
+    let currentRoute = '';
+
+    segments.forEach((segment, index) => {
+      currentRoute += '/' + segment;
+      const isLast = index === segments.length - 1;
+
+      // Get label from mapping or use segment with capitalization
+      let label = this.routeLabels[segment] || this.capitalizeWords(segment);
+
+      // For IDs (like customer IDs), try to get more meaningful name
+      if (segment.startsWith('c') && segments[index - 1] === 'customers') {
+        // This would ideally fetch from a service, for now use generic
+        label = 'Customer Details';
+      } else if (!isNaN(Number(segment))) {
+        // Skip numeric IDs for now or mark as details
+        label = 'Details';
+      }
+
+      crumbs.push({
+        label: label,
+        route: currentRoute,
+        isActive: isLast
+      });
+    });
+
+    this.breadcrumbs = crumbs;
+    console.log('Generated breadcrumbs:', this.breadcrumbs);
+  }
+
+  private capitalizeWords(str: string): string {
+    return str
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   toggleMenu(menuName: string) {
