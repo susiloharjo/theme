@@ -26,8 +26,18 @@ export class Layout implements OnInit {
         { label: 'My Profile', route: '/profile' },
         { label: 'Training', route: '/training/list' },
         { label: 'Purchase', route: '/purchase/list' },
-        { label: 'Reimbursement', route: '#' },
-        { label: 'Cash Advance', route: '#' }
+        {
+          label: 'Reimbursement', route: '#', children: [
+            { label: 'Reimbursement Request', route: '/reimbursement/request' },
+            { label: 'Reimbursement List', route: '/reimbursement/list' }
+          ]
+        },
+        {
+          label: 'Cash Advance', route: '#', children: [
+            { label: 'Cash Advance Request', route: '/cash-advance/request' },
+            { label: 'Cash Advance List', route: '/cash-advance/list' }
+          ]
+        }
       ]
     },
     {

@@ -374,13 +374,19 @@
                         <!-- Simple Dropdown Content Placeholder -->
                         <div *ngIf="activeMenu === item.label"
                             class="absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md mt-1 z-50 py-1">
-                            <div class="px-4 py-2 text-xs text-gray-400 uppercase">Actions</div>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">Create
-                                New</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">View
-                                All</a>
+                            <ng-container *ngIf="item.children && item.children.length > 0">
+                                <a *ngFor="let child of item.children" [routerLink]="child.route"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">
+                                    {{ child.label }}
+                                </a>
+                            </ng-container>
+
+                            <!-- Fallback for items without explicit children but set to # -->
+                            <ng-container *ngIf="!item.children || item.children.length === 0">
+                                <a href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#0A6ED1]">View
+                                    Details</a>
+                            </ng-container>
                         </div>
                     </div>
                 </ng-container>

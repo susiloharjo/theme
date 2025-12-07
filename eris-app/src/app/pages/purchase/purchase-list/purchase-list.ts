@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 interface TrackingStep {
     id: number;
@@ -30,7 +31,7 @@ interface ColumnConfig {
 @Component({
     selector: 'app-purchase-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './purchase-list.html',
 })
 export class PurchaseListComponent {
