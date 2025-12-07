@@ -105,6 +105,9 @@ export interface Opportunity {
     stageName?: string;
     customerName?: string;
     ownerName?: string;
+    contactName?: string;
+    contactEmail?: string;
+    contactPhone?: string;
 }
 
 export interface Product {

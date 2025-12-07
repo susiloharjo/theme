@@ -28,11 +28,13 @@ export class CrmDataService {
     ];
 
     private opportunityStages: OpportunityStage[] = [
-        { id: 's1', name: 'Qualification', sortOrder: 1 },
-        { id: 's2', name: 'Proposal', sortOrder: 2 },
-        { id: 's3', name: 'Negotiation', sortOrder: 3 },
-        { id: 's4', name: 'Closed Won', sortOrder: 4 },
-        { id: 's5', name: 'Closed Lost', sortOrder: 5 }
+        { id: 'st_leads', name: 'Leads', sortOrder: 1 },
+        { id: 'st_opps', name: 'Opportunities', sortOrder: 2 },
+        { id: 's1', name: 'Qualification', sortOrder: 3 },
+        { id: 's2', name: 'Proposal', sortOrder: 4 },
+        { id: 's3', name: 'Negotiation', sortOrder: 5 },
+        { id: 's4', name: 'Closed Won', sortOrder: 6 },
+        { id: 's5', name: 'Closed Lost', sortOrder: 7 }
     ];
 
     private leadSources: LeadSource[] = [
@@ -106,6 +108,7 @@ export class CrmDataService {
     private opportunities: Opportunity[] = [
         {
             id: 'o1', customerId: 'c1', name: 'Q4 Software License Expansion', stageId: 's2',
+            description: 'Expansion of software licenses for the engineering team to support new hires.',
             expectedValue: 50000000, probability: 60, expectedCloseDate: '2023-12-31',
             ownerUserId: 'u1', createdAt: '2023-11-01', updatedAt: '2023-11-01'
         },
@@ -223,12 +226,18 @@ export class CrmDataService {
     }
 
     getOpportunities(): Observable<Opportunity[]> {
-        const opps = this.opportunities.map(o => ({
-            ...o,
-            stageName: this.opportunityStages.find(s => s.id === o.stageId)?.name,
-            customerName: this.customers.find(c => c.id === o.customerId)?.name,
-            ownerName: this.users.find(u => u.id === o.ownerUserId)?.name
-        }));
+        const opps = this.opportunities.map(o => {
+            const contact = this.contacts.find(c => c.customerId === o.customerId && c.isPrimary) || this.contacts.find(c => c.customerId === o.customerId);
+            return {
+                ...o,
+                stageName: this.opportunityStages.find(s => s.id === o.stageId)?.name,
+                customerName: this.customers.find(c => c.id === o.customerId)?.name,
+                ownerName: this.users.find(u => u.id === o.ownerUserId)?.name,
+                contactName: contact?.name,
+                contactEmail: contact?.email,
+                contactPhone: contact?.phone
+            };
+        });
         return of(opps);
     }
 

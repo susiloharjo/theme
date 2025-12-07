@@ -34,8 +34,6 @@ export class Layout implements OnInit {
       id: 'crm', label: 'CRM', icon: 'users', submenus: [
         { label: 'Dashboard', route: '/crm/dashboard' },
         { label: 'Customers', route: '/crm/customers' },
-        { label: 'Leads', route: '/crm/leads' },
-        { label: 'Opportunities', route: '/crm/opportunities' },
         { label: 'Sales Pipeline', route: '/crm/pipeline' }
       ]
     },
