@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  eris-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eris-app
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    # Optional: Volume for hot-reloading if doing dev work (requires different setup)
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules
