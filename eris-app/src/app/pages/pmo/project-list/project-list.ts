@@ -113,7 +113,9 @@ export class ProjectListComponent implements OnInit {
 
     selectedProject: Project | null = null;
     searchTerm: string = '';
-    activeTab: 'org-chart' | 'procurement' | 'cash-advance' | 'gantt' | 's-curve' | 'kyc' | 'risk' | 'documents' = 'org-chart';
+    activeTab: 'org-chart' | 'procurement' | 'cash-advance' | 'gantt' | 's-curve' | 'financial' | 'kyc' | 'risk' | 'documents' = 'org-chart';
+    expandedFinancialCategory: string | null = null;
+
 
     projects: Project[] = [
         {
@@ -410,5 +412,13 @@ export class ProjectListComponent implements OnInit {
         });
 
         return path;
+    }
+
+    toggleFinancialCategory(category: string) {
+        if (this.expandedFinancialCategory === category) {
+            this.expandedFinancialCategory = null;
+        } else {
+            this.expandedFinancialCategory = category;
+        }
     }
 }
