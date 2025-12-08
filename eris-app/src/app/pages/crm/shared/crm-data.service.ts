@@ -136,6 +136,57 @@ export class CrmDataService {
             id: 'o6', customerId: 'c3', name: 'CRM Consultation', stageId: 's5',
             expectedValue: 10000000, probability: 0, expectedCloseDate: '2023-11-30',
             ownerUserId: 'u3', createdAt: '2023-11-05', updatedAt: '2023-11-30'
+        },
+        // --- NEW MOCK DATA (10 Items) ---
+        {
+            id: 'o7', customerId: 'c2', name: 'Logistics Fleet Upgrade', stageId: 'st_leads',
+            expectedValue: 0, probability: 10, expectedCloseDate: '2024-04-01',
+            ownerUserId: 'u2', createdAt: '2023-12-08', updatedAt: '2023-12-08'
+        },
+        {
+            id: 'o8', customerId: 'c3', name: 'Retail Chain Expansion', stageId: 'st_leads',
+            expectedValue: 0, probability: 5, expectedCloseDate: '2024-05-15',
+            ownerUserId: 'u1', createdAt: '2023-12-08', updatedAt: '2023-12-08'
+        },
+        {
+            id: 'o9', customerId: 'c1', name: 'Q1 Hardware Refresh', stageId: 'st_opps',
+            expectedValue: 150000000, probability: 20, expectedCloseDate: '2024-02-28',
+            ownerUserId: 'u1', createdAt: '2023-12-07', updatedAt: '2023-12-07'
+        },
+        {
+            id: 'o10', customerId: 'c2', name: 'Cloud Migration Phase 1', stageId: 'st_opps',
+            expectedValue: 500000000, probability: 25, expectedCloseDate: '2024-06-30',
+            ownerUserId: 'u2', createdAt: '2023-12-06', updatedAt: '2023-12-06'
+        },
+        {
+            id: 'o11', customerId: 'c1', name: 'HR ERP Customization', stageId: 's1',
+            expectedValue: 80000000, probability: 40, expectedCloseDate: '2024-03-01',
+            ownerUserId: 'u3', createdAt: '2023-11-25', updatedAt: '2023-12-05'
+        },
+        {
+            id: 'o12', customerId: 'c2', name: 'Security Audit & Compliance', stageId: 's1',
+            expectedValue: 45000000, probability: 35, expectedCloseDate: '2024-01-30',
+            ownerUserId: 'u2', createdAt: '2023-11-20', updatedAt: '2023-11-20'
+        },
+        {
+            id: 'o13', customerId: 'c3', name: 'Managed Services Contract', stageId: 's2',
+            expectedValue: 120000000, probability: 60, expectedCloseDate: '2024-02-15',
+            ownerUserId: 'u1', createdAt: '2023-11-15', updatedAt: '2023-12-01'
+        },
+        {
+            id: 'o14', customerId: 'c1', name: 'Global License Agreement', stageId: 's3',
+            expectedValue: 1200000000, probability: 90, expectedCloseDate: '2023-12-25',
+            ownerUserId: 'u1', createdAt: '2023-09-01', updatedAt: '2023-12-08'
+        },
+        {
+            id: 'o15', customerId: 'c2', name: 'Consulting Hour Block', stageId: 's4',
+            expectedValue: 50000000, probability: 100, expectedCloseDate: '2023-11-30',
+            ownerUserId: 'u2', createdAt: '2023-11-10', updatedAt: '2023-11-25'
+        },
+        {
+            id: 'o16', customerId: 'c3', name: 'Legacy System Support', stageId: 's5',
+            expectedValue: 30000000, probability: 0, expectedCloseDate: '2023-11-15',
+            ownerUserId: 'u3', createdAt: '2023-10-01', updatedAt: '2023-11-15'
         }
     ];
 

@@ -17,36 +17,153 @@
         </div>
 
         <!-- Filter Strip -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 flex-grow">
-            <!-- Filter Controls -->
-            <div class="relative">
-                <select
-                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option>All Owners</option>
-                    <option>Me</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+        <!-- Filter Section (Multi-tier) -->
+        <!-- Filter Section (Single Row) -->
+        <div
+            class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex flex-wrap items-center gap-4 shadow-inner">
+            <!-- Owner Filter -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase">Owner:</label>
+                <div class="relative">
+                    <select [(ngModel)]="filterOwnerId" (change)="applyFilters()"
+                        class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <option value="all">All Owners</option>
+                        <option *ngFor="let user of owners" [value]="user.id">{{ user.name }}</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
                 </div>
             </div>
-            <div class="relative">
-                <select
-                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option>All Customers</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+
+            <!-- Customer Filter -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase">Customer:</label>
+                <div class="relative">
+                    <select [(ngModel)]="filterCustomerId" (change)="applyFilters()"
+                        class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <option value="all">All Customers</option>
+                        <option *ngFor="let cust of customers" [value]="cust.id">{{ cust.name }}</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
                 </div>
             </div>
-            <button
-                class="bg-white border border-gray-300 text-gray-700 py-1.5 px-3 rounded-full text-sm hover:bg-gray-50">
-                This Quarter
-            </button>
+
+            <!-- Value Filter -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase">Value:</label>
+                <div class="relative">
+                    <select [(ngModel)]="filterValueMin" (change)="applyFilters()"
+                        class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <option [value]="0">Any Value</option>
+                        <option [value]="50000000">> 50 Million</option>
+                        <option [value]="100000000">> 100 Million</option>
+                        <option [value]="500000000">> 500 Million</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Probability Filter -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase">Probability:</label>
+                <div class="relative">
+                    <select [(ngModel)]="filterProbMin" (change)="applyFilters()"
+                        class="appearance-none bg-white border border-gray-300 text-gray-700 py-1.5 pl-3 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <option [value]="0">Any %</option>
+                        <option [value]="30">30%+</option>
+                        <option [value]="60">60%+</option>
+                        <option [value]="80">80%+</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage Filter (Multi-select) -->
+            <div class="flex items-center gap-2 relative">
+                <label class="text-xs font-semibold text-gray-500 uppercase">Stage:</label>
+                <button (click)="showStageDropdown = !showStageDropdown"
+                    class="bg-white border border-gray-300 text-gray-700 py-1.5 px-3 rounded-md text-sm flex items-center gap-2 hover:bg-gray-50 shadow-sm focus:ring-2 focus:ring-blue-500">
+                    <span>{{ filterStageIds.length === stages.length ? 'All Stages' : filterStageIds.length + '
+                        Selected' }}</span>
+                    <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <!-- Stage Dropdown Menu -->
+                <div *ngIf="showStageDropdown"
+                    class="absolute top-full left-10 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2 space-y-1">
+                    <div *ngFor="let stage of stages"
+                        class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer"
+                        (click)="toggleStageFilter(stage.id)">
+                        <div class="w-4 h-4 border border-gray-300 rounded flex items-center justify-center"
+                            [ngClass]="{'bg-blue-600 border-blue-600': isStageSelected(stage.id)}">
+                            <svg *ngIf="isStageSelected(stage.id)" class="w-3 h-3 text-white" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-sm text-gray-700">{{ stage.name }}</span>
+                    </div>
+                    <div class="border-t border-gray-100 mt-2 pt-2 flex justify-end">
+                        <button (click)="showStageDropdown = false"
+                            class="text-xs text-blue-600 font-medium hover:underline">Done</button>
+                    </div>
+                </div>
+                <!-- Overlay to close -->
+                <div *ngIf="showStageDropdown" class="fixed inset-0 z-40" (click)="showStageDropdown = false"></div>
+            </div>
+
             <div class="flex-grow"></div>
+
+            <!-- Search Input -->
+            <div class="relative min-w-[200px]">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilters()"
+                    placeholder="Search deals..."
+                    class="pl-9 pr-3 py-1.5 w-full border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm placeholder-gray-400">
+            </div>
+
+            <!-- Show Active Toggle -->
+            <div class="flex items-center gap-2 ml-2">
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" [(ngModel)]="filterShowActive" (ngModelChange)="applyFilters()"
+                        class="sr-only peer">
+                    <div
+                        class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600">
+                    </div>
+                </label>
+                <span class="text-sm font-medium text-gray-700">Show Only Active</span>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-6 w-px bg-gray-300 mx-2"></div>
+
             <!-- View Toggle -->
             <div class="flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200">
                 <button (click)="setViewMode('kanban')" [class.bg-white]="viewMode === 'kanban'"
@@ -106,51 +223,17 @@
                 <div class="p-2 overflow-y-auto flex-1 flex flex-col gap-2 custom-scrollbar">
 
                     <!-- Opportunity Card -->
-                    <div *ngFor="let opp of getOpportunitiesByStage(stage.id)"
-                        class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all cursor-grab active:cursor-grabbing group relative"
+                    <div *ngFor="let opp of getVisibleOpportunities(stage.id)"
+                        class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition-all cursor-grab active:cursor-grabbing group relative flex flex-col gap-2"
                         draggable="true" (dragstart)="onDragStart($event, opp)" (click)="selectOpportunity(opp)">
 
-                        <!-- Title & Customer -->
-                        <div class="mb-2">
-                            <h3
-                                class="text-sm font-semibold text-gray-800 leading-tight mb-0.5 hover:text-blue-600 cursor-pointer">
-                                {{ opp.name }}</h3>
-                            <p class="text-xs text-gray-500">{{ opp.customerName || 'Unknown Customer' }}</p>
-                        </div>
-
-                        <!-- Value & Date -->
-                        <div class="mb-3">
-                            <div class="text-sm font-bold text-gray-900 font-mono">
-                                {{ opp.expectedValue | currency:'IDR':'symbol':'1.0-0' }}
-                            </div>
-                            <div class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                                {{ opp.expectedCloseDate | date:'mediumDate' }}
-                            </div>
-                        </div>
-
-                        <!-- Footer: Badges & Owner -->
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <!-- Probability Badge -->
-                            <div class="flex items-center gap-1">
-                                <span class="text-[10px] font-medium px-1.5 py-0.5 rounded border" [ngClass]="{
-                                        'bg-red-50 text-red-700 border-red-100': opp.probability < 30,
-                                        'bg-yellow-50 text-yellow-700 border-yellow-100': opp.probability >= 30 && opp.probability < 70,
-                                        'bg-green-50 text-green-700 border-green-100': opp.probability >= 70
-                                    }">
-                                    {{ opp.probability }}%
-                                </span>
-                            </div>
-
-                            <!-- Owner Avatar & Activity -->
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] text-gray-400 hidden group-hover:block transition-opacity">
-                                    2d ago
-                                </span>
+                        <!-- Top: Name & Owner -->
+                        <div class="flex justify-between items-start gap-2">
+                            <h3 class="text-sm font-semibold text-gray-800 leading-tight hover:text-blue-600 cursor-pointer line-clamp-2"
+                                title="{{ opp.name }}">
+                                {{ opp.name }}
+                            </h3>
+                            <div class="flex-shrink-0">
                                 <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 border border-white ring-1 ring-gray-100"
                                     title="{{ opp.ownerName }}">
                                     {{ (opp.ownerName || 'Unknown').charAt(0) }}
@@ -158,6 +241,62 @@
                             </div>
                         </div>
 
+                        <!-- Customer Name -->
+                        <div class="text-xs text-gray-500 font-medium truncate">
+                            {{ opp.customerName || 'Unknown Customer' }}
+                        </div>
+
+                        <!-- Value & Date Row -->
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-sm font-bold text-gray-900 font-mono">
+                                {{ opp.expectedValue | currency:'IDR':'symbol':'1.0-0' }}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-gray-400">
+                            <span class="flex items-center gap-1">
+                                Due: {{ opp.expectedCloseDate | date:'MMM d, y' }}
+                            </span>
+                            <span>Prob: {{ opp.probability }}%</span>
+                        </div>
+
+                        <!-- Tags Section -->
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            <!-- Risk Tag -->
+                            <span *ngIf="isRisk(opp)"
+                                class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-700 border border-red-200">
+                                🔥 Risk
+                            </span>
+                            <!-- Stale Tag -->
+                            <span *ngIf="isStale(opp)"
+                                class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                ⏳ Stale >20d
+                            </span>
+                            <!-- High Value Tag -->
+                            <span *ngIf="isHighValue(opp)"
+                                class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-700 border border-green-200">
+                                💰 High Value
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full h-1.5 bg-gray-100 rounded-full mt-2 overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-300"
+                                [ngClass]="getProgressBarColor(opp.probability)" [style.width.%]="opp.probability">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div *ngIf="hasMore(stage.id)" class="py-2 text-center">
+                        <button (click)="loadMore(stage.id)"
+                            class="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center justify-center gap-1 w-full hover:bg-gray-200 rounded py-1 transition-colors">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            Load More Deals...
+                        </button>
                     </div>
                 </div>
             </div>
@@ -196,7 +335,7 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let opp of opportunities" class="hover:bg-gray-50 transition-colors cursor-pointer"
+                <tr *ngFor="let opp of filteredOpportunities" class="hover:bg-gray-50 transition-colors cursor-pointer"
                     (click)="selectOpportunity(opp)">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">{{ opp.name }}</div>
