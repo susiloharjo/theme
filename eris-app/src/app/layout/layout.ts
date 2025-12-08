@@ -28,23 +28,6 @@ export class Layout implements OnInit {
   // Breadcrumb State
   breadcrumbs: Breadcrumb[] = [];
 
-  // Route labels mapping
-  private routeLabels: { [key: string]: string } = {
-    'crm': 'CRM',
-    'customers': 'Customers',
-    'leads': 'Leads',
-    'pipeline': 'Sales Pipeline',
-    'opportunities': 'Opportunities',
-    'dashboard': 'Dashboard',
-    'pmo': 'PMO',
-    'projects': 'Projects',
-    'profile': 'My Profile',
-    'training': 'Training',
-    'request': 'Request',
-    'list': 'List',
-    'purchase': 'Purchase'
-  };
-
   menuItems = [
     {
       id: 'self-service', label: 'Self Service', icon: 'user', submenus: [
@@ -149,12 +132,15 @@ export class Layout implements OnInit {
   isUserMenuOpen = false;
   @ViewChild('navContainer') navContainer!: ElementRef;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     // Initialize based on current URL
     this.updateTopMenu(this.router.url);
-    this.generateBreadcrumbs(this.router.url);
+    this.generateBreadcrumbs();
 
     // Listen to navigation changes
     this.router.events.pipe(
@@ -162,7 +148,7 @@ export class Layout implements OnInit {
     ).subscribe((event: any) => {
       const url = event.urlAfterRedirects || event.url;
       this.updateTopMenu(url);
-      this.generateBreadcrumbs(url);
+      this.generateBreadcrumbs();
     });
   }
 
@@ -189,63 +175,53 @@ export class Layout implements OnInit {
     }
   }
 
-  generateBreadcrumbs(url: string) {
-    const crumbs: Breadcrumb[] = [];
+  generateBreadcrumbs() {
+    const breadcrumbs: Breadcrumb[] = [];
+    let route = this.activatedRoute.root;
+    let url = '';
 
-    console.log('Generating breadcrumbs for URL:', url);
+    // Traverse the activated route tree
+    while (route) {
+      // Check if this route has children
+      if (route.firstChild) {
+        route = route.firstChild;
 
-    // Always start with home
-    if (url !== '/') {
-      crumbs.push({
-        label: 'Home',
+        // Get the route segment(s)
+        const routeURL = route.snapshot.url.map(segment => segment.path).join('/');
+        if (routeURL) {
+          url += `/${routeURL}`;
+        }
+
+        // Get breadcrumb from route data
+        const breadcrumb = route.snapshot.data['breadcrumb'];
+
+        if (breadcrumb) {
+          breadcrumbs.push({
+            label: breadcrumb,
+            route: url,
+            isActive: false
+          });
+        }
+      } else {
+        break;
+      }
+    }
+
+    // Mark the last breadcrumb as active
+    if (breadcrumbs.length > 0) {
+      breadcrumbs[breadcrumbs.length - 1].isActive = true;
+    }
+
+    // Always add "My Home" at the beginning (if not on home page)
+    if (breadcrumbs.length > 0) {
+      breadcrumbs.unshift({
+        label: 'My Home',
         route: '/',
         isActive: false
       });
     }
 
-    // Parse URL segments
-    const segments = url.split('/').filter(s => s);
-
-    if (segments.length === 0) {
-      this.breadcrumbs = [];
-      console.log('No segments, breadcrumbs:', this.breadcrumbs);
-      return;
-    }
-
-    let currentRoute = '';
-
-    segments.forEach((segment, index) => {
-      currentRoute += '/' + segment;
-      const isLast = index === segments.length - 1;
-
-      // Get label from mapping or use segment with capitalization
-      let label = this.routeLabels[segment] || this.capitalizeWords(segment);
-
-      // For IDs (like customer IDs), try to get more meaningful name
-      if (segment.startsWith('c') && segments[index - 1] === 'customers') {
-        // This would ideally fetch from a service, for now use generic
-        label = 'Customer Details';
-      } else if (!isNaN(Number(segment))) {
-        // Skip numeric IDs for now or mark as details
-        label = 'Details';
-      }
-
-      crumbs.push({
-        label: label,
-        route: currentRoute,
-        isActive: isLast
-      });
-    });
-
-    this.breadcrumbs = crumbs;
-    console.log('Generated breadcrumbs:', this.breadcrumbs);
-  }
-
-  private capitalizeWords(str: string): string {
-    return str
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    this.breadcrumbs = breadcrumbs;
   }
 
   toggleMenu(menuName: string) {
