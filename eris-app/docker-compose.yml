@@ -20,9 +20,11 @@ services:
     working_dir: /app
     volumes:
       - ./server:/app
+      - /app/node_modules
     command: sh -c "npm install && npm start"
     ports:
       - "3000:3000"
+    restart: unless-stopped
     # volumes:
     #   - .:/app
     #   - /app/node_modules

@@ -41,12 +41,64 @@ const db = new sqlite3.Database(dbPath, (err) => {
                     if (row.count === 0) {
                         console.log("Seeding default widgets for main dashboard...");
                         const defaults = [
-                            { id: 'w1', dashboard_id: 'main', title: 'Total Revenue', type: 'stat', x: 0, y: 0, w: 3, h: 4, value: 'Rp 2.5B', icon: 'dollar-sign', color: 'bg-blue-500' },
-                            { id: 'w2', dashboard_id: 'main', title: 'Active Projects', type: 'stat', x: 3, y: 0, w: 3, h: 4, value: '12', icon: 'briefcase', color: 'bg-indigo-500' },
-                            { id: 'w3', dashboard_id: 'main', title: 'Pending Approval', type: 'stat', x: 6, y: 0, w: 3, h: 4, value: '5', icon: 'clock', color: 'bg-orange-500' },
-                            { id: 'w4', dashboard_id: 'main', title: 'Team Members', type: 'stat', x: 9, y: 0, w: 3, h: 4, value: '48', icon: 'users', color: 'bg-green-500' },
-                            { id: 'w5', dashboard_id: 'main', title: 'Revenue Trend', type: 'chart', x: 0, y: 4, w: 6, h: 8, content: 'Chart Placeholder' },
-                            { id: 'w6', dashboard_id: 'main', title: 'Project Status', type: 'chart', x: 6, y: 4, w: 6, h: 8, content: 'Pie Chart Placeholder' },
+                            // Stats (Row 1)
+                            { id: 'w1', dashboard_id: 'main', title: 'Total Revenue', type: 'stat', x: 0, y: 0, w: 2, h: 4, value: 'Rp 2.5B', icon: 'dollar-sign', color: 'bg-blue-500' },
+                            { id: 'w2', dashboard_id: 'main', title: 'Active Projects', type: 'stat', x: 2, y: 0, w: 2, h: 4, value: '12', icon: 'briefcase', color: 'bg-indigo-500' },
+                            { id: 'w3', dashboard_id: 'main', title: 'Pending Approval', type: 'stat', x: 4, y: 0, w: 2, h: 4, value: '5', icon: 'clock', color: 'bg-orange-500' },
+                            { id: 'w4', dashboard_id: 'main', title: 'Team Members', type: 'stat', x: 6, y: 0, w: 2, h: 4, value: '48', icon: 'users', color: 'bg-green-500' },
+                            { id: 'w5', dashboard_id: 'main', title: 'Conversion Rate', type: 'stat', x: 8, y: 0, w: 2, h: 4, value: '65.5', icon: 'trending-up', color: 'bg-green-600' },
+                            { id: 'w6', dashboard_id: 'main', title: 'Critical Issues', type: 'stat', x: 10, y: 0, w: 2, h: 4, value: '3', icon: 'alert-triangle', color: 'bg-red-500' },
+
+                            // Row 2
+                            // List Widget
+                            {
+                                id: 'w7', dashboard_id: 'main', title: 'Sales Order Fulfilment', type: 'list', x: 0, y: 4, w: 3, h: 6,
+                                content: JSON.stringify({
+                                    listItems: [
+                                        { label: 'Incomplete Data', value: '8.03K', colorClass: 'text-green-600' },
+                                        { label: 'Delivery Issue', value: '4.49K', colorClass: 'text-red-600' },
+                                        { label: 'Invoicing Issue', value: '3.8K', colorClass: 'text-orange-500' }
+                                    ],
+                                    footer: 'Now'
+                                })
+                            },
+                            // Bar Chart
+                            {
+                                id: 'w8', dashboard_id: 'main', title: 'Incoming Sales Orders', type: 'bar', x: 3, y: 4, w: 3, h: 6,
+                                value: '2.3',
+                                content: JSON.stringify({
+                                    subtitle: 'EMEA',
+                                    unit: 'M',
+                                    footer: 'EUR, Year to Date',
+                                    chartData: [
+                                        { value: 30, colorClass: 'bg-blue-400' },
+                                        { value: 50, colorClass: 'bg-blue-500' },
+                                        { value: 40, colorClass: 'bg-blue-600' },
+                                        { value: 60, colorClass: 'bg-blue-700' },
+                                        { value: 80, colorClass: 'bg-gray-500' }
+                                    ]
+                                })
+                            },
+                            // Pie Chart
+                            {
+                                id: 'w9', dashboard_id: 'main', title: 'Sales Contract Fulfilment', type: 'pie', x: 6, y: 4, w: 3, h: 6,
+                                value: '1.8M',
+                                content: JSON.stringify({
+                                    subtitle: 'EMEA',
+                                    target: '3M',
+                                    footer: 'EUR, Year to Date'
+                                })
+                            },
+                            // Line/Area Chart
+                            {
+                                id: 'w10', dashboard_id: 'main', title: 'Ext. Sales Commissions', type: 'line', x: 9, y: 4, w: 3, h: 6,
+                                content: JSON.stringify({
+                                    value1: '70M',
+                                    value2: '45M',
+                                    labelStart: 'June',
+                                    labelEnd: 'June 30'
+                                })
+                            },
                         ];
                         const stmt = db.prepare("INSERT INTO widgets_v2 (id, dashboard_id, title, type, x, y, w, h, value, content, icon, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         defaults.forEach(w => {
