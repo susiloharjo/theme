@@ -8,7 +8,7 @@ import { DashboardWidget } from './dashboard.component';
     providedIn: 'root'
 })
 export class DashboardService {
-    private apiUrl = 'http://localhost:3000/api/dashboard';
+    private apiUrl = '/api/dashboard';
 
     constructor(private http: HttpClient) { }
 
