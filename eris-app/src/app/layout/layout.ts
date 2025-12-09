@@ -31,8 +31,7 @@ export class Layout implements OnInit {
   menuItems = [
     {
       id: 'self-service', label: 'Self Service', icon: 'user', submenus: [
-        { label: 'My Home', route: '/' },
-        { label: 'Dashboard', route: '/dashboard' },
+        { label: 'My Home', route: '/dashboard' },
         { label: 'My Profile', route: '/profile' },
         { label: 'Training', route: '/training/list' },
         { label: 'Purchase', route: '/purchase/list' },
@@ -217,7 +216,7 @@ export class Layout implements OnInit {
     if (breadcrumbs.length > 0) {
       breadcrumbs.unshift({
         label: 'My Home',
-        route: '/',
+        route: '/dashboard',
         isActive: false
       });
     }
