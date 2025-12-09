@@ -32,6 +32,7 @@ export class Layout implements OnInit {
     {
       id: 'self-service', label: 'Self Service', icon: 'user', submenus: [
         { label: 'My Home', route: '/' },
+        { label: 'Dashboard', route: '/dashboard' },
         { label: 'My Profile', route: '/profile' },
         { label: 'Training', route: '/training/list' },
         { label: 'Purchase', route: '/purchase/list' },

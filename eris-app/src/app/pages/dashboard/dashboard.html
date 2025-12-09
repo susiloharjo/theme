@@ -1,0 +1,84 @@
+<div class="h-full flex flex-col p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+            <p class="text-sm text-gray-500">Overview & Analytics</p>
+        </div>
+
+        <!-- Dashboard Switcher & Edit Mode -->
+        <div class="flex items-center gap-4">
+            <button (click)="toggleEditMode()"
+                [ngClass]="isEditMode ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'"
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
+                <svg *ngIf="!isEditMode" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                    </path>
+                </svg>
+                <svg *ngIf="isEditMode" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                {{ isEditMode ? 'Done Editing' : 'Customize' }}
+            </button>
+
+            <select [ngModel]="currentDashboardId" (ngModelChange)="switchDashboard($event)"
+                class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                <option *ngFor="let id of availableDashboards" [value]="id">{{ id | titlecase }} Dashboard</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading/Error -->
+    <div *ngIf="isLoading" class="py-10 text-center text-gray-500">Loading widgets...</div>
+    <div *ngIf="error" class="py-10 text-center text-red-500">{{ error }}</div>
+
+    <!-- Grid Stack Container -->
+    <div class="flex-1 relative overflow-auto">
+        <div class="grid-stack" #gridStack>
+            <!-- Widgets Loop -->
+            <div *ngFor="let w of widgets" class="grid-stack-item" [attr.gs-id]="w.id" [attr.gs-x]="w.x"
+                [attr.gs-y]="w.y" [attr.gs-w]="w.w" [attr.gs-h]="w.h" [id]="w.id">
+
+                <div
+                    class="grid-stack-item-content bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                    <!-- Widget Content Rendered based on Type -->
+
+                    <!-- Stat -->
+                    <div *ngIf="w.type === 'stat'" class="p-6 flex flex-col justify-between h-full select-none">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 truncate">{{ w.title }}</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-2">{{ w.value }}</h3>
+                            </div>
+                            <div [ngClass]="w.color" class="p-3 rounded-lg text-white shadow-sm flex-shrink-0">
+                                <span class="font-bold text-xs">ICON</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <div *ngIf="w.type === 'chart'" class="p-4 h-full flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-2">{{ w.title }}</h3>
+                        <div
+                            class="flex-1 bg-gray-50 rounded border border-dashed flex items-center justify-center text-gray-400 italic">
+                            {{ w.content }}
+                        </div>
+                    </div>
+
+                    <!-- Default Content -->
+                    <div *ngIf="!w.type" class="p-4">
+                        {{ w.title }}
+                    </div>
+                    <!-- Resize Icon (Visible in Edit Mode) -->
+                    <div *ngIf="isEditMode"
+                        class="absolute bottom-1 right-1 pointer-events-none text-gray-400 opacity-50">
+                        <svg class="w-3 h-3" viewBox="0 0 10 10" fill="currentColor">
+                            <path d="M10 10 L0 10 L10 0 Z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

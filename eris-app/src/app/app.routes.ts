@@ -16,6 +16,7 @@ export const routes: Routes = [
             { path: '', redirectTo: 'myhome', pathMatch: 'full' },
             { path: 'myhome', component: Home },
             { path: 'profile', component: Profile, data: { breadcrumb: 'My Profile' } },
+            { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent), data: { breadcrumb: 'Dashboard' } },
             { path: 'training', component: TrainingListComponent, data: { breadcrumb: 'Training' } },
             { path: 'training/request', component: TrainingRequestComponent, data: { breadcrumb: 'Training Request' } },
             { path: 'training/list', component: TrainingListComponent, data: { breadcrumb: 'Training List' } },

@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import 'gridstack/dist/gridstack.min.css';
+@import 'gridstack/dist/gridstack.min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -451,4 +453,9 @@
     .text-h6 {
         @apply text-base font-semibold text-text-primary;
     }
+}
+
+/* Hide default Gridstack resize handles to use custom icon */
+.grid-stack-item .ui-resizable-handle {
+    opacity: 0 !important;
 }
