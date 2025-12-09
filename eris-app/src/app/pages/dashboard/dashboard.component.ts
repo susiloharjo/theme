@@ -66,6 +66,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         { path: '/crm/dashboard', label: 'CRM Dashboard' }
     ];
 
+
+    availableIcons = ['link', 'triangle', 'chevron', 'user', 'cart', 'gear', 'bar-chart', 'pie-chart', 'wrench', 'car'];
+
+
+
     tempShortcutConfig = {
         title: 'New Shortcut',
         link: '/myhome',
