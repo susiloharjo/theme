@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -75,6 +75,12 @@ interface ProjectDocument {
     uploadedBy: string;
 }
 
+interface ActivityFeedItem {
+    message: string;
+    timestamp: string; // e.g. "2h ago", "Yesterday"
+    type: 'info' | 'warning' | 'success';
+}
+
 interface Project {
     id: string;
     name: string;
@@ -82,6 +88,21 @@ interface Project {
     type: string;
     status: 'In Planning' | 'In Progress' | 'On Hold' | 'Completed';
     progress: number;
+    // Health Dashboard Fields
+    health: 'Good' | 'At Risk' | 'Critical';
+    scheduleVariance: number; // days (+ ahead, - behind)
+    budgetUsed: number; // percentage
+    // New Budget Insights
+    budgetStats: {
+        timelineProgress: number; // percentage of time elapsed
+        forecastCompletion: number; // projected budget usage at end
+        burnRateMessage: string; // e.g., "Overspending +10%"
+        status: 'On Track' | 'Overspending' | 'Underbudget';
+    };
+    riskStats: { high: number; med: number; low: number };
+    taskStats: { open: number; inProgress: number; overdue: number; completed: number };
+    activityFeed: ActivityFeedItem[];
+    // Standard Fields
     startDate: string;
     endDate: string;
     budget: string;
@@ -103,6 +124,19 @@ interface Project {
     documents: ProjectDocument[];
 }
 
+interface SimulationResult {
+    predictedCompletionDate: Date;
+    delayDays: number;
+    budgetForecast: {
+        overrun: boolean;
+        predictedAtCompletion: number;
+    };
+    confidenceScore: number;
+    criticalPath: string[];
+    risks: { task: string; risk: string }[];
+    recommendations: string[];
+}
+
 @Component({
     selector: 'app-project-list',
     standalone: true,
@@ -111,10 +145,17 @@ interface Project {
 })
 export class ProjectListComponent implements OnInit {
 
+    constructor(private cdr: ChangeDetectorRef) { }
+
     selectedProject: Project | null = null;
     searchTerm: string = '';
-    activeTab: 'org-chart' | 'procurement' | 'cash-advance' | 'gantt' | 's-curve' | 'financial' | 'kyc' | 'risk' | 'documents' = 'org-chart';
+    activeTab: 'org-chart' | 'procurement' | 'cash-advance' | 'gantt' | 's-curve' | 'financial' | 'kyc' | 'risk' | 'documents' = 'gantt';
     expandedFinancialCategory: string | null = null;
+
+    // AI Simulation State
+    showSimulationModal = false;
+    simulationLoading = false;
+    simulationResult: any = null;
 
 
     projects: Project[] = [
@@ -125,6 +166,22 @@ export class ProjectListComponent implements OnInit {
             type: 'IT Infrastructure',
             status: 'In Progress',
             progress: 65,
+            health: 'Good',
+            scheduleVariance: -5,
+            budgetUsed: 65,
+            budgetStats: {
+                timelineProgress: 55,
+                forecastCompletion: 115,
+                burnRateMessage: 'Overspending +10%',
+                status: 'Overspending'
+            },
+            riskStats: { high: 2, med: 1, low: 3 },
+            taskStats: { open: 22, inProgress: 14, overdue: 6, completed: 35 },
+            activityFeed: [
+                { message: 'Task "Requirement Gathering" completed', timestamp: '2h ago', type: 'success' },
+                { message: 'Risk added: Vendor delay potential', timestamp: '4h ago', type: 'warning' },
+                { message: 'File uploaded: architecture_v2.pdf', timestamp: 'Yesterday', type: 'info' }
+            ],
             startDate: '2024-01-01',
             endDate: '2024-06-30',
             budget: 'Rp 1,500,000,000',
@@ -191,6 +248,20 @@ export class ProjectListComponent implements OnInit {
             type: 'Construction',
             status: 'In Planning',
             progress: 10,
+            health: 'Good',
+            scheduleVariance: 5,
+            budgetUsed: 25,
+            budgetStats: {
+                timelineProgress: 20,
+                forecastCompletion: 98,
+                burnRateMessage: 'On Track',
+                status: 'On Track'
+            },
+            riskStats: { high: 0, med: 1, low: 4 },
+            taskStats: { open: 15, inProgress: 8, overdue: 0, completed: 5 },
+            activityFeed: [
+                { message: 'Project Charter Approved', timestamp: '2 days ago', type: 'success' }
+            ],
             startDate: '2024-03-01',
             endDate: '2024-12-20',
             budget: 'Rp 5,000,000,000',
@@ -227,6 +298,20 @@ export class ProjectListComponent implements OnInit {
             type: 'Marketing',
             status: 'Completed',
             progress: 100,
+            health: 'Good',
+            scheduleVariance: 2,
+            budgetUsed: 98,
+            budgetStats: {
+                timelineProgress: 100,
+                forecastCompletion: 98,
+                burnRateMessage: 'Underbudget -2%',
+                status: 'Underbudget'
+            },
+            riskStats: { high: 0, med: 0, low: 0 },
+            taskStats: { open: 0, inProgress: 0, overdue: 0, completed: 25 },
+            activityFeed: [
+                { message: 'Final Report Submitted', timestamp: '1 week ago', type: 'success' }
+            ],
             startDate: '2024-04-01',
             endDate: '2024-06-30',
             budget: 'Rp 250,000,000',
@@ -259,6 +344,20 @@ export class ProjectListComponent implements OnInit {
             type: 'Internal Process',
             status: 'On Hold',
             progress: 45,
+            health: 'At Risk',
+            scheduleVariance: -10,
+            budgetUsed: 40,
+            budgetStats: {
+                timelineProgress: 35,
+                forecastCompletion: 105,
+                burnRateMessage: 'Slight Overspend',
+                status: 'Overspending'
+            },
+            riskStats: { high: 1, med: 3, low: 2 },
+            taskStats: { open: 8, inProgress: 4, overdue: 2, completed: 12 },
+            activityFeed: [
+                { message: 'Project put on hold pending review', timestamp: '1 month ago', type: 'warning' }
+            ],
             startDate: '2024-02-10',
             endDate: '2024-05-30',
             budget: 'Rp 50,000,000',
@@ -288,6 +387,20 @@ export class ProjectListComponent implements OnInit {
             type: 'Software Development',
             status: 'In Progress',
             progress: 30,
+            health: 'Critical',
+            scheduleVariance: -20,
+            budgetUsed: 50,
+            budgetStats: {
+                timelineProgress: 40,
+                forecastCompletion: 130,
+                burnRateMessage: 'Overspending +30%',
+                status: 'Overspending'
+            },
+            riskStats: { high: 4, med: 2, low: 1 },
+            taskStats: { open: 45, inProgress: 15, overdue: 12, completed: 10 },
+            activityFeed: [
+                { message: 'Critical bug reported in login module', timestamp: '1h ago', type: 'warning' }
+            ],
             startDate: '2024-05-01',
             endDate: '2024-11-30',
             budget: 'Rp 800,000,000',
@@ -319,6 +432,18 @@ export class ProjectListComponent implements OnInit {
             type: 'Business Development',
             status: 'In Planning',
             progress: 0,
+            health: 'Good',
+            scheduleVariance: 2,
+            budgetUsed: 10,
+            budgetStats: {
+                timelineProgress: 15,
+                forecastCompletion: 95,
+                burnRateMessage: 'Underbudget -5%',
+                status: 'Underbudget'
+            },
+            riskStats: { high: 0, med: 2, low: 1 },
+            taskStats: { open: 5, inProgress: 2, overdue: 0, completed: 8 },
+            activityFeed: [],
             startDate: '2024-07-01',
             endDate: '2024-12-31',
             budget: 'Rp 300,000,000',
@@ -421,4 +546,114 @@ export class ProjectListComponent implements OnInit {
             this.expandedFinancialCategory = category;
         }
     }
+
+    // --- AI SIMULATION LOGIC ---
+    runSimulation() {
+        console.log('Run simulation clicked');
+        this.showSimulationModal = true;
+        this.simulationLoading = true;
+        this.simulationResult = null;
+
+        // Simulate API delay
+        setTimeout(() => {
+            try {
+                if (this.selectedProject) {
+                    this.calculateSimulation(this.selectedProject);
+                } else {
+                    console.warn('No project selected for simulation');
+                    this.simulationLoading = false;
+                }
+            } catch (error) {
+                console.error('Simulation failed:', error);
+                this.simulationLoading = false;
+            } finally {
+                this.cdr.detectChanges();
+            }
+        }, 5000); // 5 second delay to simulate AI processing
+    }
+
+    calculateSimulation(project: Project) {
+        console.log('Calculating simulation for', project.name);
+
+        // SAFEGUARD: Ensure budgetStats exists
+        if (!project.budgetStats) {
+            console.warn('Missing budgetStats for project');
+            // Create default stats if missing to prevent crash
+            project.budgetStats = { timelineProgress: 0, forecastCompletion: 0, burnRateMessage: 'N/A', status: 'On Track' };
+        }
+
+        // 1. Calculate Schedule Deviation
+        // Simple logic: If progress < timelineProgress, assume delay
+        const deviation = (project.budgetStats?.timelineProgress || 0) - (project.progress || 0);
+        let delayDays = 0;
+
+        const today = new Date();
+        const endDate = project.endDate ? new Date(project.endDate) : new Date();
+
+        if (deviation > 5) {
+            // Significant delay: Add 1.5 days for every 1% deviation
+            delayDays = Math.ceil(deviation * 1.5);
+        } else if (deviation < -5) {
+            // Ahead of schedule
+            delayDays = -Math.floor(Math.abs(deviation) * 0.5);
+        }
+
+        const predictedDate = new Date(endDate);
+        predictedDate.setDate(predictedDate.getDate() + delayDays);
+
+        // 2. Budget Forecast
+        // Parse budget string to number (removing "Rp" and ",")
+        const budgetStr = project.budget || '0';
+        const budgetTotal = parseInt(budgetStr.replace(/[^0-9]/g, ''), 10) || 0;
+
+        // Forecast based on current burn rate: (Budget / Progress) * 100
+        // If progress is 0, avoid divide by zero
+        const effectiveProgress = project.progress || 1;
+        const predictedBudget = ((project.budgetStats?.forecastCompletion || 100) / 100) * budgetTotal;
+
+        const isOverrun = predictedBudget > budgetTotal;
+
+
+        // 3. Risks & Recommendations
+        const newRisks = [];
+        const recommendations = [];
+
+        if (delayDays > 10) {
+            newRisks.push({ task: 'Overall Schedule', risk: 'High' });
+            recommendations.push('Consider fast-tracking critical path tasks.');
+            recommendations.push('Negotiate timeline extension with stakeholders.');
+        } else if (delayDays > 0) {
+            newRisks.push({ task: 'Mid-term Milestones', risk: 'Medium' });
+            recommendations.push('Monitor critical path closely.');
+        }
+
+        if (isOverrun) {
+            newRisks.push({ task: 'Budget Control', risk: 'High' });
+            recommendations.push('Review resource allocation and hourly rates.');
+            recommendations.push('Freeze non-essential scope changes.');
+        }
+
+        if (project.riskStats && project.riskStats.high > 0) {
+            recommendations.push('Detailed mitigation plan required for High priority risks.');
+        }
+
+        // Critical Path (Mock)
+        const criticalPath = ['Requirement', 'Design', 'Dev', 'UAT', 'Go-Live'];
+
+        this.simulationResult = {
+            predictedCompletionDate: predictedDate,
+            delayDays: delayDays,
+            budgetForecast: {
+                overrun: isOverrun,
+                predictedAtCompletion: predictedBudget
+            },
+            confidenceScore: 0.85, // Mock confidence
+            criticalPath: criticalPath,
+            risks: newRisks.length ? newRisks : [{ task: 'None', risk: 'Low' }],
+            recommendations: recommendations.length ? recommendations : ['Continue monitoring progress.']
+        };
+
+        this.simulationLoading = false;
+    }
 }
+

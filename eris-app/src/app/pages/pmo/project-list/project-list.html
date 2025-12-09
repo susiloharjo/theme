@@ -46,6 +46,13 @@
                     <span class="flex items-center gap-1 text-[11px]">
                         {{ project.budget }}
                     </span>
+                    <span class="text-[10px] font-medium" [ngClass]="{
+                        'text-blue-600': project.status === 'In Progress',
+                        'text-green-600': project.status === 'Completed',
+                        'text-gray-400': project.status !== 'In Progress' && project.status !== 'Completed'
+                    }">
+                        {{ project.progress }}%
+                    </span>
                 </div>
             </div>
 
@@ -59,15 +66,15 @@
     <!-- COLUMN 2: Main Detail (Center) -->
     <div *ngIf="selectedProject" class="flex-1 flex flex-col bg-gray-50 overflow-hidden relative">
 
-        <!-- 1. SUMMARY CARD (Top) -->
-        <div class="bg-white p-6 border-b border-gray-200">
-            <!-- Header Row -->
+        <!-- 1. DASHBOARD & SUMMARY (Top) -->
+        <div class="bg-gray-50 p-6 border-b border-gray-200">
+            <!-- Header Row (Compact) -->
             <div class="flex items-start justify-between mb-6">
                 <div class="flex gap-4">
                     <!-- Project Icon/Thumbnail -->
                     <div
-                        class="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100 flex-shrink-0">
-                        <svg class="w-8 h-8 text-[#0a6ed1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-gray-200 shadow-sm flex-shrink-0">
+                        <svg class="w-6 h-6 text-[#0a6ed1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                             </path>
@@ -75,21 +82,27 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h1 class="text-xl font-bold text-gray-900 leading-tight">{{ selectedProject.name }}</h1>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border"
+                            <h1 class="text-lg font-bold text-gray-900 leading-tight">{{ selectedProject.name }}</h1>
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border bg-white"
                                 [ngClass]="{
-                                'bg-blue-50 text-blue-700 border-blue-100': selectedProject.status === 'In Progress',
-                                'bg-green-50 text-green-700 border-green-100': selectedProject.status === 'Completed',
-                                'bg-amber-50 text-amber-700 border-amber-100': selectedProject.status === 'In Planning',
-                                'bg-gray-50 text-gray-600 border-gray-200': selectedProject.status === 'On Hold'
+                                'text-blue-700 border-blue-200': selectedProject.status === 'In Progress',
+                                'text-green-700 border-green-200': selectedProject.status === 'Completed',
+                                'text-amber-700 border-amber-200': selectedProject.status === 'In Planning',
+                                'text-gray-600 border-gray-200': selectedProject.status === 'On Hold'
                             }">{{ selectedProject.status }}</span>
                         </div>
                         <div class="flex items-center gap-4 text-xs text-gray-500">
-                            <span class="flex items-center gap-1.5">
-                                <span class="font-semibold text-gray-400">ID:</span> {{ selectedProject.id }}
+                            <span class="flex items-center gap-1">
+                                <span class="font-semibold text-gray-400">Manager:</span> {{ selectedProject.manager }}
                             </span>
-                            <span class="flex items-center gap-1.5">
-                                <span class="font-semibold text-gray-400">Type:</span> {{ selectedProject.type }}
+                            <span class="flex items-center gap-1">
+                                <span class="font-semibold text-gray-400">Location:</span> {{ selectedProject.location
+                                }}
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <span class="font-semibold text-gray-400">Dates:</span> {{ selectedProject.startDate |
+                                date:'mediumDate' }} - {{ selectedProject.endDate | date:'mediumDate' }}
                             </span>
                         </div>
                     </div>
@@ -97,60 +110,242 @@
 
                 <div class="flex gap-2">
                     <button
-                        class="px-3 py-1.5 bg-[#0a6ed1] text-white text-xs font-semibold rounded hover:bg-blue-700 transition-colors">Edit</button>
-                    <button
-                        class="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-xs font-semibold rounded hover:bg-gray-50 transition-colors">Simulate</button>
+                        class="px-3 py-1.5 bg-[#0a6ed1] text-white text-xs font-bold rounded hover:bg-blue-700 transition shadow-sm">Edit</button>
+                    <button (click)="runSimulation()"
+                        class="px-3 py-1.5 bg-white text-gray-700 border border-gray-300 text-xs font-bold rounded hover:bg-gray-50 transition shadow-sm flex items-center gap-1">
+                        <svg class="w-3 h-3 text-[#0a6ed1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        Simulate
+                    </button>
                 </div>
             </div>
 
-            <!-- Key Details Grid -->
-            <div class="flex items-start justify-between gap-6 w-full">
-                <div>
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Manager</h3>
-                    <p class="text-sm font-semibold text-gray-900">{{ selectedProject.manager }}</p>
-                    <p class="text-[10px] text-gray-500">PMP Certified</p>
+            <!-- DASHBOARD GRID -->
+            <div class="grid grid-cols-12 gap-4">
+
+                <!-- ROW 1: Health Summary Panel (Full Width) -->
+                <div
+                    class="col-span-12 bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between relative overflow-hidden">
+
+
+                    <div class="flex items-center gap-6 px-2 flex-1">
+                        <!-- HEALTH -->
+                        <div>
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Overall
+                                Health</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold" [ngClass]="{
+                                    'text-emerald-700': selectedProject.health === 'Good',
+                                    'text-amber-700': selectedProject.health === 'At Risk',
+                                    'text-red-700': selectedProject.health === 'Critical'
+                                }">{{ selectedProject.health }}</span>
+                                <span class="flex h-2 w-2 relative">
+                                    <span class="relative inline-flex rounded-full h-2 w-2" [ngClass]="{
+                                        'bg-emerald-500': selectedProject.health === 'Good',
+                                        'bg-amber-500': selectedProject.health === 'At Risk',
+                                        'bg-red-500': selectedProject.health === 'Critical'
+                                    }"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="h-8 w-px bg-gray-100"></div>
+
+                        <!-- SCHEDULE -->
+                        <div>
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Schedule</h3>
+                            <p class="text-sm font-semibold whitespace-nowrap" [ngClass]="{
+                                 'text-emerald-600': selectedProject.scheduleVariance >= 0,
+                                 'text-red-600': selectedProject.scheduleVariance < 0
+                             }">
+                                {{ selectedProject.scheduleVariance >= 0 ? '+' : ''}}{{ selectedProject.scheduleVariance
+                                }} days
+                                <span class="text-[10px] font-normal text-gray-400 ml-1">variance</span>
+                            </p>
+                        </div>
+
+                        <div class="h-8 w-px bg-gray-100"></div>
+
+                        <!-- BUDGET (Wider) -->
+                        <div class="min-w-[200px]">
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Budget
+                                Forecast</h3>
+                            <div class="flex items-center gap-2 text-sm whitespace-nowrap">
+                                <span class="font-bold text-gray-700">{{ selectedProject.budgetUsed }}% Used</span>
+                                <span class="text-gray-300">|</span>
+                                <span class="font-medium text-[11px]" [ngClass]="{
+                                    'text-red-600': selectedProject.budgetStats.status === 'Overspending',
+                                    'text-emerald-600': selectedProject.budgetStats.status === 'Underbudget',
+                                    'text-blue-600': selectedProject.budgetStats.status === 'On Track'
+                                }">{{ selectedProject.budgetStats.burnRateMessage }}</span>
+                            </div>
+                            <!-- Optional Subtext if space allows, or implicit -->
+                        </div>
+
+                        <div class="h-8 w-px bg-gray-100"></div>
+
+                        <!-- RISKS -->
+                        <div>
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Risks</h3>
+                            <p class="text-sm font-semibold text-gray-900 whitespace-nowrap">
+                                <span class="text-red-600">{{ selectedProject.riskStats.high }} High</span>
+                                <span class="text-gray-300 mx-1">|</span>
+                                {{ selectedProject.riskStats.med }} Med
+                            </p>
+                        </div>
+                        <div class="h-8 w-px bg-gray-100"></div>
+
+                        <!-- TIMELINE PACE (Stacked Bars) -->
+                        <div class="min-w-[180px]">
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Timeline Pace
+                            </h3>
+                            <div class="flex flex-col gap-1.5 w-full">
+                                <!-- Actual -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[9px] font-bold text-blue-700 w-10 uppercase">Actual</span>
+                                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full transition-all duration-500"
+                                            [ngClass]="selectedProject.progress >= selectedProject.budgetStats.timelineProgress ? 'bg-emerald-500' : 'bg-blue-600'"
+                                            [style.width.%]="selectedProject.progress"></div>
+                                    </div>
+                                    <span class="text-[9px] font-bold text-gray-700 w-6 text-right">{{
+                                        selectedProject.progress }}%</span>
+                                </div>
+                                <!-- Plan -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[9px] font-medium text-gray-400 w-10 uppercase">Plan</span>
+                                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gray-300 rounded-full"
+                                            [style.width.%]="selectedProject.budgetStats.timelineProgress"></div>
+                                    </div>
+                                    <span class="text-[9px] font-medium text-gray-400 w-6 text-right">{{
+                                        selectedProject.budgetStats.timelineProgress }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Progress Circle Mini -->
+                    <div class="flex items-center gap-3 pr-2">
+                        <div class="text-right">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Completion</h3>
+                            <p class="text-lg font-bold text-[#0a6ed1]">{{ selectedProject.progress }}%</p>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="none"
+                                    class="text-gray-100" />
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="none"
+                                    class="text-[#0a6ed1]" [attr.stroke-dasharray]="125.6"
+                                    [attr.stroke-dashoffset]="125.6 - (125.6 * selectedProject.progress) / 100" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Location</h3>
-                    <p class="text-sm font-semibold text-gray-900">{{ selectedProject.location }}</p>
-                    <p class="text-[10px] text-gray-500">Primary Site</p>
+
+                <!-- ROW 2: Charts (Full Width) -->
+                <!-- Timeline vs Progress Chart -->
+                <!-- ROW 2 removed (Timeline Pace merged above) -->
+
+                <!-- ROW 3: Metrics & Feed -->
+                <!-- Tasks Overview -->
+                <div class="col-span-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                    <h3 class="text-xs font-bold text-gray-700 uppercase mb-3 border-b border-gray-100 pb-2">Tasks
+                        Overview</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <!-- Open -->
+                        <div class="bg-blue-50 p-2 rounded border border-blue-100 text-center">
+                            <span class="block text-lg font-bold text-blue-700 leading-none">{{
+                                selectedProject.taskStats.open }}</span>
+                            <span class="text-[9px] text-blue-600 font-semibold uppercase">Open</span>
+                        </div>
+                        <!-- In Progress -->
+                        <div class="bg-amber-50 p-2 rounded border border-amber-100 text-center">
+                            <span class="block text-lg font-bold text-amber-700 leading-none">{{
+                                selectedProject.taskStats.inProgress }}</span>
+                            <span class="text-[9px] text-amber-600 font-semibold uppercase">In Progress</span>
+                        </div>
+                        <!-- Overdue -->
+                        <div class="bg-red-50 p-2 rounded border border-red-100 text-center">
+                            <span class="block text-lg font-bold text-red-700 leading-none">{{
+                                selectedProject.taskStats.overdue }}</span>
+                            <span class="text-[9px] text-red-600 font-semibold uppercase">Overdue</span>
+                        </div>
+                        <!-- Completed -->
+                        <div class="bg-green-50 p-2 rounded border border-green-100 text-center">
+                            <span class="block text-lg font-bold text-green-700 leading-none">{{
+                                selectedProject.taskStats.completed }}</span>
+                            <span class="text-[9px] text-green-600 font-semibold uppercase">Completed</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Timeline</h3>
-                    <p class="text-sm font-semibold text-gray-900">{{ selectedProject.startDate | date:'mediumDate' }}
-                    </p>
-                    <p class="text-[10px] text-gray-500">to {{ selectedProject.endDate | date:'mediumDate' }}</p>
+
+                <!-- Risks Summary -->
+                <div class="col-span-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-700 uppercase mb-3 border-b border-gray-100 pb-2">Risks &
+                        Issues</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-medium text-gray-600"><span
+                                    class="w-2 h-2 rounded-full bg-red-500 inline-block mr-1"></span> High
+                                Priority</span>
+                            <span class="font-mono font-bold">{{ selectedProject.riskStats.high }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-medium text-gray-600"><span
+                                    class="w-2 h-2 rounded-full bg-amber-500 inline-block mr-1"></span> Medium
+                                Priority</span>
+                            <span class="font-mono font-bold">{{ selectedProject.riskStats.med }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-medium text-gray-600"><span
+                                    class="w-2 h-2 rounded-full bg-blue-500 inline-block mr-1"></span> Low
+                                Priority</span>
+                            <span class="font-mono font-bold">{{ selectedProject.riskStats.low }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-gray-50 text-[10px] text-gray-400 text-center italic">
+                        "{{ selectedProject.risks.length > 0 ? selectedProject.risks[0].description : 'No active risks'
+                        }}..."
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Budget</h3>
-                    <p class="text-sm font-semibold text-gray-900">{{ selectedProject.budget }}</p>
-                    <p class="text-[10px] text-blue-600">Total Alloc.</p>
+
+                <!-- Activity Feed -->
+                <div class="col-span-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                    <h3 class="text-xs font-bold text-gray-700 uppercase mb-3 border-b border-gray-100 pb-2">Recent
+                        Activity</h3>
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 max-h-[100px] space-y-3">
+                        <div *ngFor="let item of selectedProject.activityFeed" class="flex gap-2">
+                            <div class="flex-col items-center pt-1 hidden sm:flex">
+                                <div class="w-1.5 h-1.5 rounded-full" [ngClass]="{
+                                    'bg-blue-400': item.type === 'info',
+                                    'bg-amber-400': item.type === 'warning',
+                                    'bg-emerald-400': item.type === 'success'
+                                }"></div>
+                                <div class="w-px h-full bg-gray-100 my-0.5 last:hidden"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-700 leading-snug">{{ item.message }}</p>
+                                <p class="text-[10px] text-gray-400">{{ item.timestamp }}</p>
+                            </div>
+                        </div>
+                        <div *ngIf="selectedProject.activityFeed.length === 0"
+                            class="text-[10px] text-gray-400 italic text-center py-2">
+                            No recent updates.
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Expenses</h3>
-                    <p class="text-sm font-semibold text-gray-900">Rp 975,000,000</p>
-                    <p class="text-[10px] text-emerald-600">65% Used</p>
-                </div>
-                <div>
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Remaining</h3>
-                    <p class="text-sm font-semibold text-gray-900">Rp 525,000,000</p>
-                    <p class="text-[10px] text-amber-600">Available</p>
-                </div>
+
             </div>
         </div>
 
         <!-- 2. TABS (Middle) -->
         <div class="bg-white border-b border-gray-200 px-6">
             <div class="flex gap-8">
-                <button (click)="activeTab = 'org-chart'"
-                    class="pb-3 pt-4 text-sm font-medium border-b-2 transition-colors relative"
-                    [class.text-[#0a6ed1]]="activeTab === 'org-chart'"
-                    [class.border-[#0a6ed1]]="activeTab === 'org-chart'"
-                    [class.text-gray-500]="activeTab !== 'org-chart'"
-                    [class.border-transparent]="activeTab !== 'org-chart'"
-                    [class.hover:text-gray-700]="activeTab !== 'org-chart'">
-                    Org Chart View
-                </button>
+
                 <button (click)="activeTab = 'gantt'"
                     class="pb-3 pt-4 text-sm font-medium border-b-2 transition-colors relative"
                     [class.text-[#0a6ed1]]="activeTab === 'gantt'" [class.border-[#0a6ed1]]="activeTab === 'gantt'"
@@ -197,83 +392,22 @@
                     [class.hover:text-gray-700]="activeTab !== 'documents'">
                     Documents
                 </button>
+                <button (click)="activeTab = 'org-chart'"
+                    class="pb-3 pt-4 text-sm font-medium border-b-2 transition-colors relative"
+                    [class.text-[#0a6ed1]]="activeTab === 'org-chart'"
+                    [class.border-[#0a6ed1]]="activeTab === 'org-chart'"
+                    [class.text-gray-500]="activeTab !== 'org-chart'"
+                    [class.border-transparent]="activeTab !== 'org-chart'"
+                    [class.hover:text-gray-700]="activeTab !== 'org-chart'">
+                    Org Chart View
+                </button>
             </div>
         </div>
 
         <!-- 3. TAB CONTENT (Bottom) -->
         <div class="flex-1 overflow-y-auto custom-scrollbar bg-gray-50 p-6">
 
-            <!-- TAB: ORG CHART -->
-            <div *ngIf="activeTab === 'org-chart'" class="space-y-6">
-                <!-- Org Chart Placeholder -->
-                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                    <h3 class="text-sm font-bold text-gray-900 mb-4">Project Organization</h3>
 
-                    <div class="flex flex-col items-center">
-                        <!-- Manager Node -->
-                        <div class="flex flex-col items-center mb-8 relative">
-                            <div
-                                class="w-12 h-12 rounded-full border-2 border-indigo-100 bg-indigo-50 flex items-center justify-center text-indigo-700 font-bold mb-2 z-10">
-                                {{ selectedProject.manager.charAt(0) }}
-                            </div>
-                            <div class="text-center bg-white border border-gray-200 px-4 py-2 rounded shadow-sm z-10">
-                                <p class="text-sm font-bold text-gray-900">{{ selectedProject.manager }}</p>
-                                <p class="text-xs text-gray-500">Project Manager</p>
-                            </div>
-                            <!-- Connector Line -->
-                            <div class="absolute top-10 h-16 w-px bg-gray-300 -z-0"></div>
-                        </div>
-
-                        <!-- Team Layout -->
-                        <div class="flex gap-8 border-t border-gray-300 pt-8 relative">
-                            <!-- Team Nodes -->
-                            <div *ngFor="let member of selectedProject.team"
-                                class="flex flex-col items-center relative">
-                                <!-- Up Connector -->
-                                <div class="absolute -top-8 h-8 w-px bg-gray-300"></div>
-
-                                <img [src]="member.avatar"
-                                    class="w-10 h-10 rounded-full border border-gray-200 mb-2 bg-white">
-                                <div class="text-center bg-white border border-gray-200 px-3 py-1.5 rounded shadow-sm">
-                                    <p class="text-xs font-bold text-gray-900 leading-tight">{{ member.name }}</p>
-                                    <p class="text-[10px] text-gray-500">{{ member.role }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Suppliers List -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                        <h3 class="text-xs font-bold text-gray-700 uppercase">External Suppliers</h3>
-                        <span class="text-[10px] bg-gray-200 px-1.5 rounded text-gray-600">{{
-                            selectedProject.suppliers.length }}</span>
-                    </div>
-                    <table class="w-full text-xs text-left">
-                        <thead class="bg-white text-gray-500 border-b border-gray-100">
-                            <tr>
-                                <th class="px-4 py-2 font-medium">Partner</th>
-                                <th class="px-4 py-2 font-medium">Service Scope</th>
-                                <th class="px-4 py-2 font-medium text-right">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-50">
-                            <tr *ngFor="let s of selectedProject.suppliers">
-                                <td class="px-4 py-2.5 font-medium text-gray-900">{{ s.name }}</td>
-                                <td class="px-4 py-2.5 text-gray-500">{{ s.service }}</td>
-                                <td class="px-4 py-2.5 text-right">
-                                    <span class="px-1.5 py-0.5 rounded text-[10px] border" [ngClass]="{
-                                        'bg-green-50 text-green-700 border-green-100': s.status === 'Active',
-                                        'bg-gray-50 text-gray-600 border-gray-200': s.status !== 'Active'
-                                    }">{{ s.status }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
 
             <!-- TAB: PROCUREMENT LIST -->
             <div *ngIf="activeTab === 'procurement'"
@@ -726,7 +860,8 @@
                                         [class.rotate-90]="expandedFinancialCategory === 'procurement'" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5l7 7-7 7"></path>
+                                            d="M9 5l7 7-7 7">
+                                        </path>
                                     </svg>
                                 </td>
                                 <td class="px-4 py-3 font-medium text-gray-900">
@@ -850,7 +985,8 @@
                                         [class.rotate-90]="expandedFinancialCategory === 'cash-advance'" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5l7 7-7 7"></path>
+                                            d="M9 5l7 7-7 7">
+                                        </path>
                                     </svg>
                                 </td>
                                 <td class="px-4 py-3 font-medium text-gray-900">
@@ -923,7 +1059,8 @@
                                                     </tr>
                                                     <tr *ngIf="selectedProject.cashAdvances.length === 0">
                                                         <td colspan="6"
-                                                            class="px-4 py-3 text-center text-gray-500 italic">No cash
+                                                            class="px-4 py-3 text-center text-gray-500 italic">No
+                                                            cash
                                                             advance history found.</td>
                                                     </tr>
                                                 </tbody>
@@ -1205,109 +1342,232 @@
                 </table>
             </div>
 
+            <!-- TAB: ORG CHART -->
+            <div *ngIf="activeTab === 'org-chart'" class="space-y-6">
+                <!-- Org Chart Placeholder -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-900 mb-4">Project Organization</h3>
+
+                    <div class="flex flex-col items-center">
+                        <!-- Manager Node -->
+                        <div class="flex flex-col items-center mb-8 relative">
+                            <div
+                                class="w-12 h-12 rounded-full border-2 border-indigo-100 bg-indigo-50 flex items-center justify-center text-indigo-700 font-bold mb-2 z-10">
+                                {{ selectedProject.manager.charAt(0) }}
+                            </div>
+                            <div class="text-center bg-white border border-gray-200 px-4 py-2 rounded shadow-sm z-10">
+                                <p class="text-sm font-bold text-gray-900">{{ selectedProject.manager }}</p>
+                                <p class="text-xs text-gray-500">Project Manager</p>
+                            </div>
+                            <!-- Connector Line -->
+                            <div class="absolute top-10 h-16 w-px bg-gray-300 -z-0"></div>
+                        </div>
+
+                        <!-- Team Layout -->
+                        <div class="flex gap-8 border-t border-gray-300 pt-8 relative">
+                            <!-- Team Nodes -->
+                            <div *ngFor="let member of selectedProject.team"
+                                class="flex flex-col items-center relative">
+                                <!-- Up Connector -->
+                                <div class="absolute -top-8 h-8 w-px bg-gray-300"></div>
+
+                                <img [src]="member.avatar"
+                                    class="w-10 h-10 rounded-full border border-gray-200 mb-2 bg-white">
+                                <div class="text-center bg-white border border-gray-200 px-3 py-1.5 rounded shadow-sm">
+                                    <p class="text-xs font-bold text-gray-900 leading-tight">{{ member.name }}</p>
+                                    <p class="text-[10px] text-gray-500">{{ member.role }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suppliers List -->
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-gray-700 uppercase">External Suppliers</h3>
+                        <span class="text-[10px] bg-gray-200 px-1.5 rounded text-gray-600">{{
+                            selectedProject.suppliers.length }}</span>
+                    </div>
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-white text-gray-500 border-b border-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 font-medium">Partner</th>
+                                <th class="px-4 py-2 font-medium">Service Scope</th>
+                                <th class="px-4 py-2 font-medium text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <tr *ngFor="let s of selectedProject.suppliers">
+                                <td class="px-4 py-2.5 font-medium text-gray-900">{{ s.name }}</td>
+                                <td class="px-4 py-2.5 text-gray-500">{{ s.service }}</td>
+                                <td class="px-4 py-2.5 text-right">
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] border" [ngClass]="{
+                                        'bg-green-50 text-green-700 border-green-100': s.status === 'Active',
+                                        'bg-gray-50 text-gray-600 border-gray-200': s.status !== 'Active'
+                                    }">{{ s.status }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
         </div>
     </div>
 
-    <!-- COLUMN 3: Status & Info (Right Sidebar) -->
-    <div *ngIf="selectedProject"
-        class="w-72 bg-gray-50 border-l border-gray-200 flex flex-col overflow-y-auto custom-scrollbar z-10">
-
-        <!-- Status Card -->
-        <div class="p-6 bg-white border-b border-gray-200 min-h-[200px] flex flex-col justify-center">
-            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Project Status</h3>
-
-            <div class="flex items-end justify-between mb-2">
-                <span class="text-4xl font-light text-gray-800 leading-none">{{ selectedProject.progress }}<span
-                        class="text-lg text-gray-400">%</span></span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border" [ngClass]="{
-                     'bg-blue-50 text-blue-700 border-blue-100': selectedProject.status === 'In Progress',
-                     'bg-green-50 text-green-700 border-green-100': selectedProject.status === 'Completed',
-                     'bg-amber-50 text-amber-700 border-amber-100': selectedProject.status === 'In Planning',
-                     'bg-gray-50 text-gray-600 border-gray-200': selectedProject.status === 'On Hold'
-                 }">{{ selectedProject.status }}</span>
-            </div>
-
-            <div class="w-full bg-gray-100 rounded-sm h-1.5 mb-8 overflow-hidden">
-                <div class="bg-[#0a6ed1] h-1.5 rounded-sm transition-all duration-500"
-                    [style.width.%]="selectedProject.progress"></div>
-            </div>
-
-            <div class="space-y-4">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-500">Client</span>
-                    <span class="font-medium text-gray-800">{{ selectedProject.client }}</span>
-                </div>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-500">Priority</span>
-                    <span class="font-bold text-[10px] uppercase px-1.5 rounded" [ngClass]="{
-                        'text-red-700 bg-red-50': selectedProject.priority === 'High',
-                        'text-amber-700 bg-amber-50': selectedProject.priority === 'Medium',
-                        'text-green-700 bg-green-50': selectedProject.priority === 'Low'
-                    }">{{ selectedProject.priority }}</span>
-                </div>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-500">Project ID</span>
-                    <span class="font-mono text-gray-600 bg-gray-100 px-1 rounded">{{ selectedProject.id }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact Info -->
-        <div class="p-5">
-            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Details</h3>
-
-            <div class="space-y-3">
-                <div class="group">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Email</p>
-                    <a href="mailto:{{selectedProject.contactEmail}}"
-                        class="text-sm text-[#0a6ed1] hover:underline flex items-center gap-1.5 truncate">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- SIMULATION RESULT MODAL -->
+    <div *ngIf="showSimulationModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all scale-100">
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                            </path>
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
-                        <span class="truncate">{{ selectedProject.contactEmail }}</span>
-                    </a>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Simulated Project Outcome</h3>
+                        <p class="text-xs text-gray-500">AI-Powered Predictive Analysis</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Phone</p>
-                    <a href="tel:{{selectedProject.contactPhone}}"
-                        class="text-sm text-gray-700 hover:text-[#0a6ed1] flex items-center gap-1.5 transition-colors">
-                        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                            </path>
-                        </svg>
-                        {{ selectedProject.contactPhone }}
-                    </a>
-                </div>
-                <div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Location</p>
-                    <p class="text-sm text-gray-700 flex items-start gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-gray-400 mt-0.5" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                            </path>
-                        </svg>
-                        {{ selectedProject.location }}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="mt-6 pt-5 border-t border-gray-200">
-                <button
-                    class="w-full mb-2.5 btn bg-[#0a6ed1] text-white hover:bg-blue-700 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors">
-                    Contact Manager
-                </button>
-                <button
-                    class="w-full btn bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 py-1.5 rounded text-xs font-semibold transition-colors">
-                    Share Project
+                <button (click)="showSimulationModal = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
                 </button>
             </div>
-        </div>
 
+            <!-- Body -->
+            <div class="p-6" *ngIf="simulationLoading">
+                <div class="flex flex-col items-center justify-center py-12">
+                    <svg class="animate-spin h-10 w-10 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <p class="text-gray-500 font-medium">Running simulation engine...</p>
+                    <p class="text-xs text-gray-400 mt-1">Analyzing dependencies, budget velocity, and risk factors</p>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-6" *ngIf="!simulationLoading && simulationResult">
+                <!-- Top Metrics -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Forecast
+                            Completion</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-xl font-bold text-gray-900">{{ simulationResult.predictedCompletionDate |
+                                date:'mediumDate' }}</span>
+                        </div>
+                        <span class="text-xs font-bold"
+                            [ngClass]="simulationResult.delayDays > 0 ? 'text-red-600' : 'text-emerald-600'">
+                            {{ simulationResult.delayDays > 0 ? '+' + simulationResult.delayDays + ' days delay' : 'On
+                            Schedule' }}
+                        </span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Budget Risk</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-xl font-bold text-gray-900">{{ simulationResult.budgetForecast.overrun ?
+                                'Overrun' : 'Safe' }}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">Est. {{
+                            simulationResult.budgetForecast.predictedAtCompletion | currency:'USD':'symbol':'1.0-0'
+                            }}</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Confidence</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-xl font-bold text-blue-600">{{ simulationResult.confidenceScore * 100
+                                }}%</span>
+                        </div>
+                        <span class="text-xs text-gray-500">Based on historical data</span>
+                    </div>
+                </div>
+
+                <!-- Critical Path & Risks -->
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Critical Path -->
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            Critical Path
+                        </h4>
+                        <div class="bg-white border border-gray-200 rounded-lg p-3">
+                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                <ng-container *ngFor="let node of simulationResult.criticalPath; let last = last">
+                                    <span class="font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">{{ node
+                                        }}</span>
+                                    <span *ngIf="!last" class="text-gray-400">→</span>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Risks -->
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                            Detected Risks
+                        </h4>
+                        <ul class="space-y-2">
+                            <li *ngFor="let risk of simulationResult.risks"
+                                class="flex justify-between items-center text-xs bg-red-50 px-3 py-2 rounded border border-red-100">
+                                <span class="font-medium text-red-800">{{ risk.task }}</span>
+                                <span
+                                    class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-white border border-red-200 text-red-600">{{
+                                    risk.risk }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div>
+                    <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        AI Recommendations
+                    </h4>
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                        <ul class="space-y-2">
+                            <li *ngFor="let rec of simulationResult.recommendations"
+                                class="flex gap-2 text-sm text-blue-900">
+                                <span class="text-blue-500">•</span>
+                                {{ rec }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button class="text-sm text-blue-600 font-bold hover:underline">Download Report</button>
+                <button (click)="showSimulationModal = false"
+                    class="px-4 py-2 bg-gray-800 text-white text-sm font-bold rounded-lg hover:bg-gray-900 transition">Close
+                    Analysis</button>
+            </div>
+        </div>
     </div>
 
 </div>
