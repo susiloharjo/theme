@@ -42,8 +42,8 @@
     <div class="flex-1 relative overflow-auto">
         <div class="grid-stack" #gridStack>
             <!-- Widgets Loop -->
-            <div *ngFor="let w of widgets" class="grid-stack-item" [attr.gs-id]="w.id" [attr.gs-x]="w.x"
-                [attr.gs-y]="w.y" [attr.gs-w]="w.w" [attr.gs-h]="w.h" [id]="w.id">
+            <div *ngFor="let w of widgets; trackBy: trackByWidgetId" class="grid-stack-item" [attr.gs-id]="w.id"
+                [attr.gs-x]="w.x" [attr.gs-y]="w.y" [attr.gs-w]="w.w" [attr.gs-h]="w.h" [id]="w.id">
 
                 <div
                     class="grid-stack-item-content bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
@@ -73,7 +73,7 @@
 
                     <!-- Action Icons (Visible in Edit Mode) -->
                     <div *ngIf="isEditMode" class="absolute top-2 right-2 flex gap-2 z-10">
-                        <button (click)="editWidget(w)"
+                        <button (click)="$event.stopPropagation(); editWidget(w)"
                             class="text-gray-400 hover:text-blue-500 transition-colors p-1 bg-white rounded-full shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -81,7 +81,7 @@
                                 </path>
                             </svg>
                         </button>
-                        <button (click)="deleteWidget(w)"
+                        <button (click)="$event.stopPropagation(); deleteWidget(w)"
                             class="text-gray-400 hover:text-red-500 transition-colors p-1 bg-white rounded-full shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -173,8 +173,28 @@
                         </div>
                     </div>
 
+                    <!-- Shortcut Widget -->
+                    <div *ngIf="w.type === 'shortcut'" (click)="navigateTo(w.meta?.link)"
+                        class="p-4 h-full flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors group">
+                        <div [class]="w.color || 'bg-blue-500'"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-white mb-2 shadow-sm group-hover:scale-110 transition-transform">
+                            <svg *ngIf="w.icon === 'link'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                </path>
+                            </svg>
+                            <svg *ngIf="!w.icon || w.icon !== 'link'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-sm font-semibold text-gray-700">{{ w.title }}</div>
+                    </div>
+
                     <!-- Default Content (Fallback) -->
-                    <div *ngIf="!['stat', 'list', 'bar', 'pie', 'line'].includes(w.type)" class="p-4">
+                    <div *ngIf="!['stat', 'list', 'bar', 'pie', 'line', 'shortcut'].includes(w.type)" class="p-4">
                         <h3 class="text-sm font-semibold text-gray-700 mb-2">{{ w.title }}</h3>
                         <div class="text-sm text-gray-500">{{ w.content }}</div>
                     </div>
@@ -251,6 +271,12 @@
                                     d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z">
                                 </path>
                             </svg>
+                            <svg *ngIf="t.type === 'shortcut'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                </path>
+                            </svg>
                         </div>
                         <h3 class="font-medium text-gray-700 group-hover:text-blue-600">{{ t.title }}</h3>
                     </div>
@@ -258,6 +284,82 @@
                         {{ t.type | titlecase }} Widget ({{t.w}}x{{t.h}})
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shortcut Configuration Modal -->
+<div *ngIf="showShortcutModal" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+            (click)="cancelShortcut()"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div
+            class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div
+                        class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">{{ editingWidgetId ?
+                            'Edit Shortcut' : 'Add New Shortcut' }}</h3>
+                        <div class="mt-4 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Title</label>
+                                <input type="text" [(ngModel)]="tempShortcutConfig.title"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Navigate To</label>
+                                <select [(ngModel)]="tempShortcutConfig.link"
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    <option *ngFor="let route of availableRoutes" [value]="route.path">{{ route.label }}
+                                        ({{ route.path }})</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Color</label>
+                                <div class="mt-2 flex gap-2">
+                                    <button (click)="tempShortcutConfig.color = 'bg-blue-500'"
+                                        [class.ring-2]="tempShortcutConfig.color === 'bg-blue-500'"
+                                        class="w-8 h-8 rounded-full bg-blue-500 ring-offset-2"></button>
+                                    <button (click)="tempShortcutConfig.color = 'bg-indigo-500'"
+                                        [class.ring-2]="tempShortcutConfig.color === 'bg-indigo-500'"
+                                        class="w-8 h-8 rounded-full bg-indigo-500 ring-offset-2"></button>
+                                    <button (click)="tempShortcutConfig.color = 'bg-green-500'"
+                                        [class.ring-2]="tempShortcutConfig.color === 'bg-green-500'"
+                                        class="w-8 h-8 rounded-full bg-green-500 ring-offset-2"></button>
+                                    <button (click)="tempShortcutConfig.color = 'bg-orange-500'"
+                                        [class.ring-2]="tempShortcutConfig.color === 'bg-orange-500'"
+                                        class="w-8 h-8 rounded-full bg-orange-500 ring-offset-2"></button>
+                                    <button (click)="tempShortcutConfig.color = 'bg-red-500'"
+                                        [class.ring-2]="tempShortcutConfig.color === 'bg-red-500'"
+                                        class="w-8 h-8 rounded-full bg-red-500 ring-offset-2"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button (click)="saveShortcutWidget()" type="button"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    {{ editingWidgetId ? 'Update' : 'Add' }}
+                </button>
+                <button (click)="cancelShortcut()" type="button"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
