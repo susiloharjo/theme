@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
 
-    availableIcons = ['link', 'triangle', 'chevron', 'user', 'cart', 'gear', 'bar-chart', 'pie-chart', 'wrench', 'car'];
+    availableIcons = ['link', 'triangle', 'chevron', 'user', 'cart', 'gear', 'monitor', 'pie-chart', 'wrench', 'truck', 'home', 'search', 'bell', 'calendar'];
 
 
 

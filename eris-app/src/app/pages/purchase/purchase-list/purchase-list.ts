@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 interface TrackingStep {
     id: number;
@@ -13,6 +14,7 @@ interface TrackingStep {
 
 interface PurchaseRequest {
     id: string;
+    title: string;
     requester: string;
     department: string;
     requestDate: string;
@@ -31,7 +33,7 @@ interface ColumnConfig {
 @Component({
     selector: 'app-purchase-list',
     standalone: true,
-    imports: [CommonModule, RouterLink],
+    imports: [CommonModule, RouterLink, FormsModule],
     templateUrl: './purchase-list.html',
 })
 export class PurchaseListComponent {
@@ -53,9 +55,15 @@ export class PurchaseListComponent {
     isSettingsOpen = false;
     isDrawerOpen = false;
 
+    // Search & Sort State
+    searchText = '';
+    sortColumn: string | null = null;
+    sortDirection: 'asc' | 'desc' = 'asc';
+
     columns: ColumnConfig[] = [
         { key: 'select', label: '', visible: true },
         { key: 'id', label: 'PR Number', visible: true },
+        { key: 'title', label: 'Title', visible: true },
         { key: 'requestDate', label: 'Request Date', visible: true },
         { key: 'requester', label: 'Requester', visible: true },
         { key: 'department', label: 'Department', visible: true },
@@ -68,21 +76,67 @@ export class PurchaseListComponent {
     currentPage = 1;
     pageSize = 10;
 
+    get filteredSortedRequests(): PurchaseRequest[] {
+        let result = [...this.requests];
+
+        // Filter
+        if (this.searchText) {
+            const lowerSearch = this.searchText.toLowerCase();
+            result = result.filter(item =>
+                item.id.toLowerCase().includes(lowerSearch) ||
+                item.title.toLowerCase().includes(lowerSearch) ||
+                item.requester.toLowerCase().includes(lowerSearch) ||
+                item.department.toLowerCase().includes(lowerSearch) ||
+                item.status.toLowerCase().includes(lowerSearch)
+            );
+        }
+
+        // Sort
+        if (this.sortColumn) {
+            result.sort((a, b) => {
+                let valA = (a as any)[this.sortColumn!] ?? '';
+                let valB = (b as any)[this.sortColumn!] ?? '';
+
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return result;
+    }
+
     get paginatedRequests(): PurchaseRequest[] {
         const startIndex = (this.currentPage - 1) * this.pageSize;
-        return this.requests.slice(startIndex, startIndex + this.pageSize);
+        return this.filteredSortedRequests.slice(startIndex, startIndex + this.pageSize);
     }
 
     get totalPages(): number {
-        return Math.ceil(this.requests.length / this.pageSize);
+        return Math.ceil(this.filteredSortedRequests.length / this.pageSize) || 1;
     }
 
     get startIndex(): number {
+        if (this.filteredSortedRequests.length === 0) return 0;
         return (this.currentPage - 1) * this.pageSize + 1;
     }
 
     get endIndex(): number {
-        return Math.min(this.startIndex + this.pageSize - 1, this.requests.length);
+        if (this.filteredSortedRequests.length === 0) return 0;
+        return Math.min(this.startIndex + this.pageSize - 1, this.filteredSortedRequests.length);
+    }
+
+    onSort(column: string) {
+        if (column === 'select' || column === 'actions') return;
+
+        if (this.sortColumn === column) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDirection = 'asc';
+        }
     }
 
     nextPage() {
@@ -151,6 +205,7 @@ export class PurchaseListComponent {
         this.requests = [
             {
                 id: 'PR-2025-001',
+                title: 'Data Center Upgrade',
                 requester: 'John Doe',
                 department: 'IT',
                 requestDate: '2025-12-01',
@@ -161,6 +216,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-002',
+                title: 'Recruitment Agency Fees',
                 requester: 'Jane Smith',
                 department: 'HR',
                 requestDate: '2025-12-05',
@@ -171,6 +227,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-003',
+                title: 'Forklift Maintenance',
                 requester: 'Robert Brown',
                 department: 'Operations',
                 requestDate: '2025-12-06',
@@ -181,6 +238,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-004',
+                title: 'Q4 Marketing Campaign',
                 requester: 'Alice Johnson',
                 department: 'Marketing',
                 requestDate: '2025-12-07',
@@ -191,6 +249,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-005',
+                title: 'Office Furniture',
                 requester: 'Michael Chen',
                 department: 'Finance',
                 requestDate: '2025-11-28',
@@ -201,6 +260,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-006',
+                title: 'CRM License Renewal',
                 requester: 'Sarah Williams',
                 department: 'Sales',
                 requestDate: '2025-12-02',
@@ -211,6 +271,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-007',
+                title: 'Development Laptops',
                 requester: 'David Lee',
                 department: 'IT',
                 requestDate: '2025-12-03',
@@ -221,6 +282,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-008',
+                title: 'Warehouse Racking System',
                 requester: 'Emma Davis',
                 department: 'Operations',
                 requestDate: '2025-11-25',
@@ -231,6 +293,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-009',
+                title: 'Event Booth Construction',
                 requester: 'James Wilson',
                 department: 'Marketing',
                 requestDate: '2025-12-04',
@@ -241,6 +304,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-010',
+                title: 'Employee Training Program',
                 requester: 'Olivia Martinez',
                 department: 'HR',
                 requestDate: '2025-12-06',
@@ -251,6 +315,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-011',
+                title: 'Annual Audit Services',
                 requester: 'William Taylor',
                 department: 'Finance',
                 requestDate: '2025-11-30',
@@ -261,6 +326,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-012',
+                title: 'Sales Team Tablets',
                 requester: 'Sophia Anderson',
                 department: 'Sales',
                 requestDate: '2025-12-05',
@@ -271,6 +337,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-013',
+                title: 'Cloud Server Expansion',
                 requester: 'Benjamin Thomas',
                 department: 'IT',
                 requestDate: '2025-12-07',
@@ -281,6 +348,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-014',
+                title: 'Fleet Maintenance',
                 requester: 'Isabella Garcia',
                 department: 'Operations',
                 requestDate: '2025-11-29',
@@ -291,6 +359,7 @@ export class PurchaseListComponent {
             },
             {
                 id: 'PR-2025-015',
+                title: 'Social Media Ads',
                 requester: 'Lucas Rodriguez',
                 department: 'Marketing',
                 requestDate: '2025-12-06',

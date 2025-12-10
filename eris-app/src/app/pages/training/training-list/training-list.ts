@@ -33,6 +33,11 @@ export class TrainingListComponent {
 
     isSettingsOpen = false;
 
+    // Search & Sort State
+    searchText = '';
+    sortColumn: string | null = null;
+    sortDirection: 'asc' | 'desc' = 'asc';
+
     // Default Columns Configuration
     columns: ColumnConfig[] = [
         { key: 'select', label: '', visible: true },
@@ -218,21 +223,71 @@ export class TrainingListComponent {
     currentPage = 1;
     pageSize = 10;
 
+    get filteredSortedTrainings(): Training[] {
+        let result = [...this.trainings];
+
+        // Filter
+        if (this.searchText) {
+            const lowerSearch = this.searchText.toLowerCase();
+            result = result.filter(item =>
+                item.topic.toLowerCase().includes(lowerSearch) ||
+                item.provider.toLowerCase().includes(lowerSearch) ||
+                item.type.toLowerCase().includes(lowerSearch) ||
+                item.location.toLowerCase().includes(lowerSearch)
+            );
+        }
+
+        // Sort
+        if (this.sortColumn) {
+            result.sort((a, b) => {
+                let valA = (a as any)[this.sortColumn!]?.toString().toLowerCase() || '';
+                let valB = (b as any)[this.sortColumn!]?.toString().toLowerCase() || '';
+
+                // Handle Cost sorting manually (remove commas, handle 'free')
+                if (this.sortColumn === 'cost') {
+                    const numA = valA === 'free' ? 0 : parseInt(valA.replace(/,/g, ''), 10) || 0;
+                    const numB = valB === 'free' ? 0 : parseInt(valB.replace(/,/g, ''), 10) || 0;
+                    return this.sortDirection === 'asc' ? numA - numB : numB - numA;
+                }
+
+                // Default String/Date sorting
+                if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return result;
+    }
+
     get paginatedTrainings(): Training[] {
         const startIndex = (this.currentPage - 1) * this.pageSize;
-        return this.trainings.slice(startIndex, startIndex + this.pageSize);
+        return this.filteredSortedTrainings.slice(startIndex, startIndex + this.pageSize);
     }
 
     get totalPages(): number {
-        return Math.ceil(this.trainings.length / this.pageSize);
+        return Math.ceil(this.filteredSortedTrainings.length / this.pageSize) || 1;
     }
 
     get startIndex(): number {
+        if (this.filteredSortedTrainings.length === 0) return 0;
         return (this.currentPage - 1) * this.pageSize + 1;
     }
 
     get endIndex(): number {
-        return Math.min(this.startIndex + this.pageSize - 1, this.trainings.length);
+        if (this.filteredSortedTrainings.length === 0) return 0;
+        return Math.min(this.startIndex + this.pageSize - 1, this.filteredSortedTrainings.length);
+    }
+
+    onSort(column: string) {
+        if (column === 'select' || column === 'actions') return;
+
+        if (this.sortColumn === column) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDirection = 'asc';
+        }
     }
 
     nextPage() {

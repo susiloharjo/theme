@@ -6,7 +6,7 @@
 
         <!-- Search (Left) -->
         <div class="relative w-full md:w-64">
-            <input type="text"
+            <input type="text" [(ngModel)]="searchText"
                 class="input py-1.5 pl-3 pr-8 text-sm italic text-gray-500 border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Search">
             <button class="absolute inset-y-0 right-0 px-2 text-gray-500 hover:text-gray-700">
@@ -124,11 +124,28 @@
                         <!-- Header Loop -->
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible" scope="col" class="px-3 py-3 font-semibold text-gray-700"
-                                [ngClass]="{'w-8 p-3': col.key === 'select', 'text-right w-32': col.key === 'actions'}">
+                                [ngClass]="{'w-8 p-3': col.key === 'select', 'text-right w-32': col.key === 'actions', 'cursor-pointer select-none hover:bg-gray-50': col.key !== 'select' && col.key !== 'actions'}"
+                                (click)="onSort(col.key)">
                                 <ng-container [ngSwitch]="col.key">
                                     <input *ngSwitchCase="'select'" type="checkbox"
                                         class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                    <span *ngSwitchDefault>{{ col.label }}</span>
+                                    <div *ngSwitchDefault class="flex items-center gap-1"
+                                        [ngClass]="{'justify-end': col.key === 'actions'}">
+                                        {{ col.label }}
+                                        <!-- Sort Icon -->
+                                        <div *ngIf="sortColumn === col.key" class="text-blue-600">
+                                            <svg *ngIf="sortDirection === 'asc'" class="w-4 h-4" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 15l7-7 7 7"></path>
+                                            </svg>
+                                            <svg *ngIf="sortDirection === 'desc'" class="w-4 h-4" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </ng-container>
                             </th>
                         </ng-container>
@@ -190,7 +207,7 @@
             class="px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
             <p class="text-sm text-gray-500">
                 Showing <span class="font-medium">{{ startIndex }}</span> to <span class="font-medium">{{ endIndex
-                    }}</span> of <span class="font-medium">{{ trainings.length }}</span> results
+                    }}</span> of <span class="font-medium">{{ filteredSortedTrainings.length }}</span> results
             </p>
             <div class="flex gap-2">
                 <button (click)="prevPage()" [disabled]="currentPage === 1"
