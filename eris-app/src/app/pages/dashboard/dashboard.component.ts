@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DashboardService } from './dashboard.service';
 import { GridStack, GridStackOptions } from 'gridstack';
+import { EditShortcutSidebarComponent } from './components/edit-shortcut-sidebar/edit-shortcut-sidebar.component';
 
 // Import gridstack CSS if not globally accessible - typically easier to add to styles.css or angular.json
 // But we can try to rely on global styles or basic styling.
@@ -29,15 +30,15 @@ export interface DashboardWidget {
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, EditShortcutSidebarComponent],
     providers: [DashboardService],
     templateUrl: './dashboard.html',
     styles: [`
     :host {
-      display: block;
-      height: 100%;
-    }
-  `]
+    display: block;
+    height: 100 %;
+}
+`]
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('gridStack') gridStackEl!: ElementRef;
@@ -53,6 +54,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     showAddWidgetSidebar = false;
     showShortcutModal = false;
+    editingWidgetId: string | null = null;
+    // activeTab removed, managed by child component
+
 
     availableRoutes = [
         { path: '/myhome', label: 'My Home' },
@@ -139,8 +143,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     toggleAddWidgetSidebar() {
         this.showAddWidgetSidebar = !this.showAddWidgetSidebar;
     }
-
-    editingWidgetId: string | null = null;
 
     addWidget(template: Partial<DashboardWidget>) {
         if (template.type === 'shortcut') {
@@ -328,7 +330,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     deleteWidget(w: DashboardWidget) {
-        if (confirm(`Are you sure you want to delete "${w.title}"?`)) {
+        if (confirm(`Are you sure you want to delete "${w.title}" ? `)) {
             // Remove from Gridstack
             const el = document.getElementById(w.id);
             if (el && this.grid) {
