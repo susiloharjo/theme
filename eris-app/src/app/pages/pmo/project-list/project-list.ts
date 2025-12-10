@@ -467,12 +467,23 @@ export class ProjectListComponent implements OnInit {
         }
     ];
 
+    filterStatus: string = 'All';
+    filterProgressMax: number = 100;
+
     get filteredProjects() {
-        if (!this.searchTerm) return this.projects;
-        return this.projects.filter(p =>
-            p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            p.id.toLowerCase().includes(this.searchTerm.toLowerCase())
-        );
+        return this.projects.filter(p => {
+            const matchesSearch = !this.searchTerm ||
+                p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                p.id.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+            const matchesStatus = this.filterStatus === 'All' || p.status === this.filterStatus;
+
+            // "slide to 50% show project percentage from 0 - 50%"
+            // Implementation: Show projects where progress is <= validation value
+            const matchesProgress = p.progress <= this.filterProgressMax;
+
+            return matchesSearch && matchesStatus && matchesProgress;
+        });
     }
 
     ngOnInit() {
