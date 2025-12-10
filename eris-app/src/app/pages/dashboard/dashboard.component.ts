@@ -13,7 +13,7 @@ export interface DashboardWidget {
     id: string;
     titles?: string; // Optional: Gridstack might not care, but we do for display
     title: string;
-    type: 'stat' | 'chart' | 'list' | 'bar' | 'pie' | 'line' | 'shortcut';
+    type: 'stat' | 'chart' | 'list' | 'bar' | 'pie' | 'line' | 'shortcut' | 'picture';
     x?: number;
     y?: number;
     w?: number;
@@ -119,6 +119,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             content: JSON.stringify({
                 link: '/training',
                 label: 'Go to Training'
+            })
+        },
+        {
+            title: 'New Picture', type: 'picture', w: 3, h: 4,
+            content: JSON.stringify({
+                src: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80',
+                caption: 'Office Space'
             })
         }
     ];
@@ -352,7 +359,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 // Parse content JSON into meta
                 this.widgets = (data || []).map(w => {
                     let meta = {};
-                    if (w.content && (w.type === 'list' || w.type === 'bar' || w.type === 'pie' || w.type === 'line' || w.type === 'shortcut')) {
+                    if (w.content && (w.type === 'list' || w.type === 'bar' || w.type === 'pie' || w.type === 'line' || w.type === 'shortcut' || w.type === 'picture')) {
                         try {
                             meta = JSON.parse(w.content);
                         } catch (e) {
