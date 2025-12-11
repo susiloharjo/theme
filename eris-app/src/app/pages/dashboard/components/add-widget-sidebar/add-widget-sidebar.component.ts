@@ -83,7 +83,7 @@ export class AddWidgetSidebarComponent implements OnInit {
 
                             return { ...t, config, meta };
                         });
-                        this.filterTemplates();
+                        this.filterTemplates(); // Initial filter after fetching
                     }
                     this.loading = false;
                     this.cdr.detectChanges();
@@ -102,9 +102,8 @@ export class AddWidgetSidebarComponent implements OnInit {
             t.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
 
-        // Then group
-        const groups: { [key: string]: WidgetTemplate[] } = {};
-        this.categoryOrder.forEach(cat => groups[cat] = []);
+        const uniqueTypes: Set<string> = new Set();
+        this.displayedTemplates = [];
 
         searched.forEach(t => {
             // User requested to remove "Team member cards" which are 'stat' type
@@ -115,32 +114,17 @@ export class AddWidgetSidebarComponent implements OnInit {
                 t.name = 'Shortcut';
                 if (t.config) t.config.title = 'Shortcut';
             }
-            // Optional: Genericize others if needed, but 'shortcut' was the specific request context
 
-            const cat = this.mapTypeToCategory(t.type);
-            if (groups[cat]) {
-                // Check if we already have this type in this group (Deduplicate styles)
-                const exists = groups[cat].find(existing => existing.type === t.type);
-                if (!exists) {
-                    groups[cat].push(t);
-                }
-            } else {
-                // Fallback to Standard chart card
-                // Also check for duplicates in the fallback group
-                const fallbackGroup = groups['Standard chart card'];
-                const exists = fallbackGroup.find(existing => existing.type === t.type);
-                if (!exists) {
-                    fallbackGroup.push(t);
-                }
+            // Deduplicate by type (style)
+            if (!uniqueTypes.has(t.type)) {
+                uniqueTypes.add(t.type);
+                this.displayedTemplates.push(t);
             }
         });
-
-        this.templateGroups = this.categoryOrder
-            .map(name => ({ name, templates: groups[name] }))
-            .filter(g => g.templates.length > 0);
     }
 
     mapTypeToCategory(type: string): string {
+        // Kept for reference or future use, but not strictly needed for flat list
         switch (type) {
             case 'stat': return 'Standard chart card';
             case 'pie': return 'Pie chart card';

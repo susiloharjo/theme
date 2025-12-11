@@ -59,182 +59,174 @@
                 </div>
             </div>
 
-            <!-- Content Area -->
-            <div class="flex-1 overflow-y-auto bg-gray-50 p-8">
-                <div *ngFor="let group of templateGroups">
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 mt-6">{{ group.name }}</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-                        <!-- Template Card -->
-                        <div *ngFor="let t of group.templates" (click)="onAdd(t)"
-                            class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-200 cursor-pointer group overflow-hidden flex flex-col h-64">
-                            <!-- Preview Header/Image Area -->
-                            <div
-                                class="h-40 bg-gray-50 border-b border-gray-100 relative items-center justify-center flex overflow-hidden p-2">
-                                <!-- Stat Preview (Adapted from dashboard) -->
-                                <div *ngIf="t.type === 'stat'"
-                                    class="w-full h-full bg-white rounded shadow-sm border border-gray-200 p-3 flex flex-col justify-between select-none">
-                                    <div>
-                                        <h3 class="text-sm font-semibold text-gray-700 truncate">{{ t.config.title }}
-                                        </h3>
-                                    </div>
-                                    <div class="flex items-end justify-between mt-2">
-                                        <div class="flex items-baseline gap-1">
-                                            <span class="text-2xl font-light text-gray-800">{{ t.config.value }}</span>
-                                        </div>
-                                        <div *ngIf="t.config.icon"
-                                            [ngClass]="t.config.color ? t.config.color.replace('bg-', 'text-') : 'text-gray-400'"
-                                            class="opacity-80">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
+            <!-- Templates Grid -->
+            <div class="flex-1 overflow-y-auto bg-gray-50 p-6">
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Template Card -->
+                    <div *ngFor="let t of displayedTemplates" (click)="onAdd(t)"
+                        class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-200 cursor-pointer group overflow-hidden flex flex-col h-64">
+                        <!-- Preview Header/Image Area -->
+                        <div
+                            class="h-40 bg-gray-50 border-b border-gray-100 relative items-center justify-center flex overflow-hidden p-2">
+                            <!-- Stat Preview (Adapted from dashboard) -->
+                            <div *ngIf="t.type === 'stat'"
+                                class="w-full h-full bg-white rounded shadow-sm border border-gray-200 p-3 flex flex-col justify-between select-none">
+                                <div>
+                                    <h3 class="text-sm font-semibold text-gray-700 truncate">{{ t.config.title }}
+                                    </h3>
                                 </div>
-
-                                <!-- List Preview -->
-                                <div *ngIf="t.type === 'list'"
-                                    class="w-full h-full p-2 flex flex-col bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
-                                    <h3 class="text-xs font-semibold text-gray-700 mb-1">{{ t.config.title }}</h3>
-                                    <div class="flex-1 flex flex-col justify-center space-y-1 text-[10px]">
-                                        <div *ngFor="let item of t.meta?.listItems"
-                                            class="flex justify-between items-center border-b border-gray-100 pb-0.5 last:border-0">
-                                            <span class="text-gray-600">{{ item.label }}</span>
-                                            <span [class]="item.colorClass" class="font-medium">{{ item.value }}</span>
-                                        </div>
+                                <div class="flex items-end justify-between mt-2">
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-2xl font-light text-gray-800">{{ t.config.value }}</span>
                                     </div>
-                                    <div *ngIf="t.meta?.footer"
-                                        class="mt-1 text-blue-600 text-[10px] flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div *ngIf="t.config.icon"
+                                        [ngClass]="t.config.color ? t.config.color.replace('bg-', 'text-') : 'text-gray-400'"
+                                        class="opacity-80">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                         </svg>
-                                        {{ t.meta.footer }}
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Bar Chart Preview -->
-                                <div *ngIf="t.type === 'bar'"
-                                    class="w-full h-full p-2 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200">
-                                    <div>
-                                        <h3 class="text-xs font-semibold text-gray-700">{{ t.config.title }}</h3>
-                                        <div class="text-[10px] text-gray-500">{{ t.meta?.subtitle }}</div>
-                                    </div>
-                                    <div class="flex items-end justify-between mt-1">
-                                        <div>
-                                            <span class="text-xl font-light text-gray-800">{{ t.config.value }}</span>
-                                            <span class="text-[10px] text-gray-500">{{ t.meta?.unit }}</span>
-                                        </div>
-                                        <div class="flex items-end gap-0.5 h-10">
-                                            <div *ngFor="let bar of t.meta?.chartData" [style.height.%]="bar.value"
-                                                [class]="bar.colorClass" class="w-2 rounded-t-sm"></div>
-                                        </div>
+                            <!-- List Preview -->
+                            <div *ngIf="t.type === 'list'"
+                                class="w-full h-full p-2 flex flex-col bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+                                <h3 class="text-xs font-semibold text-gray-700 mb-1">{{ t.config.title }}</h3>
+                                <div class="flex-1 flex flex-col justify-center space-y-1 text-[10px]">
+                                    <div *ngFor="let item of t.meta?.listItems"
+                                        class="flex justify-between items-center border-b border-gray-100 pb-0.5 last:border-0">
+                                        <span class="text-gray-600">{{ item.label }}</span>
+                                        <span [class]="item.colorClass" class="font-medium">{{ item.value }}</span>
                                     </div>
                                 </div>
-
-                                <!-- Pie Chart Preview -->
-                                <div *ngIf="t.type === 'pie'"
-                                    class="w-full h-full p-2 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200">
-                                    <div>
-                                        <h3 class="text-xs font-semibold text-gray-700">{{ t.config.title }}</h3>
-                                    </div>
-                                    <div class="flex items-end gap-2">
-                                        <div
-                                            class="w-10 h-10 rounded-full border-2 border-l-gray-300 border-t-green-500 border-r-green-500 border-b-green-500 transform -rotate-45">
-                                        </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-green-600">{{ t.config.value }}</div>
-                                            <div class="text-[8px] text-gray-500">{{ t.meta?.target }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="text-[8px] text-gray-400 mt-0.5">{{ t.meta?.footer }}</div>
+                                <div *ngIf="t.meta?.footer"
+                                    class="mt-1 text-blue-600 text-[10px] flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    {{ t.meta.footer }}
                                 </div>
+                            </div>
 
-                                <!-- Line Chart Preview -->
-                                <div *ngIf="t.type === 'line'"
-                                    class="w-full h-full p-2 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200">
+                            <!-- Bar Chart Preview -->
+                            <div *ngIf="t.type === 'bar'"
+                                class="w-full h-full p-2 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200">
+                                <div>
+                                    <h3 class="text-xs font-semibold text-gray-700">{{ t.config.title }}</h3>
+                                    <div class="text-[10px] text-gray-500">{{ t.meta?.subtitle }}</div>
+                                </div>
+                                <div class="flex items-end justify-between mt-1">
                                     <div>
-                                        <h3 class="text-xs font-semibold text-gray-700">{{ t.config.title }}</h3>
+                                        <span class="text-xl font-light text-gray-800">{{ t.config.value }}</span>
+                                        <span class="text-[10px] text-gray-500">{{ t.meta?.unit }}</span>
                                     </div>
-                                    <div>
-                                        <div class="flex justify-between text-[8px] text-gray-500 mb-0.5">
-                                            <span class="text-red-500">{{ t.meta?.value1 }}</span>
-                                            <span class="text-green-500">{{ t.meta?.value2 }}</span>
-                                        </div>
-                                        <div class="h-8 w-full bg-gray-50 relative rounded-sm overflow-hidden">
-                                            <div
-                                                class="absolute bottom-0 left-0 w-full h-1/2 bg-red-100 border-t border-red-500 transform skew-y-3 origin-left">
-                                            </div>
-                                            <div
-                                                class="absolute bottom-0 left-0 w-full h-1/3 bg-green-100 border-t border-green-500 transform -skew-y-2 origin-left opacity-70">
-                                            </div>
-                                        </div>
-                                        <div class="flex justify-between text-[8px] text-gray-400 mt-0.5">
-                                            <span>{{ t.meta?.labelStart }}</span>
-                                            <span>{{ t.meta?.labelEnd }}</span>
-                                        </div>
+                                    <div class="flex items-end gap-0.5 h-10">
+                                        <div *ngFor="let bar of t.meta?.chartData" [style.height.%]="bar.value"
+                                            [class]="bar.colorClass" class="w-2 rounded-t-sm"></div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Picture Preview -->
-                                <div *ngIf="t.type === 'picture'"
-                                    class="w-full h-full bg-white rounded shadow-sm border border-gray-200 overflow-hidden relative group">
-                                    <img [src]="t.meta?.src" class="w-full h-full object-cover" alt="Widget Image">
+                            <!-- Pie Chart Preview -->
+                            <div *ngIf="t.type === 'pie'"
+                                class="w-full h-full p-2 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200">
+                                <div>
+                                    <h3 class="text-xs font-semibold text-gray-700">{{ t.config.title }}</h3>
+                                </div>
+                                <div class="flex items-end gap-2">
                                     <div
-                                        class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                                        <h3 class="text-white font-bold text-xs leading-tight">{{ t.config.title }}</h3>
-                                        <p *ngIf="t.meta?.caption" class="text-white/80 text-[10px] mt-0.5">{{
-                                            t.meta.caption }}</p>
+                                        class="w-10 h-10 rounded-full border-2 border-l-gray-300 border-t-green-500 border-r-green-500 border-b-green-500 transform -rotate-45">
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-green-600">{{ t.config.value }}</div>
+                                        <div class="text-[8px] text-gray-500">{{ t.meta?.target }}</div>
                                     </div>
                                 </div>
+                                <div class="text-[8px] text-gray-400 mt-0.5">{{ t.meta?.footer }}</div>
+                            </div>
 
-                                <!-- Shortcut Preview (Renamed generic Shortcut) -->
-                                <div *ngIf="t.type === 'shortcut'"
-                                    class="w-full h-full p-3 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200 select-none group-hover:bg-blue-50 transition-colors relative">
-                                    <div class="text-sm font-bold text-gray-800 leading-snug">{{ t.config.title }}</div>
-                                    <div [ngClass]="t.config.color ? t.config.color.replace('bg-', 'text-') : 'text-blue-600'"
-                                        class="flex items-center justify-center self-end mt-auto">
-                                        <!-- Icons for Shortcut -->
-                                        <svg *ngIf="t.config.icon === 'link'" class="w-6 h-6" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                                            </path>
-                                        </svg>
-                                        <svg *ngIf="!t.config.icon || t.config.icon === 'chevron'" class="w-6 h-6"
-                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                        <svg *ngIf="![ 'link', 'chevron' ].includes(t.config.icon!)" class="w-6 h-6"
-                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                        </svg>
-                                    </div>
+                            <!-- Line Chart Preview -->
+                            <div *ngIf="t.type === 'line'"
+                                class="w-full h-full p-2 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200">
+                                <div>
+                                    <h3 class="text-xs font-semibold text-gray-700">{{ t.config.title }}</h3>
                                 </div>
-
-                                <!-- Default Fallback for other types not matched above but valid -->
-                                <div *ngIf="!['stat', 'list', 'bar', 'pie', 'line', 'picture', 'shortcut'].includes(t.type)"
-                                    class="w-full h-full flex items-center justify-center bg-white border border-gray-200 rounded">
-                                    <span class="text-gray-400 uppercase text-xs font-bold">{{t.type}}</span>
+                                <div>
+                                    <div class="flex justify-between text-[8px] text-gray-500 mb-0.5">
+                                        <span class="text-red-500">{{ t.meta?.value1 }}</span>
+                                        <span class="text-green-500">{{ t.meta?.value2 }}</span>
+                                    </div>
+                                    <div class="h-8 w-full bg-gray-50 relative rounded-sm overflow-hidden">
+                                        <div
+                                            class="absolute bottom-0 left-0 w-full h-1/2 bg-red-100 border-t border-red-500 transform skew-y-3 origin-left">
+                                        </div>
+                                        <div
+                                            class="absolute bottom-0 left-0 w-full h-1/3 bg-green-100 border-t border-green-500 transform -skew-y-2 origin-left opacity-70">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-[8px] text-gray-400 mt-0.5">
+                                        <span>{{ t.meta?.labelStart }}</span>
+                                        <span>{{ t.meta?.labelEnd }}</span>
+                                    </div>
                                 </div>
                             </div>
 
-
-                            <!-- Text/Description Area -->
-                            <div class="px-5 py-4 flex flex-col justify-center flex-1 bg-white relative z-0">
-                                <h3
-                                    class="font-bold text-gray-800 text-lg mb-1 group-hover:text-blue-600 transition-colors">
-                                    {{t.name}}</h3>
-                                <div class="text-sm text-gray-400 font-medium uppercase tracking-wide">{{ t.type }}
+                            <!-- Picture Preview -->
+                            <div *ngIf="t.type === 'picture'"
+                                class="w-full h-full bg-white rounded shadow-sm border border-gray-200 overflow-hidden relative group">
+                                <img [src]="t.meta?.src" class="w-full h-full object-cover" alt="Widget Image">
+                                <div
+                                    class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                                    <h3 class="text-white font-bold text-xs leading-tight">{{ t.config.title }}</h3>
+                                    <p *ngIf="t.meta?.caption" class="text-white/80 text-[10px] mt-0.5">{{
+                                        t.meta.caption }}</p>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-2 line-clamp-2">
-                                    {{ t.config.description || 'Visualization of data for devices, assets, and other
-                                    entities.' }}
-                                </p>
                             </div>
+
+                            <!-- Shortcut Preview (Renamed generic Shortcut) -->
+                            <div *ngIf="t.type === 'shortcut'"
+                                class="w-full h-full p-3 flex flex-col justify-between bg-white rounded shadow-sm border border-gray-200 select-none group-hover:bg-blue-50 transition-colors relative">
+                                <div class="text-sm font-bold text-gray-800 leading-snug">{{ t.config.title }}</div>
+                                <div [ngClass]="t.config.color ? t.config.color.replace('bg-', 'text-') : 'text-blue-600'"
+                                    class="flex items-center justify-center self-end mt-auto">
+                                    <!-- Icons for Shortcut -->
+                                    <svg *ngIf="t.config.icon === 'link'" class="w-6 h-6" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                        </path>
+                                    </svg>
+                                    <svg *ngIf="!t.config.icon || t.config.icon === 'chevron'" class="w-6 h-6"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                    <svg *ngIf="![ 'link', 'chevron' ].includes(t.config.icon!)" class="w-6 h-6"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Default Fallback for other types not matched above but valid -->
+                            <div *ngIf="!['stat', 'list', 'bar', 'pie', 'line', 'picture', 'shortcut'].includes(t.type)"
+                                class="w-full h-full flex items-center justify-center bg-white border border-gray-200 rounded">
+                                <span class="text-gray-400 uppercase text-xs font-bold">{{t.type}}</span>
+                            </div>
+                        </div>
+
+
+                        <!-- Text/Description Area -->
+                        <div class="px-5 py-4 flex flex-col justify-center flex-1 bg-white relative z-0">
+                            <h3
+                                class="text-sm font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors truncate">
+                                {{t.name}}</h3>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide font-medium mb-2">{{t.type}}</p>
+                            <p class="text-xs text-gray-500 leading-snug line-clamp-2">{{t.description}}</p>
                         </div>
                     </div>
                 </div>
