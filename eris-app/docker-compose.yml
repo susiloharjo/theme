@@ -22,8 +22,27 @@ services:
       - ./server:/app
       - /app/node_modules
     command: sh -c "npm install && npm start"
+    ports:
+      - "3000:3000"
 
     restart: unless-stopped
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://eris:eris.1234@postgres:5432/dashboard?schema=public
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: eris-postgres
+    environment:
+      POSTGRES_USER: eris
+      POSTGRES_PASSWORD: eris.1234
+      POSTGRES_DB: dashboard
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

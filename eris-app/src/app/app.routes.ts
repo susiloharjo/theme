@@ -44,6 +44,13 @@ export const routes: Routes = [
                     { path: 'opportunities', loadComponent: () => import('./pages/crm/opportunities-list/opportunities-list.component').then(m => m.OpportunitiesListComponent), data: { breadcrumb: 'Opportunities' } },
                 ]
             },
+            {
+                path: 'system-settings',
+                children: [
+                    { path: '', redirectTo: 'widget-library', pathMatch: 'full' },
+                    { path: 'widget-library', loadComponent: () => import('./pages/widget-library/widget-library.component').then(m => m.WidgetLibraryComponent), data: { breadcrumb: 'Widget Library' } }
+                ]
+            }
         ]
     }
 ];

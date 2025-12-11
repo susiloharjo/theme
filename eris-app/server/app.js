@@ -1,139 +1,87 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const path = require('path');
 
 const app = express();
 const port = 3000;
-const dbPath = path.resolve(__dirname, 'dashboard.db');
+const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// Database Setup
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database', err.message);
-    } else {
-        console.log('Connected to the SQLite database.');
+// Routes
 
-        // Create new table for Gridstack
-        db.run(`CREATE TABLE IF NOT EXISTS widgets_v2 (
-      id TEXT PRIMARY KEY,
-      dashboard_id TEXT,
-      title TEXT,
-      type TEXT,
-      x INTEGER,
-      y INTEGER,
-      w INTEGER,
-      h INTEGER,
-      value TEXT,
-      content TEXT,
-      icon TEXT,
-      color TEXT
-    )`, (err) => {
-            if (err) {
-                console.error('Error creating table', err.message);
-            } else {
-                // Seed default data if empty for 'main' dashboard
-                db.get("SELECT count(*) as count FROM widgets_v2 WHERE dashboard_id = 'main'", (err, row) => {
-                    if (row.count === 0) {
-                        console.log("Seeding default widgets for main dashboard...");
-                        const defaults = [
-                            // Stats (Row 1)
-                            { id: 'w1', dashboard_id: 'main', title: 'Total Revenue', type: 'stat', x: 0, y: 0, w: 2, h: 4, value: 'Rp 2.5B', icon: 'dollar-sign', color: 'bg-blue-500' },
-                            { id: 'w2', dashboard_id: 'main', title: 'Active Projects', type: 'stat', x: 2, y: 0, w: 2, h: 4, value: '12', icon: 'briefcase', color: 'bg-indigo-500' },
-                            { id: 'w3', dashboard_id: 'main', title: 'Pending Approval', type: 'stat', x: 4, y: 0, w: 2, h: 4, value: '5', icon: 'clock', color: 'bg-orange-500' },
-                            { id: 'w4', dashboard_id: 'main', title: 'Team Members', type: 'stat', x: 6, y: 0, w: 2, h: 4, value: '48', icon: 'users', color: 'bg-green-500' },
-                            { id: 'w5', dashboard_id: 'main', title: 'Conversion Rate', type: 'stat', x: 8, y: 0, w: 2, h: 4, value: '65.5', icon: 'trending-up', color: 'bg-green-600' },
-                            { id: 'w6', dashboard_id: 'main', title: 'Critical Issues', type: 'stat', x: 10, y: 0, w: 2, h: 4, value: '3', icon: 'alert-triangle', color: 'bg-red-500' },
-
-                            // Row 2
-                            // List Widget
-                            {
-                                id: 'w7', dashboard_id: 'main', title: 'Sales Order Fulfilment', type: 'list', x: 0, y: 4, w: 3, h: 6,
-                                content: JSON.stringify({
-                                    listItems: [
-                                        { label: 'Incomplete Data', value: '8.03K', colorClass: 'text-green-600' },
-                                        { label: 'Delivery Issue', value: '4.49K', colorClass: 'text-red-600' },
-                                        { label: 'Invoicing Issue', value: '3.8K', colorClass: 'text-orange-500' }
-                                    ],
-                                    footer: 'Now'
-                                })
-                            },
-                            // Bar Chart
-                            {
-                                id: 'w8', dashboard_id: 'main', title: 'Incoming Sales Orders', type: 'bar', x: 3, y: 4, w: 3, h: 6,
-                                value: '2.3',
-                                content: JSON.stringify({
-                                    subtitle: 'EMEA',
-                                    unit: 'M',
-                                    footer: 'EUR, Year to Date',
-                                    chartData: [
-                                        { value: 30, colorClass: 'bg-blue-400' },
-                                        { value: 50, colorClass: 'bg-blue-500' },
-                                        { value: 40, colorClass: 'bg-blue-600' },
-                                        { value: 60, colorClass: 'bg-blue-700' },
-                                        { value: 80, colorClass: 'bg-gray-500' }
-                                    ]
-                                })
-                            },
-                            // Pie Chart
-                            {
-                                id: 'w9', dashboard_id: 'main', title: 'Sales Contract Fulfilment', type: 'pie', x: 6, y: 4, w: 3, h: 6,
-                                value: '1.8M',
-                                content: JSON.stringify({
-                                    subtitle: 'EMEA',
-                                    target: '3M',
-                                    footer: 'EUR, Year to Date'
-                                })
-                            },
-                            // Line/Area Chart
-                            {
-                                id: 'w10', dashboard_id: 'main', title: 'Ext. Sales Commissions', type: 'line', x: 9, y: 4, w: 3, h: 6,
-                                content: JSON.stringify({
-                                    value1: '70M',
-                                    value2: '45M',
-                                    labelStart: 'June',
-                                    labelEnd: 'June 30'
-                                })
-                            },
-                        ];
-                        const stmt = db.prepare("INSERT INTO widgets_v2 (id, dashboard_id, title, type, x, y, w, h, value, content, icon, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        defaults.forEach(w => {
-                            stmt.run(w.id, w.dashboard_id, w.title, w.type, w.x, w.y, w.w, w.h, w.value, w.content, w.icon, w.color);
-                        });
-                        stmt.finalize();
-                    }
-                });
-            }
+// Get all widget templates
+app.get('/api/templates', async (req, res) => {
+    try {
+        const templates = await prisma.widgetTemplate.findMany();
+        res.json({
+            "message": "success",
+            "data": templates
         });
+    } catch (err) {
+        console.error('Error fetching templates:', err);
+        res.status(500).json({ "error": "Internal server error" });
     }
 });
 
-// Routes
-
 // Get widgets for a specific dashboard
-app.get('/api/dashboard/:dashboardId', (req, res) => {
+app.get('/api/dashboard/:dashboardId', async (req, res) => {
     const dashboardId = req.params.dashboardId;
-    db.all("SELECT * FROM widgets_v2 WHERE dashboard_id = ?", [dashboardId], (err, rows) => {
-        if (err) {
-            res.status(400).json({ "error": err.message });
-            return;
-        }
-        // If empty for a new dashboard, maybe seed it or return empty
-        // For now returning whatever is there
+    try {
+        const dashboardWidgets = await prisma.dashboardWidget.findMany({
+            where: {
+                dashboardId: dashboardId
+            },
+            include: {
+                template: true
+            }
+        });
+
+        // Flatten response structure to match frontend expectations
+        const widgets = dashboardWidgets.map(dw => {
+            const template = dw.template;
+            const instanceConfig = dw.config ? JSON.parse(dw.config) : {};
+            const templateConfig = template.defaultConfig ? JSON.parse(template.defaultConfig) : {};
+
+            // Merge: Instance config overrides Template config
+            // However, our migration set instance config to null, so we mostly rely on template here.
+            // But we need to reconstruct the flat object.
+
+            return {
+                id: dw.id,
+                dashboardId: dw.dashboardId,
+                title: instanceConfig.title || templateConfig.title || template.name,
+                type: template.type,
+                x: dw.x,
+                y: dw.y,
+                w: dw.w,
+                h: dw.h,
+
+                // Reconstruct legacy fields from config
+                value: instanceConfig.value || templateConfig.value,
+                content: instanceConfig.content || templateConfig.content,
+                icon: instanceConfig.icon || templateConfig.icon,
+                color: instanceConfig.color || templateConfig.color,
+
+                // Add template info for future use
+                templateId: template.id
+            };
+        });
+
         res.json({
             "message": "success",
-            "data": rows
+            "data": widgets
         });
-    });
+    } catch (err) {
+        console.error('Error fetching widgets:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
 });
 
 // Save (upsert) widgets for a specific dashboard
-// We expect the FULL list of widgets for that dashboard to replace/update state
-app.post('/api/dashboard/:dashboardId', (req, res) => {
+app.post('/api/dashboard/:dashboardId', async (req, res) => {
     const dashboardId = req.params.dashboardId;
     const widgets = req.body.widgets;
 
@@ -142,36 +90,86 @@ app.post('/api/dashboard/:dashboardId', (req, res) => {
         return;
     }
 
-    db.serialize(() => {
-        db.run("BEGIN TRANSACTION");
+    try {
+        await prisma.$transaction(async (tx) => {
+            // Delete all widgets for this dashboard
+            await tx.dashboardWidget.deleteMany({
+                where: {
+                    dashboardId: dashboardId
+                }
+            });
 
-        // We could delete all for this dashboard and re-insert, or upsert.
-        // Deleting and re-inserting is safer for "cleanup" of removed widgets.
-        db.run("DELETE FROM widgets_v2 WHERE dashboard_id = ?", [dashboardId], (err) => {
-            if (err) {
-                console.error("Error clearing old widgets", err);
-                // rollback?
+            // Re-insert new widgets
+            if (widgets.length > 0) {
+                // Note: This naive implementation assumes we are reusing existing templates or creating new ones?
+                // The frontend currently sends flat widget objects. It doesn't know about templateIds yet unless we sent them back in GET.
+                // If a widget has a templateId, we link it. If not (new widget), we might need to create a template or find a generic one.
+                // For now, let's assume we find/create a template for EVERY widget to keep it simple and consistent with the user request.
+
+                for (const w of widgets) {
+                    let templateId = w.templateId;
+
+                    // If no template ID provided (e.g. new generic widget added from UI), create a new template for it
+                    // This effectively auto-saves custom widgets as templates as requested ("save and use it").
+                    if (!templateId) {
+                        const defaultConfig = {
+                            title: w.title,
+                            icon: w.icon,
+                            color: w.color,
+                            content: w.content,
+                            value: w.value
+                        };
+
+                        const newTemplate = await tx.widgetTemplate.create({
+                            data: {
+                                name: w.title || `New ${w.type}`,
+                                type: w.type || 'unknown',
+                                defaultConfig: JSON.stringify(defaultConfig)
+                            }
+                        });
+                        templateId = newTemplate.id;
+                    }
+
+                    // Config override: For now, we store everything in the template for new widgets.
+                    // For existing widgets connected to a template, if we change something, 
+                    // should we update the template OR the instance config?
+                    // User said "separate widget as template... save the template...".
+                    // Let's assume dashboard edits update the INSTANCE overrides, not the template itself, 
+                    // unless explicitly "saving as template" (which is a UI feature we don't have yet).
+                    // So we save specific properties to 'config'.
+
+                    const instanceConfig = {
+                        title: w.title,
+                        icon: w.icon,
+                        color: w.color,
+                        content: w.content,
+                        value: w.value
+                    };
+
+                    await tx.dashboardWidget.create({
+                        data: {
+                            id: w.id,
+                            dashboardId: dashboardId,
+                            templateId: templateId,
+                            x: w.x,
+                            y: w.y,
+                            w: w.w,
+                            h: w.h,
+                            config: JSON.stringify(instanceConfig)
+                        }
+                    });
+                }
             }
         });
 
-        const stmt = db.prepare("INSERT INTO widgets_v2 (id, dashboard_id, title, type, x, y, w, h, value, content, icon, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-        widgets.forEach(w => {
-            // Ensure we use the path param dashboardId
-            stmt.run(w.id, dashboardId, w.title, w.type, w.x, w.y, w.w, w.h, w.value, w.content, w.icon, w.color);
-        });
-
-        stmt.finalize();
-        db.run("COMMIT", (err) => {
-            if (err) {
-                res.status(400).json({ "error": err.message });
-                return;
-            }
-            res.json({ "message": "saved successfully" });
-        });
-    });
+        res.json({ "message": "saved successfully" });
+    } catch (err) {
+        console.error('Error saving widgets:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
 });
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+

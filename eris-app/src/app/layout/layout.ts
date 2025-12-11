@@ -127,6 +127,11 @@ export class Layout implements OnInit {
         { label: 'Schedule Control', route: '#' },
         { label: 'Risk Management', route: '#' }
       ]
+    },
+    {
+      id: 'system-settings', label: 'System Setting', icon: 'settings', submenus: [
+        { label: 'Widget Library', route: '/system-settings/widget-library' }
+      ]
     }
   ];
   isUserMenuOpen = false;
