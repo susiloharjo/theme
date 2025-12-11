@@ -7,6 +7,7 @@ export interface WidgetTemplate {
     id: string;
     name: string;
     type: string;
+    description?: string;
     defaultConfig: string;
     // Parsed properties for UI
     config?: any;
@@ -31,7 +32,8 @@ export class AddWidgetSidebarComponent implements OnInit {
     selectedCategory = 'All';
 
     // user requested groups: standard chart card, pie chart card, line chart card, picture card, list card, table card, bar chart card
-    templateGroups: { name: string, templates: WidgetTemplate[] }[] = [];
+    // user requested groups: standard chart card, pie chart card, line chart card, picture card, list card, table card, bar chart card
+    displayedTemplates: WidgetTemplate[] = [];
 
     // Exact mapping requested
     categoryOrder = [
