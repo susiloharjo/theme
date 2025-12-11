@@ -7,40 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Matching widgets_v2 structure
-// Template definition
 model WidgetTemplate {
-  id            String   @id @default(uuid())
+  id            String            @id @default(uuid())
   name          String
-  type          String   
-  defaultConfig String?  // JSON string or simpler structure
-
+  type          String
+  defaultConfig String?
   widgets       DashboardWidget[]
 
   @@map("widget_templates")
 }
 
-// Instance on a dashboard
 model DashboardWidget {
   id          String         @id
   dashboardId String         @map("dashboard_id")
   templateId  String         @map("template_id")
-  
-  // Position
   x           Int?
   y           Int?
   w           Int?
   h           Int?
-  
-  // Instance usage overrides
-  config      String?        // JSON string storing title, value, content, icon, color overrides
-
+  config      String?
   template    WidgetTemplate @relation(fields: [templateId], references: [id])
 
   @@map("dashboard_widgets")
 }
 
-// Keeping this temporarily for migration script usage, will remove after migration
 model Widget {
   id          String  @id
   dashboardId String  @map("dashboard_id")
