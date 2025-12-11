@@ -64,24 +64,32 @@ export class AddWidgetSidebarComponent implements OnInit {
                             try {
                                 config = t.defaultConfig ? JSON.parse(t.defaultConfig) : {};
                                 if (config.content) {
-                                    if (typeof config.content === 'string' && (config.content.startsWith('{') || config.content.startsWith('['))) {
-                                        try { meta = JSON.parse(config.content); } catch (e) { meta = { content: config.content }; }
+                                    if (typeof config.content === 'string') {
+                                        try {
+                                            meta = JSON.parse(config.content);
+                                        } catch (e) {
+                                            console.warn('Could not parse content string as JSON', config.content);
+                                            meta = { text: config.content };
+                                        }
                                     } else {
-                                        meta = { content: config.content };
+                                        // It's already an object (e.g. from seed)
+                                        meta = config.content;
                                     }
-                                }
-                                if (config.meta && typeof config.meta === 'string') {
-                                    try { meta = { ...meta, ...JSON.parse(config.meta) }; } catch (e) { /* ignore */ }
-                                } else if (config.meta) {
-                                    meta = { ...meta, ...config.meta };
                                 }
                             } catch (e) {
                                 console.error('Error parsing template config', t.id, e);
                             }
 
+                            // Extract value from content if present (new structure)
+                            if (config.content && typeof config.content === 'object' && config.content.value) {
+                                config.value = config.content.value;
+                            }
+
+                            // Mock values for preview if missing
+                            if (!config.value) config.value = '100'; // Default for stats
+
                             if (!config.title) config.title = t.name;
                             if (!config.type) config.type = t.type;
-                            if (!config.value && t.type === 'stat') config.value = '0';
 
                             return { ...t, config, meta };
                         });
@@ -104,25 +112,8 @@ export class AddWidgetSidebarComponent implements OnInit {
             t.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
 
-        const uniqueTypes: Set<string> = new Set();
-        this.displayedTemplates = [];
-
-        searched.forEach(t => {
-            // User requested to remove "Team member cards" which are 'stat' type
-            if (t.type === 'stat') return;
-
-            // Genericize names for the library view
-            if (t.type === 'shortcut') {
-                t.name = 'Shortcut';
-                if (t.config) t.config.title = 'Shortcut';
-            }
-
-            // Deduplicate by type (style)
-            if (!uniqueTypes.has(t.type)) {
-                uniqueTypes.add(t.type);
-                this.displayedTemplates.push(t);
-            }
-        });
+        // Show all templates, matching Widget Library behavior
+        this.displayedTemplates = searched;
     }
 
     mapTypeToCategory(type: string): string {

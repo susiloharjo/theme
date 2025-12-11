@@ -1,0 +1,323 @@
+<!-- Template Configuration Sidebar -->
+<div *ngIf="isVisible" class="fixed inset-0 z-[100] overflow-hidden" aria-labelledby="slide-over-title" role="dialog"
+    aria-modal="true">
+    <!-- Overlay -->
+    <div (click)="onClose()" class="fixed inset-0 bg-black bg-opacity-25 transition-opacity"></div>
+
+    <!-- Sidebar Panel -->
+    <div class="absolute inset-y-0 right-0 flex" style="width: 50%;">
+        <div
+            class="relative w-full bg-white shadow-xl flex flex-col h-full transform transition-transform duration-300 ease-in-out font-sans">
+
+            <!-- Custom Header (Blue #205ea9) -->
+            <div class="bg-[#205ea9] text-white pt-6 pb-0 px-6 relative flex flex-col justify-between"
+                style="min-height: 140px;">
+                <!-- Top Actions -->
+                <div class="absolute top-4 right-4 flex gap-3 text-white/80">
+                    <button class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                    <button (click)="onClose()" class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Title Section -->
+                <div class="mt-4 mb-8">
+                    <h3 class="text-2xl font-normal tracking-wide text-white">
+                        Edit Template
+                    </h3>
+                    <p class="text-white/80 text-sm mt-1">{{ editingTemplate?.name || 'Widget Template' }}</p>
+                </div>
+
+                <!-- Floating Action Buttons (Overlapping) -->
+                <div class="absolute right-6 -bottom-7 flex gap-3 z-20">
+                    <!-- Checkmark Button -->
+                    <button (click)="onSave()"
+                        class="w-14 h-14 bg-[#00a0ff] hover:bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                    <!-- Close Button -->
+                    <button (click)="onClose()"
+                        class="w-14 h-14 bg-[#00a0ff] hover:bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs Bar -->
+            <div class="px-6 border-b border-gray-200 bg-white">
+                <div class="flex gap-8 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                    <button class="py-4 border-b-[3px] transition-colors focus:outline-none"
+                        [class]="activeTab === 'Settings' ? 'text-[#205ea9] border-[#205ea9]' : 'border-transparent hover:text-gray-700'"
+                        (click)="activeTab = 'Settings'">
+                        Settings
+                    </button>
+                    <button class="py-4 border-b-[3px] transition-colors focus:outline-none"
+                        [class]="activeTab === 'Data' ? 'text-[#205ea9] border-[#205ea9]' : 'border-transparent hover:text-gray-700'"
+                        (click)="activeTab = 'Data'">
+                        Data
+                    </button>
+                    <button class="py-4 border-b-[3px] transition-colors focus:outline-none"
+                        [class]="activeTab === 'Actions' ? 'text-[#205ea9] border-[#205ea9]' : 'border-transparent hover:text-gray-700'"
+                        (click)="activeTab = 'Actions'">
+                        Actions
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto bg-gray-50 p-6">
+
+                <!-- Settings Tab Content (Icon, Title, Color) -->
+                <div *ngIf="activeTab === 'Settings'" class="space-y-6 max-w-3xl">
+
+                    <!-- Fields -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Display Title</label>
+                            <input type="text" [(ngModel)]="config.title"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#205ea9] focus:border-[#205ea9] sm:text-sm">
+                        </div>
+
+                        <!-- Value Field (Common for most widgets) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Value (Preview)</label>
+                            <input type="text" [(ngModel)]="contentValue"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#205ea9] focus:border-[#205ea9] sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Icon</label>
+                            <div class="mt-2 flex flex-wrap gap-3">
+                                <div *ngFor="let icon of availableIcons" (click)="config.icon = icon"
+                                    [class.ring-2]="config.icon === icon"
+                                    [ngClass]="config.icon === icon ? (config.color ? config.color.replace('bg-', 'ring-') : 'ring-blue-500') : 'border-gray-200'"
+                                    class="w-10 h-10 rounded-lg border flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                                    <div
+                                        [class]="config.icon === icon ? (config.color ? config.color.replace('bg-', 'text-') : 'text-blue-600') : 'text-gray-400'">
+                                        <!-- Simplified Icon Handling: Using generic placeholder logic + exact rendering if needed -->
+                                        <!-- For brevity, we will rely on a generic icon wrapper if specific SVG not found, or ideally, we inject the SVG defs. 
+                                             To save space in this file, I'll use a simple placeholder that renders the icon name if no svg, 
+                                             OR I should copy the SVGs? User liked the 'Reuse' so I should probably provide at least common ones. -->
+
+                                        <!-- Just reusing a generic SVG for all for now to save space, OR copying a few key ones? 
+                                             Let's use a dynamic class approach or just text for now to keep file size down, 
+                                             since the user asked for logic primarily. 
+                                             Wait, visual consistency is key. I should copy the SVGs. -->
+
+                                        <!-- Link Icon -->
+                                        <svg *ngIf="icon === 'link'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                            </path>
+                                        </svg>
+                                        <!-- Users -->
+                                        <svg *ngIf="icon === 'users'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                            </path>
+                                        </svg>
+                                        <!-- Dollar -->
+                                        <svg *ngIf="icon === 'dollar-sign'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                            </path>
+                                        </svg>
+                                        <!-- Eye -->
+                                        <svg *ngIf="icon === 'eye'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                        <!-- Activity -->
+                                        <svg *ngIf="icon === 'activity'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                        <!-- Trend Up -->
+                                        <svg *ngIf="icon === 'trending-up'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                        </svg>
+
+                                        <!-- Triangle -->
+                                        <svg *ngIf="icon === 'triangle'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                            </path>
+                                        </svg>
+                                        <!-- Chevron -->
+                                        <svg *ngIf="icon === 'chevron'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                        <!-- User (Single) -->
+                                        <svg *ngIf="icon === 'user'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                            </path>
+                                        </svg>
+                                        <!-- Cart -->
+                                        <svg *ngIf="icon === 'cart'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                                            </path>
+                                        </svg>
+                                        <!-- Gear -->
+                                        <svg *ngIf="icon === 'gear'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                            </path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <!-- Monitor -->
+                                        <svg *ngIf="icon === 'monitor'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                        <!-- Pie Chart -->
+                                        <svg *ngIf="icon === 'pie-chart'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                                        </svg>
+                                        <!-- Wrench -->
+                                        <svg *ngIf="icon === 'wrench'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                            </path>
+                                        </svg>
+                                        <!-- Truck -->
+                                        <svg *ngIf="icon === 'truck'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z">
+                                            </path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0">
+                                            </path>
+                                        </svg>
+                                        <!-- Home -->
+                                        <svg *ngIf="icon === 'home'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                            </path>
+                                        </svg>
+                                        <!-- Search -->
+                                        <svg *ngIf="icon === 'search'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                        <!-- Bell -->
+                                        <svg *ngIf="icon === 'bell'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                                            </path>
+                                        </svg>
+                                        <!-- Calendar -->
+                                        <svg *ngIf="icon === 'calendar'" class="w-5 h-5" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+
+                                        <!-- Fallback -->
+                                        <span
+                                            *ngIf="!['link','users','dollar-sign','eye','activity','trending-up', 'triangle', 'chevron', 'user', 'cart', 'gear', 'monitor', 'pie-chart', 'wrench', 'truck', 'home', 'search', 'bell', 'calendar'].includes(icon)"
+                                            class="text-[10px] uppercase font-bold">{{ icon.substring(0,3) }}</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Color</label>
+                            <div class="mt-2 flex gap-2">
+                                <button (click)="config.color = 'bg-blue-500'"
+                                    [class.ring-2]="config.color === 'bg-blue-500'"
+                                    class="w-8 h-8 rounded-full bg-blue-500 ring-offset-2"></button>
+                                <button (click)="config.color = 'bg-indigo-500'"
+                                    [class.ring-2]="config.color === 'bg-indigo-500'"
+                                    class="w-8 h-8 rounded-full bg-indigo-500 ring-offset-2"></button>
+                                <button (click)="config.color = 'bg-green-500'"
+                                    [class.ring-2]="config.color === 'bg-green-500'"
+                                    class="w-8 h-8 rounded-full bg-green-500 ring-offset-2"></button>
+                                <button (click)="config.color = 'bg-orange-500'"
+                                    [class.ring-2]="config.color === 'bg-orange-500'"
+                                    class="w-8 h-8 rounded-full bg-orange-500 ring-offset-2"></button>
+                                <button (click)="config.color = 'bg-red-500'"
+                                    [class.ring-2]="config.color === 'bg-red-500'"
+                                    class="w-8 h-8 rounded-full bg-red-500 ring-offset-2"></button>
+                                <button (click)="config.color = 'bg-purple-500'"
+                                    [class.ring-2]="config.color === 'bg-purple-500'"
+                                    class="w-8 h-8 rounded-full bg-purple-500 ring-offset-2"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Tab Content (Raw JSON Editor) -->
+                <div *ngIf="activeTab === 'Data'" class="space-y-6 max-w-3xl">
+                    <p class="text-sm text-gray-500 mb-2">Edit the JSON configuration for this widget's content.</p>
+                    <div>
+                        <textarea [ngModel]="jsonContent" (ngModelChange)="onJsonContentChange($event)" rows="15"
+                            class="w-full font-mono text-xs p-3 border border-gray-300 rounded-md focus:ring-[#205ea9] focus:border-[#205ea9]"></textarea>
+                    </div>
+                </div>
+
+                <!-- Actions Tab Content -->
+                <div *ngIf="activeTab === 'Actions'" class="space-y-6 max-w-3xl">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Navigate To</label>
+
+                        <select [(ngModel)]="actionPath"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#205ea9] focus:border-[#205ea9] sm:text-sm">
+                            <option [value]="''">None</option>
+                            <option *ngFor="let r of availableRoutes" [value]="r.path">{{ r.label }} ({{ r.path }})
+                            </option>
+                        </select>
+
+                        <p class="mt-2 text-xs text-gray-500">
+                            Select a route to navigate to when this widget is clicked.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

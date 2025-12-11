@@ -45,21 +45,35 @@
             <div *ngFor="let w of widgets; trackBy: trackByWidgetId" class="grid-stack-item" [attr.gs-id]="w.id"
                 [attr.gs-x]="w.x" [attr.gs-y]="w.y" [attr.gs-w]="w.w" [attr.gs-h]="w.h" [id]="w.id">
 
-                <div
+                <div (click)="handleWidgetClick(w)"
+                    [class.cursor-pointer]="!isEditMode && (w.config?.action?.payload || (w.type === 'shortcut' && w.meta?.link))"
                     class="grid-stack-item-content bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
 
                     <!-- Widget Content Rendered based on Type -->
 
-                    <!-- Stat -->
-                    <div *ngIf="w.type === 'stat'" class="p-4 flex flex-col justify-between h-full select-none">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-700 truncate">{{ w.title }}</h3>
+                    <!-- Stat Widget (Users, Revenue, Visits, Bounce Rate) -->
+                    <div *ngIf="w.type === 'stat'" class="p-5 flex flex-col justify-between h-full bg-white relative">
+                        <!-- Top Row: Title -->
+                        <div class="text-gray-500 font-medium text-sm uppercase tracking-wider mb-2">
+                            {{ w.title }}
                         </div>
-                        <div class="flex items-end justify-between mt-2">
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl font-light text-gray-800">{{ w.value }}</span>
+
+                        <!-- Middle: Value -->
+                        <!-- Prioritize config.value (direct), then meta.value (parsed content), then template defaults -->
+                        <div class="text-3xl font-bold text-gray-800 my-2">
+                            {{ w.config?.value || w.meta?.value || w.template?.defaultConfig?.content?.value || w.value
+                            }}
+                        </div>
+
+                        <!-- Bottom Row: Icon + 'Content/Label' (Footer) -->
+                        <div class="flex items-end justify-between mt-auto">
+                            <!-- Footer Text -->
+                            <div class="text-xs text-gray-400 font-medium">
+                                {{ w.config?.content?.label || w.meta?.label ||
+                                w.template?.defaultConfig?.content?.label || w.content }}
                             </div>
-                            <!-- Optional Icon -->
+
+                            <!-- Icon -->
                             <div *ngIf="w.icon" [ngClass]="w.color ? w.color.replace('bg-', 'text-') : 'text-gray-400'"
                                 class="opacity-80">
                                 <!-- Placeholder for Icon until we have a proper icon mapping -->
@@ -183,8 +197,8 @@
                     </div>
 
                     <!-- Shortcut Widget -->
-                    <div *ngIf="w.type === 'shortcut'" (click)="navigateTo(w.meta?.link)"
-                        class="p-5 h-full flex flex-col justify-between cursor-pointer hover:bg-blue-50 transition-colors group relative">
+                    <div *ngIf="w.type === 'shortcut'"
+                        class="p-5 h-full flex flex-col justify-between hover:bg-blue-50 transition-colors group relative">
 
                         <!-- Top Left: Title -->
                         <div class="text-lg font-bold text-gray-800 leading-snug">
@@ -322,3 +336,8 @@
 <app-edit-shortcut-sidebar [isVisible]="showShortcutModal" [config]="tempShortcutConfig"
     [editingWidgetId]="editingWidgetId" [availableRoutes]="availableRoutes" [availableIcons]="availableIcons"
     (close)="cancelShortcut()" (save)="saveShortcutWidget()"></app-edit-shortcut-sidebar>
+
+<!-- Generic Edit Template Sidebar for non-shortcut widgets -->
+<app-edit-template-sidebar [isVisible]="showEditWidgetSidebar" [config]="editingWidgetConfig"
+    [availableRoutes]="availableRoutes" (close)="showEditWidgetSidebar = false" (save)="saveWidgetConfig($event)">
+</app-edit-template-sidebar>

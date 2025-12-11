@@ -21,7 +21,7 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
-    command: sh -c "npm install && npm start"
+    command: sh -c "npx prisma db push && npm install && npm start"
     ports:
       - "3000:3000"
 

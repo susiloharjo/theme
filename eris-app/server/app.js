@@ -15,13 +15,73 @@ app.use(bodyParser.json());
 // Get all widget templates
 app.get('/api/templates', async (req, res) => {
     try {
-        const templates = await prisma.widgetTemplate.findMany();
+        const templates = await prisma.widgetTemplate.findMany({
+            orderBy: { name: 'asc' }
+        });
         res.json({
             "message": "success",
             "data": templates
         });
     } catch (err) {
         console.error('Error fetching templates:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
+// Update a widget template
+app.put('/api/templates/:id', async (req, res) => {
+    const id = req.params.id;
+    const { defaultConfig } = req.body;
+
+    try {
+        const updatedTemplate = await prisma.widgetTemplate.update({
+            where: { id: id },
+            data: {
+                defaultConfig: defaultConfig
+            }
+        });
+        res.json({ "message": "success", "data": updatedTemplate });
+    } catch (err) {
+        console.error('Error updating template:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
+// Delete a widget template
+app.delete('/api/templates/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        // Check if template is in use
+        const usageCount = await prisma.dashboardWidget.count({
+            where: { templateId: id }
+        });
+
+        console.log(`[DELETE TEMPLATE] Template ID: ${id}, Usage Count: ${usageCount}`);
+
+        if (usageCount > 0) {
+            // Get details of which widgets are using this template
+            const usingWidgets = await prisma.dashboardWidget.findMany({
+                where: { templateId: id },
+                select: { id: true, dashboardId: true }
+            });
+            console.log(`[DELETE TEMPLATE] Blocked - Widgets using this template:`, usingWidgets);
+
+            // Create a helpful error message showing which dashboards
+            const dashboards = [...new Set(usingWidgets.map(w => w.dashboardId))];
+            const dashboardList = dashboards.join(', ');
+
+            return res.status(409).json({
+                "error": `Template is currently used by ${usageCount} widget(s) on dashboard(s): ${dashboardList}. Please remove them first.`
+            });
+        }
+
+        await prisma.widgetTemplate.delete({
+            where: { id: id }
+        });
+        console.log(`[DELETE TEMPLATE] Successfully deleted template: ${id}`);
+        res.json({ "message": "success" });
+    } catch (err) {
+        console.error('Error deleting template:', err);
         res.status(500).json({ "error": "Internal server error" });
     }
 });
@@ -101,49 +161,52 @@ app.post('/api/dashboard/:dashboardId', async (req, res) => {
 
             // Re-insert new widgets
             if (widgets.length > 0) {
-                // Note: This naive implementation assumes we are reusing existing templates or creating new ones?
-                // The frontend currently sends flat widget objects. It doesn't know about templateIds yet unless we sent them back in GET.
-                // If a widget has a templateId, we link it. If not (new widget), we might need to create a template or find a generic one.
-                // For now, let's assume we find/create a template for EVERY widget to keep it simple and consistent with the user request.
-
                 for (const w of widgets) {
                     let templateId = w.templateId;
 
-                    // If no template ID provided (e.g. new generic widget added from UI), create a new template for it
-                    // This effectively auto-saves custom widgets as templates as requested ("save and use it").
+                    // If no template ID provided, try to find an existing template of the same type
+                    // Only create a new template if none exists for this type
                     if (!templateId) {
-                        const defaultConfig = {
-                            title: w.title,
-                            icon: w.icon,
-                            color: w.color,
-                            content: w.content,
-                            value: w.value
-                        };
-
-                        const newTemplate = await tx.widgetTemplate.create({
-                            data: {
-                                name: w.title || `New ${w.type}`,
-                                type: w.type || 'unknown',
-                                defaultConfig: JSON.stringify(defaultConfig)
-                            }
+                        // Try to find an existing template of the same type
+                        const existingTemplate = await tx.widgetTemplate.findFirst({
+                            where: { type: w.type || 'unknown' }
                         });
-                        templateId = newTemplate.id;
+
+                        if (existingTemplate) {
+                            // Reuse existing template
+                            templateId = existingTemplate.id;
+                            console.log(`[SAVE WIDGET] Reusing existing template ${templateId} for type ${w.type}`);
+                        } else {
+                            // Create a new template only if none exists for this type
+                            const defaultConfig = {
+                                title: w.title,
+                                icon: w.icon,
+                                color: w.color,
+                                content: w.content,
+                                value: w.value
+                            };
+
+                            const newTemplate = await tx.widgetTemplate.create({
+                                data: {
+                                    name: w.title || `New ${w.type}`,
+                                    type: w.type || 'unknown',
+                                    defaultConfig: JSON.stringify(defaultConfig)
+                                }
+                            });
+                            templateId = newTemplate.id;
+                            console.log(`[SAVE WIDGET] Created new template ${templateId} for type ${w.type}`);
+                        }
                     }
 
-                    // Config override: For now, we store everything in the template for new widgets.
-                    // For existing widgets connected to a template, if we change something, 
-                    // should we update the template OR the instance config?
-                    // User said "separate widget as template... save the template...".
-                    // Let's assume dashboard edits update the INSTANCE overrides, not the template itself, 
-                    // unless explicitly "saving as template" (which is a UI feature we don't have yet).
-                    // So we save specific properties to 'config'.
-
+                    // Store instance-specific overrides in config
+                    // This allows the same template to be reused with different titles/values
                     const instanceConfig = {
                         title: w.title,
                         icon: w.icon,
                         color: w.color,
                         content: w.content,
-                        value: w.value
+                        value: w.value,
+                        action: w.action // Include action config
                     };
 
                     await tx.dashboardWidget.create({

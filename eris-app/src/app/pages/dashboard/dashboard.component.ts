@@ -6,14 +6,12 @@ import { DashboardService } from './dashboard.service';
 import { GridStack, GridStackOptions } from 'gridstack';
 import { EditShortcutSidebarComponent } from './components/edit-shortcut-sidebar/edit-shortcut-sidebar.component';
 import { AddWidgetSidebarComponent } from './components/add-widget-sidebar/add-widget-sidebar.component';
+import { EditTemplateSidebarComponent } from '../widget-library/components/edit-template-sidebar/edit-template-sidebar.component';
 
-// Import gridstack CSS if not globally accessible - typically easier to add to styles.css or angular.json
-// But we can try to rely on global styles or basic styling.
-// For now, assuming basic usage.
-
+// Import gridstack CSS if not globally accessible
 export interface DashboardWidget {
     id: string;
-    titles?: string; // Optional: Gridstack might not care, but we do for display
+    titles?: string;
     title: string;
     type: 'stat' | 'chart' | 'list' | 'bar' | 'pie' | 'line' | 'shortcut' | 'picture';
     x?: number;
@@ -26,18 +24,20 @@ export interface DashboardWidget {
     color?: string;
     dashboard_id?: string;
     meta?: any; // Holds parsed content for complex widgets
+    config?: any; // Parsed instance config
+    template?: any; // Template reference
 }
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule, EditShortcutSidebarComponent, AddWidgetSidebarComponent],
+    imports: [CommonModule, FormsModule, EditShortcutSidebarComponent, AddWidgetSidebarComponent, EditTemplateSidebarComponent],
     providers: [DashboardService],
     templateUrl: './dashboard.html',
     styles: [`
     :host {
     display: block;
-    height: 100 %;
+    height: 100%;
 }
 `]
 })
@@ -54,19 +54,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     error: string | null = null;
 
     showAddWidgetSidebar = false;
+    showEditWidgetSidebar = false;
+    editingWidgetConfig: any = {};
 
     toggleAddWidgetSidebar() {
         this.showAddWidgetSidebar = !this.showAddWidgetSidebar;
     }
 
     onWidgetAddedFromSidebar(template: any) {
-        this.addWidget(template);
-        this.showAddWidgetSidebar = false; // Close after adding
+        // Map WidgetTemplate (from Sidebar/API) to DashboardWidget structure
+        const mappedTemplate: Partial<DashboardWidget> = {
+            ...template,
+            title: template.config?.title || template.name,
+            value: template.config?.value,
+            icon: template.config?.icon,
+            color: template.config?.color,
+            content: template.config?.content ?
+                (typeof template.config.content === 'string' ? template.config.content : JSON.stringify(template.config.content))
+                : undefined
+        };
+
+        this.addWidget(mappedTemplate);
+        this.showAddWidgetSidebar = false;
     }
+
     showShortcutModal = false;
     editingWidgetId: string | null = null;
-    // activeTab removed, managed by child component
-
 
     availableRoutes = [
         { path: '/myhome', label: 'My Home' },
@@ -80,10 +93,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         { path: '/crm/dashboard', label: 'CRM Dashboard' }
     ];
 
-
     availableIcons = ['link', 'triangle', 'chevron', 'user', 'cart', 'gear', 'monitor', 'pie-chart', 'wrench', 'truck', 'home', 'search', 'bell', 'calendar'];
-
-
 
     tempShortcutConfig = {
         title: 'New Shortcut',
@@ -93,68 +103,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         color: 'bg-blue-500'
     };
 
-    widgetTemplates: Partial<DashboardWidget>[] = [
-        { title: 'New Stat', type: 'stat', w: 2, h: 4, value: '0', icon: 'activity', color: 'bg-blue-500' },
-        {
-            title: 'New List', type: 'list', w: 3, h: 6,
-            content: JSON.stringify({
-                listItems: [
-                    { label: 'Item 1', value: '100', colorClass: 'text-green-600' },
-                    { label: 'Item 2', value: '50', colorClass: 'text-red-600' }
-                ],
-                footer: 'Just now'
-            })
-        },
-        {
-            title: 'New Bar Chart', type: 'bar', w: 3, h: 6, value: '1.2M',
-            content: JSON.stringify({
-                subtitle: 'Sales', unit: 'M', footer: 'YTD',
-                chartData: [
-                    { value: 30, colorClass: 'bg-blue-400' },
-                    { value: 60, colorClass: 'bg-blue-600' },
-                    { value: 45, colorClass: 'bg-blue-500' }
-                ]
-            })
-        },
-        {
-            title: 'New Pie Chart', type: 'pie', w: 3, h: 6, value: '75%',
-            content: JSON.stringify({
-                subtitle: 'Conversion', target: '100%', footer: 'Monthly'
-            })
-        },
-        {
-            title: 'New Line Chart', type: 'line', w: 3, h: 6,
-            content: JSON.stringify({
-                value1: '100', value2: '80', labelStart: 'Jan', labelEnd: 'Dec'
-            })
-        },
-        {
-            title: 'New Shortcut', type: 'shortcut', w: 2, h: 2, icon: 'link', color: 'bg-indigo-500',
-            content: JSON.stringify({
-                link: '/training',
-                label: 'Go to Training'
-            })
-        },
-        {
-            title: 'New Picture', type: 'picture', w: 3, h: 4,
-            content: JSON.stringify({
-                src: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80',
-                caption: 'Office Space'
-            })
-        }
-    ];
-
     constructor(
         private dashboardService: DashboardService,
         private cdr: ChangeDetectorRef,
         private router: Router
     ) { }
 
-
-
     addWidget(template: Partial<DashboardWidget>) {
         if (template.type === 'shortcut') {
-            this.editingWidgetId = null; // Reset for new widget
+            this.editingWidgetId = null;
             this.tempShortcutConfig = {
                 title: 'New Shortcut',
                 link: '/myhome',
@@ -183,7 +140,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         };
 
         if (this.editingWidgetId) {
-            // Update existing widget - PRESERVE DIMENSIONS
             const widgetIndex = this.widgets.findIndex(w => w.id === this.editingWidgetId);
             if (widgetIndex > -1) {
                 const updatedWidget = {
@@ -197,7 +153,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.editingWidgetId = null;
         } else {
-            // Create new - Default Dimensions
             this.createWidget({ ...template, w: 2, h: 2 });
         }
 
@@ -213,15 +168,40 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     createWidget(template: Partial<DashboardWidget>) {
-        // Find the bottom-most position
         let maxY = 0;
         if (this.grid) {
             this.grid.engine.nodes.forEach(n => {
-                // n.y and n.h might be undefined if not yet rendered, but engine nodes usually have them.
-                // Fallback to widget list if needed, but grid engine is more accurate for current layout.
                 const bottom = (n.y || 0) + (n.h || 0);
                 if (bottom > maxY) maxY = bottom;
             });
+        }
+
+        // Set default widget sizes based on type if not provided
+        let defaultW = template.w || 2;
+        let defaultH = template.h || 2;
+
+        if (!template.w || !template.h) {
+            switch (template.type) {
+                case 'chart':
+                    defaultW = 3;
+                    defaultH = 2;
+                    break;
+                case 'list':
+                    defaultW = 2;
+                    defaultH = 2;
+                    break;
+                case 'stat':
+                    defaultW = 2;
+                    defaultH = 2;
+                    break;
+                case 'shortcut':
+                    defaultW = 2;
+                    defaultH = 2;
+                    break;
+                default:
+                    defaultW = 2;
+                    defaultH = 2;
+            }
         }
 
         const newWidget: DashboardWidget = {
@@ -230,25 +210,29 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             title: template.title || 'New Widget',
             type: template.type as any,
             x: 0,
-            y: maxY, // Place at the bottom to avoid shifting existing widgets
-            w: template.w,
-            h: template.h,
+            y: maxY,
+            w: defaultW,
+            h: defaultH,
             value: template.value,
             icon: template.icon,
             color: template.color,
             content: template.content,
-            meta: template.content ? JSON.parse(template.content) : undefined
+            meta: template.content ? JSON.parse(template.content) : undefined,
+            config: template.config || { // Default config if missing
+                title: template.title,
+                value: template.value,
+                icon: template.icon,
+                color: template.color,
+                content: template.content ? JSON.parse(template.content) : {}
+            }
         };
 
         this.widgets.push(newWidget);
-        this.cdr.detectChanges(); // Update view
+        this.cdr.detectChanges();
 
-        // Initialize new widget in Gridstack
         setTimeout(() => {
             const el = document.getElementById(newWidget.id);
             if (el && this.grid) {
-                // makeWidget will pick up gs-w, gs-h, gs-x, gs-y from the element attributes
-                // updated by Angular binding.
                 this.grid.makeWidget(el);
                 this.showAddWidgetSidebar = false;
                 this.saveLayout();
@@ -259,8 +243,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }, 150);
     }
 
-    navigateTo(path: string) {
-        if (!this.isEditMode && path) {
+    handleWidgetClick(w: DashboardWidget) {
+        if (this.isEditMode) return;
+
+        // Priority: Config Action > Legacy Shortcut Meta
+        const path = w.config?.action?.payload || (w.type === 'shortcut' ? w.meta?.link : null);
+
+        if (path) {
             this.router.navigate([path]);
         }
     }
@@ -285,15 +274,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             margin: 10,
             column: 12,
             animate: true,
-            staticGrid: true, // Start in non-editable mode
+            staticGrid: true,
             disableDrag: true,
             disableResize: true
         };
 
-        // Initialize GridStack
         this.grid = GridStack.init(options, this.gridStackEl.nativeElement);
 
-        // Bind Events
         this.grid.on('change', (event, items) => {
             this.saveLayout();
         });
@@ -301,14 +288,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     toggleEditMode() {
         this.isEditMode = !this.isEditMode;
-        console.log('Toggling Edit Mode:', this.isEditMode);
-
         if (this.grid) {
-            // setStatic(false) means NOT static (editable)
-            // setStatic(true) means static (locked)
             this.grid.setStatic(!this.isEditMode);
-
-            // Explicitly enable/disable to ensure it works
             if (this.isEditMode) {
                 this.grid.enableMove(true);
                 this.grid.enableResize(true);
@@ -316,14 +297,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.grid.enableMove(false);
                 this.grid.enableResize(false);
             }
-        } else {
-            console.error('Grid instance not found during toggle!');
         }
     }
 
     editWidget(w: DashboardWidget) {
+        this.editingWidgetId = w.id;
+
         if (w.type === 'shortcut') {
-            this.editingWidgetId = w.id;
             this.tempShortcutConfig = {
                 title: w.title,
                 link: w.meta?.link || '',
@@ -333,22 +313,72 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             };
             this.showShortcutModal = true;
         } else {
-            console.log('Edit not implemented for', w.type);
+            // Generic handling for Stat, Chart, etc using Template Editor
+            this.editingWidgetConfig = w.config ? JSON.parse(JSON.stringify(w.config)) : {};
+
+            // Ensure core props are in config
+            this.editingWidgetConfig.title = w.title;
+            this.editingWidgetConfig.type = w.type;
+            this.editingWidgetConfig.icon = w.icon;
+            this.editingWidgetConfig.color = w.color;
+
+            if (w.meta) {
+                this.editingWidgetConfig.content = JSON.parse(JSON.stringify(w.meta));
+            } else if (w.content) {
+                try {
+                    this.editingWidgetConfig.content = JSON.parse(w.content);
+                } catch (e) {
+                    this.editingWidgetConfig.content = w.content;
+                }
+            }
+
+            this.showEditWidgetSidebar = true;
         }
+    }
+
+    saveWidgetConfig(newConfig: any) {
+        if (!this.editingWidgetId) return;
+
+        const widgetIndex = this.widgets.findIndex(w => w.id === this.editingWidgetId);
+        if (widgetIndex > -1) {
+            const w = this.widgets[widgetIndex];
+
+            w.config = newConfig;
+            w.title = newConfig.title;
+            w.icon = newConfig.icon;
+            w.color = newConfig.color;
+            w.value = newConfig.value || newConfig.content?.value;
+
+            // Sync Meta & Content
+            if (newConfig.content) {
+                if (typeof newConfig.content === 'object') {
+                    w.meta = newConfig.content;
+                    w.content = JSON.stringify(w.meta);
+                } else {
+                    try {
+                        w.meta = JSON.parse(newConfig.content);
+                    } catch (e) {
+                        w.meta = { label: newConfig.content };
+                    }
+                    w.content = newConfig.content;
+                }
+            }
+
+            this.cdr.detectChanges();
+            this.saveLayout();
+        }
+
+        this.showEditWidgetSidebar = false;
+        this.editingWidgetId = null;
     }
 
     deleteWidget(w: DashboardWidget) {
         if (confirm(`Are you sure you want to delete "${w.title}" ? `)) {
-            // Remove from Gridstack
             const el = document.getElementById(w.id);
             if (el && this.grid) {
                 this.grid.removeWidget(el);
             }
-
-            // Remove from local array
             this.widgets = this.widgets.filter(widget => widget.id !== w.id);
-
-            // Save changes
             this.saveLayout();
         }
     }
@@ -358,77 +388,59 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.error = null;
         this.currentDashboardId = dashboardId;
 
-        // Clear current grid
         this.grid.removeAll();
 
         this.dashboardService.getWidgets(dashboardId).subscribe({
             next: (data) => {
-                console.log('Dashboard Data Received:', data);
                 this.isLoading = false;
 
-                // Parse content JSON into meta
                 this.widgets = (data || []).map(w => {
                     let meta = {};
-                    if (w.content && (w.type === 'list' || w.type === 'bar' || w.type === 'pie' || w.type === 'line' || w.type === 'shortcut' || w.type === 'picture')) {
+                    let config = {};
+                    let template = w.template ? { ...w.template } : null;
+
+                    // Parse instance content (UPDATED: added stat)
+                    if (w.content && (w.type === 'stat' || w.type === 'list' || w.type === 'bar' || w.type === 'pie' || w.type === 'line' || w.type === 'shortcut' || w.type === 'picture')) {
                         try {
                             meta = JSON.parse(w.content);
                         } catch (e) {
                             console.error('Failed to parse widget content:', w.id, e);
                         }
                     }
-                    return { ...w, meta };
+
+                    if (w.config) {
+                        try {
+                            config = typeof w.config === 'string' ? JSON.parse(w.config) : w.config;
+                        } catch (e) {
+                            console.error('Failed to parse widget config:', w.id, e);
+                        }
+                    }
+
+                    if (template && template.defaultConfig) {
+                        try {
+                            if (typeof template.defaultConfig === 'string') {
+                                template.defaultConfig = JSON.parse(template.defaultConfig);
+                            }
+                            if (template.defaultConfig.content && typeof template.defaultConfig.content === 'string') {
+                                try {
+                                    template.defaultConfig.content = JSON.parse(template.defaultConfig.content);
+                                } catch (e) { }
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse template config:', w.id, e);
+                        }
+                    }
+
+                    return { ...w, meta, config, template };
                 });
-
-                // Add widgets to grid
-                // We need to let Angular render the items? OR use Gridstack.addWidget()?
-                // IF we use Angular *ngFor to render .grid-stack-item, we just need to update 'widgets' array
-                // BUT Gridstack needs to know about them. 
-                // The Angular wrapper approach usually involves:
-                // 1. Render items with *ngFor
-                // 2. Call makeWidget() after they are in DOM.
-                // OR better: use grid.load(items) if items match GridStackWidget interface.
-
-                // Let's try the *ngFor approach + makeWidget, or simpler: grid.load()
-                // Our widget structure matches GridStackWidget (x,y,w,h,id).
-
-                // Manual add for now to ensure control
-                this.widgets.forEach(w => {
-                    // We use a slight timeout or direct addWidget with HTML content?
-                    // "Angular way": Let Angular render DOM. Angular gets confused.
-
-                    // "Widget way": Let's use *ngFor. 
-                    // We need to wait for View Update.
-                });
-
-                // Actually, simplest integration without a dedicated wrapper lib:
-                // 1. Set simple widgets array for *ngFor.
-                // 2. Wait for CD.
-                // 3. call makeWidget on new elements.
 
                 this.cdr.detectChanges();
 
-                // After DOM updated
                 setTimeout(() => {
-                    console.log('Initializing widgets for Gridstack...');
                     this.widgets.forEach(w => {
-                        // Check if already initialized? 
-                        // Gridstack 'init' automatically picks up .grid-stack-item children if they exist at init.
-                        // But we are adding them later.
-                        // We need to tell gridstack about them.
-                        // The *ngFor will create elements with class 'grid-stack-item'.
-                        // We need to call makeWidget on them if they are new.
-                        // Actually, if we use `grid.load(widgets)` it expects us to not have DOM?
-
-                        // Let's use the `grid.addWidget(el)` approach? No that's for creating new DOM.
-
-                        // HYBRID: We let Angular render the structure. We use `makeWidget` to register it.
-                        // Ideally we find the element by ID.
                         const el = document.getElementById(w.id);
                         if (el) {
-                            console.log('Found element for widget:', w.id);
                             this.grid.makeWidget(el);
-                        } else {
-                            console.warn('Could not find element for widget:', w.id);
                         }
                     });
                 }, 100);
@@ -449,20 +461,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     saveLayout() {
-        // Get current state from Gridstack
         const saveList = this.grid.save(false) as DashboardWidget[];
-        console.log('GridStack Save List:', saveList);
 
-        // Merge layout info back with content/metadata
         const mergedWidgets = saveList.map(item => {
             const original = this.widgets.find(w => w.id === item.id);
 
             if (!original) {
-                console.warn('Widget found in grid but not in local model:', item.id);
                 return null;
             }
 
-            // Ensure content matches meta (source of truth)
             let content = original.content;
             if (original.meta) {
                 try {
@@ -482,7 +489,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             } as DashboardWidget;
         }).filter(w => w !== null) as DashboardWidget[];
 
-        console.log('Saving Merged Widgets:', mergedWidgets);
         this.dashboardService.saveWidgets(this.currentDashboardId, mergedWidgets).subscribe();
     }
 
