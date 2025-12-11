@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { DashboardService } from './dashboard.service';
 import { GridStack, GridStackOptions } from 'gridstack';
 import { EditShortcutSidebarComponent } from './components/edit-shortcut-sidebar/edit-shortcut-sidebar.component';
+import { AddWidgetSidebarComponent } from './components/add-widget-sidebar/add-widget-sidebar.component';
 
 // Import gridstack CSS if not globally accessible - typically easier to add to styles.css or angular.json
 // But we can try to rely on global styles or basic styling.
@@ -30,7 +31,7 @@ export interface DashboardWidget {
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule, EditShortcutSidebarComponent],
+    imports: [CommonModule, FormsModule, EditShortcutSidebarComponent, AddWidgetSidebarComponent],
     providers: [DashboardService],
     templateUrl: './dashboard.html',
     styles: [`
@@ -53,6 +54,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     error: string | null = null;
 
     showAddWidgetSidebar = false;
+
+    toggleAddWidgetSidebar() {
+        this.showAddWidgetSidebar = !this.showAddWidgetSidebar;
+    }
+
+    onWidgetAddedFromSidebar(template: any) {
+        this.addWidget(template);
+        this.showAddWidgetSidebar = false; // Close after adding
+    }
     showShortcutModal = false;
     editingWidgetId: string | null = null;
     // activeTab removed, managed by child component
@@ -140,9 +150,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router
     ) { }
 
-    toggleAddWidgetSidebar() {
-        this.showAddWidgetSidebar = !this.showAddWidgetSidebar;
-    }
+
 
     addWidget(template: Partial<DashboardWidget>) {
         if (template.type === 'shortcut') {
