@@ -89,9 +89,10 @@ Rules:
 - Extract entity_types based on context (pembelian/purchase/beli → Purchase, kursus/training/pelatihan → Training, proyek/project/konstruksi → PMO, pelanggan/customer/klien → CRM)
 - Extract status if mentioned (pending, approved, completed, etc)
 - Extract department if mentioned (IT, Sales, HR, etc)
-- Extract important keywords for text matching - TRANSLATE Indonesian to English (peralatan kantor → office equipment, server → server, furniture → furniture, laptop → laptop, data center → data center)
-- Skip common words like "yang", "untuk", "dan", "semua", "all"
-- Keywords should be in English to match database content
+- IMPORTANT: Keywords should ONLY contain specific search terms like product names (office equipment, data center, laptop, software). 
+- Do NOT include words already mapped to entity_types (project, proyek, pembelian, purchase, kursus, training, customer, pelanggan)
+- Do NOT include common words (yang, untuk, dan, semua, all, tampilkan, nilai, value, diatas, dibawah)
+- Keywords should be in English to match database content. Translate Indonesian terms (peralatan kantor → office equipment)
 
 Return JSON format only."""),
     ("human", "{query}")
@@ -162,6 +163,18 @@ def execute_hybrid_search(intent: SearchIntent, query: str, limit: int = 100) ->
         if intent.owner_filter:
             conditions.append('owner_name ILIKE %s')
             params.append(f"%{intent.owner_filter}%")
+        
+        # Amount filter - parse operator and value (e.g., "<8000000", ">1000000")
+        if intent.amount_filter:
+            import re
+            match = re.match(r'([<>=]+)\s*(\d+)', intent.amount_filter)
+            if match:
+                operator = match.group(1)
+                amount_value = int(match.group(2))
+                # Map to valid SQL operators
+                if operator in ['<', '>', '<=', '>=', '=']:
+                    conditions.append(f'amount {operator} %s')
+                    params.append(amount_value)
         
         # Keyword filter - apply to title, description, search_text
         if intent.keywords:
