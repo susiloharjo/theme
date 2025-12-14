@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, takeUntil, finalize } from 'rxjs/operators';
 import { SearchService } from './search.service';
 import { SearchResult, SearchFacets, SearchFilters, DateRangeOption } from './search.types';
@@ -47,6 +47,7 @@ export class SuperSearchComponent implements OnInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
     private searchSubject = new Subject<string>();
+    private searchSubscription?: Subscription;
 
     constructor(
         private searchService: SearchService,
@@ -86,6 +87,11 @@ export class SuperSearchComponent implements OnInit, OnDestroy {
     }
 
     performSearch(): void {
+        // Cancel previous request to prevent race conditions
+        if (this.searchSubscription) {
+            this.searchSubscription.unsubscribe();
+        }
+
         this.isLoading = true;
         console.log('Starting search for:', this.searchQuery);
 
@@ -100,7 +106,7 @@ export class SuperSearchComponent implements OnInit, OnDestroy {
             filters.dateRange = this.selectedDateRange as any;
         }
 
-        this.searchService.search({
+        this.searchSubscription = this.searchService.search({
             query: this.searchQuery,
             filters,
             page: this.currentPage,
@@ -185,10 +191,12 @@ export class SuperSearchComponent implements OnInit, OnDestroy {
     }
 
     get visibleStatuses() {
-        if (this.showMoreStatuses || this.facets.status.length <= 5) {
-            return this.facets.status;
+        // Null-safe: prevent race condition when facets not yet loaded
+        const statuses = this.facets?.status ?? [];
+        if (this.showMoreStatuses || statuses.length <= 5) {
+            return statuses;
         }
-        return this.facets.status.slice(0, 5);
+        return statuses.slice(0, 5);
     }
 
     // Result actions

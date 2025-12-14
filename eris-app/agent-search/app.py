@@ -89,8 +89,9 @@ Rules:
 - Extract entity_types based on context (pembelian/purchase/beli → Purchase, kursus/training/pelatihan → Training, proyek/project/konstruksi → PMO, pelanggan/customer/klien → CRM)
 - Extract status if mentioned (pending, approved, completed, etc)
 - Extract department if mentioned (IT, Sales, HR, etc)
-- Extract important keywords for semantic matching (NOT common words like "yang", "untuk", "dan")
-- Indonesian and English queries should both be understood
+- Extract important keywords for text matching - TRANSLATE Indonesian to English (peralatan kantor → office equipment, server → server, furniture → furniture, laptop → laptop, data center → data center)
+- Skip common words like "yang", "untuk", "dan", "semua", "all"
+- Keywords should be in English to match database content
 
 Return JSON format only."""),
     ("human", "{query}")
@@ -161,6 +162,12 @@ def execute_hybrid_search(intent: SearchIntent, query: str, limit: int = 100) ->
         if intent.owner_filter:
             conditions.append('owner_name ILIKE %s')
             params.append(f"%{intent.owner_filter}%")
+        
+        # Keyword filter - apply to title, description, search_text
+        if intent.keywords:
+            for kw in intent.keywords:
+                conditions.append('(title ILIKE %s OR description ILIKE %s OR search_text ILIKE %s)')
+                params.extend([f"%{kw}%", f"%{kw}%", f"%{kw}%"])
         
         where_clause = " AND ".join(conditions) if conditions else "TRUE"
         
