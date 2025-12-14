@@ -105,7 +105,8 @@ router.post('/', async (req, res) => {
                 { subtitle: { contains: searchQuery, mode: 'insensitive' } },
                 { description: { contains: searchQuery, mode: 'insensitive' } },
                 { searchText: { contains: searchQuery, mode: 'insensitive' } },
-                { ownerName: { contains: searchQuery, mode: 'insensitive' } }
+                { ownerName: { contains: searchQuery, mode: 'insensitive' } },
+                { status: { contains: searchQuery, mode: 'insensitive' } }
             ];
         }
 
@@ -163,6 +164,13 @@ router.post('/', async (req, res) => {
                     keywordScore += 50;
                 }
 
+                // Status scoring
+                if (item.status && item.status.toLowerCase() === searchQuery) {
+                    keywordScore += 300; // Exact status match
+                } else if (item.status && item.status.toLowerCase().includes(searchQuery)) {
+                    keywordScore += 150; // Partial status match
+                }
+
                 // Recency bonus
                 const daysSinceUpdate = (Date.now() - new Date(item.updatedAt).getTime()) / (1000 * 60 * 60 * 24);
                 keywordScore += Math.max(0, 10 - daysSinceUpdate);
@@ -209,13 +217,13 @@ router.post('/', async (req, res) => {
             allResults.sort((a, b) => b._score - a._score);
 
             // Filter out low-relevance results based on final score
-            // Items with term boost (e.g., kursus -> Training +1000) will pass
+            // Keep items with good keyword match OR good hybrid score
             if (semanticResults && semanticResults.length > 0) {
                 const originalCount = allResults.length;
-                // Filter by hybrid score (150 = roughly 0.15 semantic * 1000)
-                allResults = allResults.filter(r => r._score >= 150);
+                // Keep if: keyword score >= 100 OR hybrid score >= 100
+                allResults = allResults.filter(r => r._keywordScore >= 100 || r._score >= 100);
                 if (allResults.length < originalCount) {
-                    console.log(`📉 Filtered ${originalCount - allResults.length} low-relevance items (score < 150)`);
+                    console.log(`📉 Filtered ${originalCount - allResults.length} low-relevance items`);
                 }
             }
         }
