@@ -72,6 +72,18 @@ async function main() {
             })
         },
         {
+            id: 'picture-default',
+            name: 'Picture Frame',
+            type: 'picture',
+            defaultConfig: JSON.stringify({
+                title: 'Gallery',
+                content: {
+                    src: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809',
+                    caption: 'Beautiful View'
+                }
+            })
+        },
+        {
             id: 'shortcut-default',
             name: 'Shortcut',
             type: 'shortcut',
