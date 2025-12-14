@@ -18,6 +18,10 @@ npx prisma db push --accept-data-loss || true
 echo "🔄 Setting up pgvector..."
 node setup-vector.js || true
 
+# Seed Widgets
+echo "🌱 Seeding widgets..."
+node seed-widgets.js || true
+
 # Build search index with embeddings (optional, can be slow first time)
 if [ "$BUILD_INDEX" = "true" ]; then
   echo "🔄 Building search index..."

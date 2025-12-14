@@ -1,75 +1,60 @@
 /**
- * Embedding Service - Local Multilingual Semantic Search
- * Uses paraphrase-multilingual-MiniLM-L12-v2 for English + Indonesian
- * Model size: ~420MB (cached after first download)
+ * Embedding Service - Proxy to Agent Search API (Gemini)
+ * Replaces local Xenova/transformers to save resources
  */
 
-let pipeline = null;
-let embedder = null;
+const AGENT_SEARCH_URL = process.env.AGENT_SEARCH_URL || 'http://agent-search:8000';
 
 /**
- * Initialize the embedding model (lazy load)
+ * Initialize - No-op for API proxy
  */
 async function initEmbedder() {
-    if (embedder) return embedder;
-
-    console.log('🔄 Loading multilingual embedding model (first time may take a while)...');
-
-    // Dynamic import for ES module
-    const { pipeline: pipelineFn } = await import('@xenova/transformers');
-    pipeline = pipelineFn;
-
-    // Load multilingual model - supports 50+ languages including Indonesian
-    embedder = await pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2', {
-        quantized: true // Use quantized version for smaller size
-    });
-
-    console.log('✅ Embedding model loaded successfully');
-    return embedder;
+    console.log('✅ Embedding service configured (Remote API via Agent Search)');
+    return true;
 }
 
 /**
- * Generate embedding vector for text
- * @param {string} text - Input text (English or Indonesian)
- * @returns {Promise<number[]>} - 384-dimensional vector
+ * Generate embedding vector for text via API
+ * @param {string} text - Input text
+ * @returns {Promise<number[]>} - Vector array
  */
 async function generateEmbedding(text) {
-    const model = await initEmbedder();
-
-    // Truncate text if too long (max ~512 tokens)
-    const truncatedText = text.slice(0, 1000);
-
-    const output = await model(truncatedText, {
-        pooling: 'mean',
-        normalize: true
-    });
-
-    // Convert to regular array
-    return Array.from(output.data);
+    return (await generateEmbeddings([text]))[0];
 }
 
 /**
- * Generate embeddings for multiple texts (batch)
+ * Generate embeddings for multiple texts (batch) via API
  * @param {string[]} texts - Array of input texts
- * @returns {Promise<number[][]>} - Array of 384-dimensional vectors
+ * @returns {Promise<number[][]>} - Array of vectors
  */
 async function generateEmbeddings(texts) {
-    const embeddings = [];
-    for (const text of texts) {
-        const embedding = await generateEmbedding(text);
-        embeddings.push(embedding);
+    try {
+        const response = await fetch(`${AGENT_SEARCH_URL}/embed`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ texts })
+        });
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.embeddings;
+    } catch (error) {
+        console.error('❌ Error generating embeddings via API:', error.message);
+        // Return empty embeddings on failure to prevent crash
+        return texts.map(() => []);
     }
-    return embeddings;
 }
 
 /**
- * Calculate cosine similarity between two vectors
- * @param {number[]} a - First vector
- * @param {number[]} b - Second vector
- * @returns {number} - Similarity score (0-1)
+ * Calculate cosine similarity (utility)
  */
 function cosineSimilarity(a, b) {
-    if (a.length !== b.length) return 0;
+    if (!a || !b || a.length !== b.length) return 0;
 
     let dotProduct = 0;
     let normA = 0;

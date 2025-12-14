@@ -13,19 +13,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 
 from models import SearchIntent, SearchResult, SearchResponse
 
-# Optional: sentence-transformers for embeddings (if available)
-try:
-    from sentence_transformers import SentenceTransformer
-    EMBEDDING_MODEL = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-    print("✅ Sentence Transformer loaded for embeddings")
-except ImportError:
-    EMBEDDING_MODEL = None
-    print("⚠️ sentence-transformers not available, using keyword search only")
+# Global Embedding Model (Gemini)
+EMBEDDING_MODEL = None
 
 load_dotenv()
 
@@ -40,17 +34,30 @@ llm = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize LLM on startup"""
-    global llm
+    """Initialize LLM and Embedding models on startup"""
+    global llm, EMBEDDING_MODEL
+    
     if GOOGLE_API_KEY:
+        # 1. Initialize LLM (Gemini 2.5 Flash)
         llm = ChatGoogleGenerativeAI(
             model=GEMINI_MODEL,
             google_api_key=GOOGLE_API_KEY,
             temperature=0,
         )
         print(f"✅ Gemini LLM initialized: {GEMINI_MODEL}")
+        
+        # 2. Initialize Embeddings (Gemini Embeddings-001)
+        try:
+            EMBEDDING_MODEL = GoogleGenerativeAIEmbeddings(
+                model="models/embedding-001",
+                google_api_key=GOOGLE_API_KEY
+            )
+            print("✅ Gemini Embeddings initialized")
+        except Exception as e:
+            print(f"⚠️ Failed to init Embeddings: {e}")
     else:
         print("⚠️ No GOOGLE_API_KEY, running in fallback mode")
+        
     yield
     print("🔴 Shutting down agent-search")
 
@@ -235,6 +242,28 @@ def execute_hybrid_search(intent: SearchIntent, query: str, limit: int = 100) ->
         import traceback
         traceback.print_exc()
         return []
+
+
+@app.post("/embed")
+async def generate_embeddings(request: dict):
+    """
+    Generate embeddings for a list of texts (used by Node.js indexer)
+    Payload: {"texts": ["text1", "text2"]}
+    """
+    if not EMBEDDING_MODEL:
+        raise HTTPException(status_code=503, detail="Embedding model not initialized")
+        
+    try:
+        texts = request.get("texts", [])
+        if not texts:
+            return {"embeddings": []}
+            
+        print(f"🔤 Generating embeddings for {len(texts)} items")
+        embeddings = EMBEDDING_MODEL.embed_documents(texts)
+        return {"embeddings": embeddings}
+    except Exception as e:
+        print(f"❌ Embedding generation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/search", response_model=SearchResponse)
