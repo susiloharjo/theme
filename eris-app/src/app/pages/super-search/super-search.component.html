@@ -1,0 +1,350 @@
+<!-- Super Search - SAP Fiori Style Layout -->
+<div class="min-h-screen bg-gray-50">
+    <!-- Header Bar -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4">
+        <div class="flex items-center gap-4">
+            <!-- Filter Toggle -->
+            <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                    </path>
+                </svg>
+            </button>
+
+            <!-- Search Input with Button -->
+            <div class="flex-1 flex gap-2">
+                <div class="flex-1 relative">
+                    <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearchSubmit()"
+                        placeholder="Search across all modules..."
+                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <!-- Search Button -->
+                <button (click)="onSearchSubmit()"
+                    class="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Search
+                </button>
+            </div>
+
+            <!-- Results Count -->
+            <div class="text-sm text-gray-600">
+                Results <span class="font-semibold">({{ totalCount | number }})</span>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center gap-2">
+                <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Download">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                </button>
+                <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Sort">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+                    </svg>
+                </button>
+                <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Settings">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex">
+        <!-- Left Sidebar - Facets -->
+        <div class="w-72 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)] flex-shrink-0">
+            <!-- Search In Section -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Search In</h3>
+                    <button class="p-1 hover:bg-gray-100 rounded transition-colors">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- All option -->
+                <div class="flex items-center justify-between py-2 px-3 rounded-lg cursor-pointer transition-colors"
+                    [class.bg-blue-50]="selectedObjectTypes.length === 0"
+                    [class.text-blue-700]="selectedObjectTypes.length === 0" (click)="clearAllFilters()">
+                    <span>All</span>
+                    <span class="text-sm">{{ totalCount | number }}</span>
+                </div>
+
+                <!-- Object Type Facets -->
+                @for (facet of facets.objectType; track facet.value) {
+                <div class="flex items-center justify-between py-2 px-3 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
+                    [class.bg-blue-50]="isObjectTypeSelected(facet.value)"
+                    [class.text-blue-700]="isObjectTypeSelected(facet.value)" (click)="toggleObjectType(facet.value)">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full" [class]="getObjectTypeColor(facet.value)"></span>
+                        <span>{{ facet.value }}</span>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ facet.count | number }}</span>
+                </div>
+                }
+            </div>
+
+            <!-- Filter By Section -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Filter By</h3>
+                    @if (selectedStatuses.length > 0 || selectedDateRange) {
+                    <button class="text-xs text-blue-600 hover:text-blue-700" (click)="clearAllFilters()">
+                        Clear all
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Status Facets -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-medium text-gray-700">Status</h3>
+                    <button class="p-1 hover:bg-gray-100 rounded transition-colors">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                @for (status of visibleStatuses; track status.value) {
+                <label
+                    class="flex items-center justify-between py-1.5 cursor-pointer hover:bg-gray-50 rounded px-2 -mx-2">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" [checked]="isStatusSelected(status.value)"
+                            (change)="toggleStatus(status.value)"
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm text-gray-700">{{ status.value }}</span>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ status.count | number }}</span>
+                </label>
+                }
+
+                @if (facets.status.length > 5) {
+                <button class="text-sm text-blue-600 hover:text-blue-700 mt-2"
+                    (click)="showMoreStatuses = !showMoreStatuses">
+                    {{ showMoreStatuses ? 'Show Less' : 'Show More' }}
+                </button>
+                }
+            </div>
+
+            <!-- Date Range -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-medium text-gray-700">Document Date</h3>
+                </div>
+
+                @for (option of dateRangeOptions; track option.value) {
+                <label
+                    class="flex items-center justify-between py-1.5 cursor-pointer hover:bg-gray-50 rounded px-2 -mx-2">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" [checked]="selectedDateRange === option.value"
+                            (change)="selectDateRange(option.value)"
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm text-gray-700">{{ option.label }}</span>
+                    </div>
+                </label>
+                }
+            </div>
+        </div>
+
+        <!-- Main Content - Results -->
+        <div class="flex-1 p-6">
+            <!-- Loading State -->
+            @if (isLoading) {
+            <div class="flex items-center justify-center py-12">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span class="ml-3 text-gray-600">Searching...</span>
+            </div>
+            }
+
+            <!-- No Results -->
+            @if (!isLoading && results.length === 0) {
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No results found</h3>
+                <p class="text-gray-600">Try adjusting your search or filters</p>
+            </div>
+            }
+
+            <!-- Results List -->
+            @if (!isLoading && results.length > 0) {
+            <div class="space-y-4">
+                @for (result of results; track result.id) {
+                <div class="bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                    (click)="navigateToResult(result)">
+                    <div class="p-4">
+                        <!-- Header Row -->
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <!-- Type Badge -->
+                                <span class="px-2 py-1 text-xs font-medium text-white rounded"
+                                    [class]="getObjectTypeColor(result.objectType)">
+                                    {{ result.objectType }}
+                                </span>
+                                <!-- Title -->
+                                <h3 class="text-lg font-semibold text-blue-600 hover:text-blue-700">
+                                    {{ result.title }}
+                                    @if (result.referenceNo) {
+                                    <span class="text-gray-500 font-normal">({{ result.referenceNo }})</span>
+                                    }
+                                </h3>
+                            </div>
+                            <!-- Expand Button -->
+                            <button class="p-1 hover:bg-gray-100 rounded transition-colors"
+                                (click)="toggleResultExpand(result.id); $event.stopPropagation()">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Info Row -->
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-2">
+                            @if (result.subtitle) {
+                            <div class="flex items-center gap-1">
+                                <span class="text-gray-400">Type:</span>
+                                <span>{{ result.subtitle }}</span>
+                            </div>
+                            }
+                            @if (result.ownerName) {
+                            <div class="flex items-center gap-1">
+                                <span class="text-gray-400">Owner:</span>
+                                <span class="text-blue-600">{{ result.ownerName }}</span>
+                            </div>
+                            }
+                            @if (result.status) {
+                            <span class="px-2 py-0.5 text-xs font-medium rounded-full"
+                                [class]="getStatusColor(result.status)">
+                                {{ result.status }}
+                            </span>
+                            }
+                            @if (result.amount) {
+                            <div class="flex items-center gap-1">
+                                <span class="text-gray-400">Value:</span>
+                                <span class="font-medium">{{ formatAmount(result.amount, result.currency) }}</span>
+                            </div>
+                            }
+                            @if (result.datePrimary) {
+                            <div class="flex items-center gap-1">
+                                <span class="text-gray-400">Date:</span>
+                                <span>{{ formatDate(result.datePrimary) }}</span>
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Description (collapsed by default) -->
+                        @if (result.description) {
+                        <p class="text-sm text-gray-500 line-clamp-1">
+                            {{ result.description }}
+                        </p>
+                        }
+
+                        <!-- Expanded Content -->
+                        @if (expandedResult === result.id) {
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                @if (result.department) {
+                                <div>
+                                    <span class="text-gray-400">Department:</span>
+                                    <span class="ml-2 text-gray-700">{{ result.department }}</span>
+                                </div>
+                                }
+                                @if (result.dateSecondary) {
+                                <div>
+                                    <span class="text-gray-400">Due Date:</span>
+                                    <span class="ml-2 text-gray-700">{{ formatDate(result.dateSecondary) }}</span>
+                                </div>
+                                }
+                                @if (result.tags && result.tags.length > 0) {
+                                <div class="col-span-2">
+                                    <span class="text-gray-400">Tags:</span>
+                                    <span class="ml-2">
+                                        @for (tag of result.tags; track tag) {
+                                        <span
+                                            class="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs mr-1">{{
+                                            tag }}</span>
+                                        }
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <button
+                                    class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
+                                    View Details
+                                </button>
+                                <button
+                                    class="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition-colors">
+                                    Related Items
+                                </button>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+
+            <!-- Pagination -->
+            @if (totalPages > 1) {
+            <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+                <div class="text-sm text-gray-600">
+                    Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalCount) }}
+                    of {{ totalCount }} results
+                </div>
+                <div class="flex gap-2">
+                    <button
+                        class="px-3 py-1.5 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+                        Previous
+                    </button>
+                    @for (page of [].constructor(totalPages); track $index) {
+                    @if ($index < 5 || $index===totalPages - 1 || Math.abs($index + 1 - currentPage) <=1) { <button
+                        class="px-3 py-1.5 border rounded text-sm" [class.bg-blue-600]="currentPage === $index + 1"
+                        [class.text-white]="currentPage === $index + 1"
+                        [class.border-blue-600]="currentPage === $index + 1"
+                        [class.border-gray-300]="currentPage !== $index + 1"
+                        [class.hover:bg-gray-50]="currentPage !== $index + 1" (click)="onPageChange($index + 1)">
+                        {{ $index + 1 }}
+                        </button>
+                        }
+                        }
+                        <button
+                            class="px-3 py-1.5 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
+                            Next
+                        </button>
+                </div>
+            </div>
+            }
+            }
+        </div>
+    </div>
+</div>

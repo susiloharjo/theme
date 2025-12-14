@@ -47,3 +47,33 @@ model Widget {
 
   @@map("widgets")
 }
+
+// Super Search - Aggregated index table for cross-module search
+// Data from CRM, PMO, Training, Purchase is flattened here
+model SearchIndex {
+  id            String   @id @default(uuid())
+  objectType    String   @map("object_type")      // CRM | PMO | Training | Purchase
+  objectId      String   @map("object_id")        // Original entity ID
+  referenceNo   String?  @map("reference_no")     // Document code/number
+  title         String
+  subtitle      String?
+  description   String?
+  status        String?
+  ownerId       String?  @map("owner_id")
+  ownerName     String?  @map("owner_name")
+  department    String?
+  amount        Decimal?
+  currency      String?
+  datePrimary   DateTime? @map("date_primary")    // Document date / start date
+  dateSecondary DateTime? @map("date_secondary")  // End date / due date
+  tags          String[]
+  searchText    String   @map("search_text")      // Concatenated searchable text
+  permissions   String[]
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("search_index")
+  @@index([objectType])
+  @@index([status])
+  @@index([ownerId])
+  @@index([referenceNo])
+}

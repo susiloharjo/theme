@@ -2,6 +2,7 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const searchRoutes = require('./search-routes');
 
 const app = express();
 const port = 3000;
@@ -9,6 +10,9 @@ const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// Mount search routes
+app.use('/api/search', searchRoutes);
 
 // Routes
 

@@ -101,7 +101,8 @@
             <!-- Center: Search (Visible on large screens) -->
             <div class="hidden lg:flex flex-1 max-w-xl mx-4">
                 <div class="relative w-full">
-                    <input type="text" placeholder="Search"
+                    <input type="text" placeholder="Search across all modules..." #headerSearchInput
+                        (keyup.enter)="router.navigate(['/search'], { queryParams: { q: headerSearchInput.value } })"
                         class="shell-search-input w-full pl-10 pr-4 py-1.5 rounded-full text-sm text-gray-700 placeholder-gray-500">
                     <svg class="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
@@ -113,8 +114,8 @@
 
             <!-- Right: Actions & User -->
             <div class="flex items-center gap-1 sm:gap-2 relative">
-                <!-- Search Icon (Mobile) -->
-                <button class="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+                <!-- Search Icon (Mobile) - Navigate to search page -->
+                <button class="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full" routerLink="/search">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>

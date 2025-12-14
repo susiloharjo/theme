@@ -17,6 +17,7 @@ export const routes: Routes = [
             { path: 'myhome', component: Home },
             { path: 'profile', component: Profile, data: { breadcrumb: 'My Profile' } },
             { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent), data: { breadcrumb: 'My Home' } },
+            { path: 'search', loadComponent: () => import('./pages/super-search/super-search.component').then(m => m.SuperSearchComponent), data: { breadcrumb: 'Search' } },
             { path: 'training', component: TrainingListComponent, data: { breadcrumb: 'Training' } },
             { path: 'training/request', component: TrainingRequestComponent, data: { breadcrumb: 'Training Request' } },
             { path: 'training/list', component: TrainingListComponent, data: { breadcrumb: 'Training List' } },

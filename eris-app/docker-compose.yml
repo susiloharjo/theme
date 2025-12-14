@@ -15,24 +15,19 @@ services:
   api:
     build:
       context: ./server
-      dockerfile: Dockerfile #(We might need to create a simple dockerfile or just use node image inline if possible, but safer to build)
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    command: sh -c "npx prisma db push && npm install && npm start"
+      dockerfile: Dockerfile
+    container_name: eris-api
     ports:
       - "3000:3000"
-
     restart: unless-stopped
     environment:
       - DATABASE_URL=postgresql://eris:eris.1234@postgres:5432/dashboard?schema=public
+      - BUILD_INDEX=true
     depends_on:
       - postgres
 
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     container_name: eris-postgres
     environment:
       POSTGRES_USER: eris

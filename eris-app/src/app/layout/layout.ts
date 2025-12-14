@@ -138,7 +138,7 @@ export class Layout implements OnInit {
   @ViewChild('navContainer') navContainer!: ElementRef;
 
   constructor(
-    private router: Router,
+    public router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
 
