@@ -11,34 +11,48 @@ async function main() {
             name: 'Stat Card',
             type: 'stat',
             defaultConfig: JSON.stringify({
-                label: 'New Stat',
+                title: 'New Stat',
                 value: '0',
-                trend: '+0%',
-                trendDirection: 'up',
                 icon: 'activity',
-                color: 'blue'
+                color: 'text-blue-600',
+                content: {
+                    trend: '+0%',
+                    trendDirection: 'up'
+                }
             })
         },
         {
             id: 'chart-line-default',
             name: 'Line Chart',
-            type: 'chart-line',
+            type: 'line',
             defaultConfig: JSON.stringify({
                 title: 'Performance',
-                data: [],
-                xAxisKey: 'date',
-                seriesKey: 'value'
+                content: {
+                    value1: 'High',
+                    value2: 'Low',
+                    labelStart: 'Jan',
+                    labelEnd: 'Dec'
+                }
             })
         },
         {
             id: 'chart-bar-default',
             name: 'Bar Chart',
-            type: 'chart-bar',
+            type: 'bar',
             defaultConfig: JSON.stringify({
                 title: 'Comparison',
-                data: [],
-                xAxisKey: 'category',
-                seriesKey: 'value'
+                value: '1,250',
+                content: {
+                    unit: 'Units',
+                    footer: 'Last 30 days',
+                    chartData: [
+                        { value: 40, colorClass: 'bg-blue-300' },
+                        { value: 70, colorClass: 'bg-blue-400' },
+                        { value: 55, colorClass: 'bg-blue-300' },
+                        { value: 85, colorClass: 'bg-blue-500' },
+                        { value: 60, colorClass: 'bg-blue-300' }
+                    ]
+                }
             })
         },
         {
@@ -47,7 +61,14 @@ async function main() {
             type: 'list',
             defaultConfig: JSON.stringify({
                 title: 'Recent Activity',
-                items: []
+                content: {
+                    listItems: [
+                        { label: 'Project Alpha', value: 'Active', colorClass: 'text-green-600' },
+                        { label: 'Design Review', value: 'Pending', colorClass: 'text-orange-500' },
+                        { label: 'Client Meeting', value: 'Today', colorClass: 'text-blue-600' }
+                    ],
+                    footer: 'View all'
+                }
             })
         },
         {
@@ -55,10 +76,10 @@ async function main() {
             name: 'Shortcut',
             type: 'shortcut',
             defaultConfig: JSON.stringify({
-                label: 'Shortcut',
+                title: 'Dashboard',
                 link: '/dashboard',
                 icon: 'link',
-                color: 'gray'
+                color: 'text-blue-600'
             })
         }
     ];
@@ -89,11 +110,13 @@ async function main() {
                     templateId: 'stat-default',
                     x: 0, y: 0, w: 3, h: 2,
                     config: JSON.stringify({
-                        label: 'Total Revenue',
+                        title: 'Total Revenue',
                         value: '$120,500',
-                        trend: '+12%',
-                        trendDirection: 'up',
-                        color: 'green'
+                        color: 'text-green-600',
+                        content: {
+                            trend: '+12%',
+                            trendDirection: 'up'
+                        }
                     })
                 },
                 {
@@ -102,11 +125,13 @@ async function main() {
                     templateId: 'stat-default',
                     x: 3, y: 0, w: 3, h: 2,
                     config: JSON.stringify({
-                        label: 'Active Projects',
+                        title: 'Active Projects',
                         value: '24',
-                        trend: '+3',
-                        trendDirection: 'up',
-                        color: 'blue'
+                        color: 'text-blue-600',
+                        content: {
+                            trend: '+3',
+                            trendDirection: 'up'
+                        }
                     })
                 },
                 {
@@ -115,7 +140,8 @@ async function main() {
                     templateId: 'chart-bar-default',
                     x: 0, y: 2, w: 6, h: 4,
                     config: JSON.stringify({
-                        title: 'Monthly Sales'
+                        title: 'Monthly Sales',
+                        value: '4,500'
                     })
                 }
             ]
