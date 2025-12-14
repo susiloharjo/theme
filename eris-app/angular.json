@@ -60,7 +60,8 @@
               "buildTarget": "eris-app:build:production"
             },
             "development": {
-              "buildTarget": "eris-app:build:development"
+              "buildTarget": "eris-app:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
