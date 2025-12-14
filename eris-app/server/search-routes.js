@@ -9,6 +9,34 @@ const { buildSearchIndex } = require('./projection-builder');
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// Agent Search URL (Python LangChain service)
+const AGENT_SEARCH_URL = process.env.AGENT_SEARCH_URL || 'http://agent-search:8000';
+
+/**
+ * Call agent-search Python service for LLM-powered semantic search
+ */
+async function callAgentSearch(query, page, size) {
+    try {
+        const response = await fetch(`${AGENT_SEARCH_URL}/search`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, page, size })
+        });
+
+        if (!response.ok) {
+            console.warn('Agent search returned error:', response.status);
+            return null;
+        }
+
+        const data = await response.json();
+        console.log(`🤖 Agent search for "${query}": ${data.total_count} results in ${data.duration_ms}ms`);
+        return data;
+    } catch (error) {
+        console.warn('Agent search unavailable:', error.message);
+        return null;
+    }
+}
+
 // Lazy load embedding service
 let embeddingService = null;
 async function getEmbeddingService() {
@@ -26,14 +54,64 @@ async function getEmbeddingService() {
 
 /**
  * POST /api/search
- * Main search endpoint with ranking and faceting
+ * Main search endpoint - uses agent-search for LLM-powered semantic search
  */
 router.post('/', async (req, res) => {
     try {
         const startTime = Date.now();
         const { query = '', filters = {}, page = 1, size = 20 } = req.body;
 
-        // Build where clause
+        // If there's a search query, try agent-search first (LLM-powered)
+        if (query && query.trim()) {
+            const agentResult = await callAgentSearch(query.trim(), page, size);
+
+            if (agentResult && agentResult.results) {
+                // Transform agent-search results to match expected format
+                const results = agentResult.results.map(r => ({
+                    id: r.id,
+                    referenceNo: r.referenceNo,
+                    objectType: r.objectType,
+                    title: r.title,
+                    subtitle: r.subtitle,
+                    description: r.description,
+                    status: r.status,
+                    ownerName: r.ownerName,
+                    department: r.department,
+                    amount: r.amount,
+                    _score: r.relevance_score * 1000 // Normalize score
+                }));
+
+                // Build facets from results to fix frontend display
+                const statusCounts = {};
+                const typeCounts = {};
+                results.forEach(r => {
+                    if (r.status) statusCounts[r.status] = (statusCounts[r.status] || 0) + 1;
+                    if (r.objectType) typeCounts[r.objectType] = (typeCounts[r.objectType] || 0) + 1;
+                });
+
+                // Keys must match frontend: status, objectType (not statuses, objectTypes)
+                const facets = {
+                    status: Object.entries(statusCounts).map(([value, count]) => ({ value, count })),
+                    objectType: Object.entries(typeCounts).map(([value, count]) => ({ value, count }))
+                };
+
+                const duration = Date.now() - startTime;
+                console.log(`Search "${query}" took ${duration}ms, found ${agentResult.total_count} results`);
+
+                return res.json({
+                    results,
+                    totalCount: agentResult.total_count,
+                    page,
+                    size,
+                    facets,
+                    searchIntent: agentResult.intent // Include LLM intent for debugging
+                });
+            }
+            // Fall through to local search if agent-search fails
+            console.log('Falling back to local search...');
+        }
+
+        // === LOCAL SEARCH FALLBACK ===
         const where = {};
 
         // Apply filters

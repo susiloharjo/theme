@@ -39,5 +39,20 @@ services:
       - "5432:5432"
     restart: unless-stopped
 
+  agent-search:
+    build:
+      context: ./agent-search
+      dockerfile: Dockerfile
+    container_name: eris-agent-search
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://eris:eris.1234@postgres:5432/dashboard
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_MODEL=gemini-2.5-flash
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:
