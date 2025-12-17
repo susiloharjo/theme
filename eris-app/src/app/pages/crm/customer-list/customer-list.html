@@ -22,7 +22,7 @@
             <div class="lg:col-span-2">
                 <label class="block text-xs font-medium text-gray-500 mb-1">Search</label>
                 <div class="relative">
-                    <input type="text"
+                    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
                         class="input w-full py-2 pl-9 pr-3 text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Search by name/code...">
                     <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
@@ -167,7 +167,7 @@
             class="px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
             <p class="text-sm text-gray-500">
                 Showing <span class="font-medium">{{ startIndex }}</span> to <span class="font-medium">{{ endIndex
-                    }}</span> of <span class="font-medium">{{ customers.length }}</span> results
+                    }}</span> of <span class="font-medium">{{ filteredCustomers.length }}</span> results
             </p>
             <div class="flex gap-2">
                 <button (click)="prevPage()" [disabled]="currentPage === 1"

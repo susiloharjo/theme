@@ -48,6 +48,84 @@ model Widget {
   @@map("widgets")
 }
 
+model CrmCustomer {
+  id           String   @id @default(uuid())
+  code         String
+  name         String
+  industry     String
+  status       String
+  ownerName    String?
+  lastActivity DateTime?
+  revenue      Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("crm_customers")
+}
+
+model CrmOpportunity {
+  id        String   @id @default(uuid())
+  name      String
+  account   String
+  stage     String
+  amount    Float
+  closeDate DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("crm_opportunities")
+}
+
+model PmoProject {
+  id          String   @id // Allowing manual ID like 'PROJ-001'
+  name        String
+  manager     String
+  type        String
+  status      String
+  progress    Int
+  health      String
+  startDate   DateTime
+  endDate     DateTime
+  budget      String?
+  description String?
+  client      String?
+  priority    String?
+  location    String?
+
+  // Complex Objects stored as JSON
+  budgetStats  Json?
+  riskStats    Json?
+  taskStats    Json?
+  team         Json?
+  suppliers    Json?
+  procurements Json?
+  risks        Json?
+  activityFeed Json?
+  // We can add others as needed
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pmo_projects")
+}
+
+model TrainingSession {
+  id        String   @id // Manual IDs '1', '2' etc
+  topic     String
+  provider  String
+  type      String
+  location  String
+  startDate DateTime
+  endDate   DateTime
+  status    String
+  cost      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("training_sessions")
+}
+
 // Super Search - Aggregated index table for cross-module search
 // Data from CRM, PMO, Training, Purchase is flattened here
 model SearchIndex {
@@ -76,4 +154,21 @@ model SearchIndex {
   @@index([status])
   @@index([ownerId])
   @@index([referenceNo])
+}
+
+model PurchaseRequest {
+  id          String   @id // e.g. "PR-2025-001"
+  title       String
+  requester   String
+  department  String
+  requestDate DateTime
+  totalAmount Decimal
+  status      String   // "Completed", "In Progress", "Rejected"
+  
+  steps       Json?    // Storing steps as JSON to simplify migration
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("purchases")
 }

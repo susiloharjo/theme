@@ -236,6 +236,99 @@ app.post('/api/dashboard/:dashboardId', async (req, res) => {
     }
 });
 
+// --- CRM ROUTES ---
+
+// Get all customers
+app.get('/api/crm/customers', async (req, res) => {
+    try {
+        const customers = await prisma.crmCustomer.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({ "message": "success", "data": customers });
+    } catch (err) {
+        console.error('Error fetching customers:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
+// Get all opportunities
+app.get('/api/crm/opportunities', async (req, res) => {
+    try {
+        const opportunities = await prisma.crmOpportunity.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({ "message": "success", "data": opportunities });
+    } catch (err) {
+        console.error('Error fetching opportunities:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
+// --- PMO ROUTES ---
+
+// Get all projects
+app.get('/api/pmo/projects', async (req, res) => {
+    try {
+        const projects = await prisma.pmoProject.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        // Parse JSON fields
+        const parsedProjects = projects.map(p => ({
+            ...p,
+            budgetStats: p.budgetStats ? JSON.parse(JSON.stringify(p.budgetStats)) : null,
+            riskStats: p.riskStats ? JSON.parse(JSON.stringify(p.riskStats)) : null,
+            taskStats: p.taskStats ? JSON.parse(JSON.stringify(p.taskStats)) : null,
+            team: p.team ? JSON.parse(JSON.stringify(p.team)) : [],
+            suppliers: p.suppliers ? JSON.parse(JSON.stringify(p.suppliers)) : [],
+            procurements: p.procurements ? JSON.parse(JSON.stringify(p.procurements)) : [],
+            risks: p.risks ? JSON.parse(JSON.stringify(p.risks)) : [],
+            activityFeed: p.activityFeed ? JSON.parse(JSON.stringify(p.activityFeed)) : []
+        }));
+        res.json({ "message": "success", "data": parsedProjects });
+    } catch (err) {
+        console.error('Error fetching projects:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
+// --- TRAINING ROUTES ---
+
+// Get all training sessions
+app.get('/api/training/sessions', async (req, res) => {
+    try {
+        const sessions = await prisma.trainingSession.findMany({
+            orderBy: { startDate: 'asc' }
+        });
+        res.json({ "message": "success", "data": sessions });
+    } catch (err) {
+        console.error('Error fetching training sessions:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
+
+// --- PURCHASE ROUTES ---
+
+// Get all purchase requests
+app.get('/api/purchases', async (req, res) => {
+    try {
+        const purchases = await prisma.purchaseRequest.findMany({
+            orderBy: { requestDate: 'desc' }
+        });
+
+        // Parse JSON fields
+        const parsedPurchases = purchases.map(p => ({
+            ...p,
+            steps: p.steps ? JSON.parse(JSON.stringify(p.steps)) : []
+        }));
+
+        res.json({ "message": "success", "data": parsedPurchases });
+    } catch (err) {
+        console.error('Error fetching purchases:', err);
+        res.status(500).json({ "error": "Internal server error" });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

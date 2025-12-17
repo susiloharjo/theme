@@ -8,6 +8,11 @@ from pydantic import BaseModel, Field
 class SearchIntent(BaseModel):
     """Structured output from Gemini for understanding search intent"""
     
+    entity_type: Optional[str] = Field(
+        default=None,
+        description="Single entity type: CRM, PMO, Training, Purchase, or null"
+    )
+    
     entity_types: List[str] = Field(
         default_factory=list,
         description="Entity types to search: CRM, PMO, Training, Purchase"
@@ -31,6 +36,11 @@ class SearchIntent(BaseModel):
     owner_filter: Optional[str] = Field(
         default=None,
         description="Owner name to filter by"
+    )
+    
+    amount_filter: Optional[str] = Field(
+        default=None,
+        description="Amount filter expression like '>1000000' or '<500000'"
     )
     
     amount_filter: Optional[str] = Field(

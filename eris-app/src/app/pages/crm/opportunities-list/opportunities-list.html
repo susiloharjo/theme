@@ -9,7 +9,7 @@
         class="bg-white border border-gray-200 rounded-t-lg border-b-0 p-2 flex flex-col md:flex-row items-center justify-between gap-4">
         <!-- Search (Left) -->
         <div class="relative w-full md:w-64">
-            <input type="text"
+            <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
                 class="input py-1.5 pl-3 pr-8 text-sm italic text-gray-500 border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-full"
                 placeholder="Search...">
             <button class="absolute inset-y-0 right-0 px-2 text-gray-500 hover:text-gray-700">
@@ -147,26 +147,28 @@
                                     <span *ngSwitchCase="'name'" class="font-medium text-gray-900">{{ opp.name }}</span>
 
                                     <!-- Account -->
-                                    <span *ngSwitchCase="'account'" class="text-gray-600">{{ opp.account }}</span>
+                                    <span *ngSwitchCase="'customerName'" class="text-gray-600">{{ opp.customerName
+                                        }}</span>
 
                                     <!-- Stage -->
-                                    <span *ngSwitchCase="'stage'"
+                                    <span *ngSwitchCase="'stageName'"
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                                         [ngClass]="{
-                                            'bg-purple-100 text-purple-800': opp.stage === 'Qualification',
-                                            'bg-blue-100 text-blue-800': opp.stage === 'Proposal',
-                                            'bg-yellow-100 text-yellow-800': opp.stage === 'Negotiation',
-                                            'bg-green-100 text-green-800': opp.stage === 'Closed Won'
+                                            'bg-purple-100 text-purple-800': opp.stageName === 'Qualification',
+                                            'bg-blue-100 text-blue-800': opp.stageName === 'Proposal',
+                                            'bg-yellow-100 text-yellow-800': opp.stageName === 'Negotiation',
+                                            'bg-green-100 text-green-800': opp.stageName === 'Closed Won'
                                         }">
-                                        {{ opp.stage }}
+                                        {{ opp.stageName }}
                                     </span>
 
                                     <!-- Amount -->
-                                    <span *ngSwitchCase="'amount'" class="font-medium text-gray-900">{{ opp.amount
-                                        }}</span>
+                                    <span *ngSwitchCase="'expectedValue'" class="font-medium text-gray-900">{{
+                                        opp.expectedValue | currency:'IDR':'symbol':'1.0-0' }}</span>
 
                                     <!-- Close Date -->
-                                    <span *ngSwitchCase="'closeDate'" class="text-gray-600">{{ opp.closeDate }}</span>
+                                    <span *ngSwitchCase="'expectedCloseDate'" class="text-gray-600">{{
+                                        opp.expectedCloseDate | date:'mediumDate' }}</span>
 
                                     <!-- Actions -->
                                     <div *ngSwitchCase="'actions'"
@@ -196,7 +198,7 @@
             class="px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
             <p class="text-sm text-gray-500">
                 Showing <span class="font-medium">{{ startIndex }}</span> to <span class="font-medium">{{ endIndex
-                    }}</span> of <span class="font-medium">{{ opportunities.length }}</span> results
+                    }}</span> of <span class="font-medium">{{ filteredOpportunities.length }}</span> results
             </p>
             <div class="flex gap-2">
                 <button (click)="prevPage()" [disabled]="currentPage === 1"

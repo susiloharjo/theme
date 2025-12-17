@@ -62,7 +62,9 @@ router.post('/', async (req, res) => {
         const { query = '', filters = {}, page = 1, size = 20 } = req.body;
 
         // If there's a search query, try agent-search first (LLM-powered)
-        if (query && query.trim()) {
+        // NOW USING: Fast Intent Parser with Gemini 2.0 Flash
+        const SKIP_AGENT_SEARCH = false; // Re-enabled for fast intent parsing
+        if (query && query.trim() && !SKIP_AGENT_SEARCH) {
             const agentResult = await callAgentSearch(query.trim(), page, size);
 
             if (agentResult && agentResult.results) {
@@ -177,15 +179,44 @@ router.post('/', async (req, res) => {
             }
 
             // Keyword search (always run as fallback/hybrid)
-            where.OR = [
-                { referenceNo: { contains: searchQuery, mode: 'insensitive' } },
-                { title: { contains: searchQuery, mode: 'insensitive' } },
-                { subtitle: { contains: searchQuery, mode: 'insensitive' } },
-                { description: { contains: searchQuery, mode: 'insensitive' } },
-                { searchText: { contains: searchQuery, mode: 'insensitive' } },
-                { ownerName: { contains: searchQuery, mode: 'insensitive' } },
-                { status: { contains: searchQuery, mode: 'insensitive' } }
-            ];
+            // For multi-word queries, match ANY word in the fields
+            const queryWords = searchQuery.split(/\s+/).filter(w => w.length > 2);
+
+            // Indonesian to English term expansion
+            const termExpansions = {
+                'pembelian': ['purchase', 'buying'],
+                'pelatihan': ['training'],
+                'proyek': ['project'],
+                'pelanggan': ['customer', 'client'],
+                'tertunda': ['pending'],
+                'selesai': ['completed', 'done'],
+                'ditolak': ['rejected'],
+                'berjalan': ['progress', 'active']
+            };
+
+            // Expand query words with translations
+            const expandedWords = [];
+            for (const word of queryWords) {
+                expandedWords.push(word);
+                if (termExpansions[word]) {
+                    expandedWords.push(...termExpansions[word]);
+                }
+            }
+
+            const orConditions = [];
+            for (const word of expandedWords) {
+                orConditions.push(
+                    { referenceNo: { contains: word, mode: 'insensitive' } },
+                    { title: { contains: word, mode: 'insensitive' } },
+                    { searchText: { contains: word, mode: 'insensitive' } },
+                    { status: { contains: word, mode: 'insensitive' } },
+                    { objectType: { contains: word, mode: 'insensitive' } }
+                );
+            }
+
+            if (orConditions.length > 0) {
+                where.OR = orConditions;
+            }
         }
 
         // Get keyword matches
@@ -217,11 +248,39 @@ router.post('/', async (req, res) => {
 
         // Apply hybrid ranking (keyword + semantic)
         if (searchQuery) {
+            // Split query into individual words for multi-word matching
+            const queryWords = searchQuery.split(/\s+/).filter(w => w.length > 1);
+
             allResults = allResults.map(item => {
                 let keywordScore = 0;
                 let semanticScore = semanticScoreMap[item.id] || 0;
 
-                // Keyword scoring (same as before)
+                // Build searchable text from item - include status and objectType for matching
+                const itemText = [
+                    item.referenceNo || '',
+                    item.title || '',
+                    item.searchText || '',
+                    item.status || '',
+                    item.objectType || ''
+                ].join(' ').toLowerCase();
+
+                // Multi-word matching: score based on how many query words match
+                let wordMatchCount = 0;
+                for (const word of queryWords) {
+                    if (itemText.includes(word)) {
+                        wordMatchCount++;
+                    }
+                }
+
+                // Give high score for items that match ALL query words
+                if (queryWords.length > 1 && wordMatchCount === queryWords.length) {
+                    keywordScore += 800; // All words match
+                } else if (wordMatchCount > 0) {
+                    // Partial match: score proportionally
+                    keywordScore += (wordMatchCount / queryWords.length) * 400;
+                }
+
+                // Exact full-query matching (original logic)
                 if (item.referenceNo && item.referenceNo.toLowerCase() === searchQuery) {
                     keywordScore += 1000;
                 } else if (item.referenceNo && item.referenceNo.toLowerCase().startsWith(searchQuery)) {
@@ -244,9 +303,9 @@ router.post('/', async (req, res) => {
 
                 // Status scoring
                 if (item.status && item.status.toLowerCase() === searchQuery) {
-                    keywordScore += 300; // Exact status match
+                    keywordScore += 300;
                 } else if (item.status && item.status.toLowerCase().includes(searchQuery)) {
-                    keywordScore += 150; // Partial status match
+                    keywordScore += 150;
                 }
 
                 // Recency bonus
@@ -295,14 +354,57 @@ router.post('/', async (req, res) => {
             allResults.sort((a, b) => b._score - a._score);
 
             // Filter out low-relevance results based on final score
-            // Keep items with good keyword match OR good hybrid score
+            // SMARTER: If we have strong keyword matches, filter out weak semantic-only results
             if (semanticResults && semanticResults.length > 0) {
                 const originalCount = allResults.length;
-                // Keep if: keyword score >= 100 OR hybrid score >= 100
-                allResults = allResults.filter(r => r._keywordScore >= 100 || r._score >= 100);
+
+                // Check if we have any strong keyword matches (score >= 600)
+                const hasStrongKeywordMatches = allResults.some(r => r._keywordScore >= 600);
+
+                if (hasStrongKeywordMatches) {
+                    // If we have strong keyword matches, only keep items with good keyword score
+                    allResults = allResults.filter(r => r._keywordScore >= 200);
+                } else {
+                    // Otherwise, use hybrid score threshold
+                    allResults = allResults.filter(r => r._score >= 500);
+                }
+
                 if (allResults.length < originalCount) {
                     console.log(`📉 Filtered ${originalCount - allResults.length} low-relevance items`);
                 }
+            }
+
+            // AND LOGIC: If query contains BOTH entity type AND status, apply strict filtering
+            const entityTypeMap = {
+                'pembelian': 'Purchase', 'beli': 'Purchase', 'purchase': 'Purchase',
+                'pelatihan': 'Training', 'training': 'Training',
+                'proyek': 'PMO', 'project': 'PMO',
+                'pelanggan': 'CRM', 'customer': 'CRM'
+            };
+            const statusKeywords = ['pending', 'completed', 'selesai', 'rejected', 'ditolak', 'progress', 'berjalan', 'approved', 'active'];
+
+            // Check if query contains entity type and status
+            let detectedEntityType = null;
+            let detectedStatusKeyword = null;
+
+            for (const word of queryWords) {
+                if (entityTypeMap[word] && !detectedEntityType) {
+                    detectedEntityType = entityTypeMap[word];
+                }
+                if (statusKeywords.includes(word) && !detectedStatusKeyword) {
+                    detectedStatusKeyword = word;
+                }
+            }
+
+            // If BOTH entity type AND status keyword detected, apply AND filter
+            if (detectedEntityType && detectedStatusKeyword) {
+                const beforeCount = allResults.length;
+                allResults = allResults.filter(item => {
+                    const matchesType = item.objectType === detectedEntityType;
+                    const matchesStatus = item.status && item.status.toLowerCase().includes(detectedStatusKeyword);
+                    return matchesType && matchesStatus;
+                });
+                console.log(`🔗 AND filter: ${detectedEntityType} + ${detectedStatusKeyword} -> ${allResults.length} results (was ${beforeCount})`);
             }
         }
 

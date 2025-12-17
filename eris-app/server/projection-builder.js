@@ -76,15 +76,106 @@ async function buildSearchIndex() {
         await prisma.searchIndex.deleteMany({});
         console.log('✅ Cleared existing index');
 
-        // Flatten all mock data
-        const allItems = [
-            ...mockData.customers,
-            ...mockData.opportunities,
-            ...mockData.leads,
-            ...mockData.projects,
-            ...mockData.trainingRequests,
-            ...mockData.purchaseRequests
-        ];
+        const allItems = [];
+
+        // 1. Fetch & Map Projects (PMO)
+        const projects = await prisma.pmoProject.findMany();
+        projects.forEach(p => {
+            allItems.push({
+                objectType: 'PMO',
+                objectId: p.id,
+                referenceNo: p.id, // ID is often the reference like "PRJ-001"
+                title: p.name,
+                subtitle: p.type,
+                description: p.description,
+                status: p.status,
+                ownerName: p.manager,
+                department: 'PMO',
+                amount: null, // Budget is string in schema, complicate parsing, skip for now or parse
+                datePrimary: p.startDate,
+                updatedAt: p.updatedAt,
+                searchText: `${p.name} ${p.manager} ${p.status} ${p.description || ''} ${p.client || ''}`
+            });
+        });
+
+        // 2. Fetch & Map Customers (CRM)
+        const customers = await prisma.crmCustomer.findMany();
+        customers.forEach(c => {
+            allItems.push({
+                objectType: 'CRM',
+                objectId: c.id,
+                referenceNo: c.code,
+                title: c.name,
+                subtitle: c.industry,
+                description: `Customer in ${c.industry}`,
+                status: c.status,
+                ownerName: c.ownerName,
+                department: 'Sales',
+                amount: c.revenue ? Number(c.revenue) : null,
+                datePrimary: c.createdAt,
+                updatedAt: c.updatedAt,
+                searchText: `${c.name} ${c.industry} ${c.status}`
+            });
+        });
+
+        // 3. Fetch & Map Opportunities (CRM)
+        const opportunities = await prisma.crmOpportunity.findMany();
+        opportunities.forEach(o => {
+            allItems.push({
+                objectType: 'CRM',
+                objectId: o.id,
+                referenceNo: 'OPP-' + o.id.substring(0, 8),
+                title: o.name,
+                subtitle: o.account,
+                description: `Opportunity for ${o.account}`,
+                status: o.stage,
+                department: 'Sales',
+                amount: o.amount ? Number(o.amount) : null,
+                datePrimary: o.closeDate,
+                updatedAt: o.updatedAt,
+                searchText: `${o.name} ${o.account} ${o.stage}`
+            });
+        });
+
+        // 4. Fetch & Map Training Sessions (Training)
+        const trainings = await prisma.trainingSession.findMany();
+        trainings.forEach(t => {
+            allItems.push({
+                objectType: 'Training',
+                objectId: t.id,
+                referenceNo: 'TR-' + t.id,
+                title: t.topic,
+                subtitle: t.provider,
+                description: `Training by ${t.provider}`,
+                status: t.status,
+                department: 'HR',
+                datePrimary: t.startDate,
+                updatedAt: t.updatedAt,
+                searchText: `${t.topic} ${t.provider} ${t.type} ${t.location}`
+            });
+        });
+
+        // 5. Fetch & Map Purchase Requests (Purchase)
+        const purchases = await prisma.purchaseRequest.findMany();
+        purchases.forEach(pr => {
+            allItems.push({
+                objectType: 'Purchase',
+                objectId: pr.id,
+                referenceNo: pr.id,
+                title: pr.title,
+                subtitle: pr.department,
+                description: `Purchase for ${pr.department}`,
+                status: pr.status,
+                ownerName: pr.requester,
+                department: pr.department,
+                amount: pr.totalAmount ? Number(pr.totalAmount) : null,
+                datePrimary: pr.requestDate,
+                updatedAt: pr.updatedAt,
+                searchText: `${pr.title} ${pr.requester} ${pr.department} ${pr.status}`
+            });
+        });
+
+        console.log(`📥 Fetched ${allItems.length} total items from database`);
 
         // Insert all items with embeddings
         let count = 0;
@@ -115,17 +206,15 @@ async function buildSearchIndex() {
                         WHERE id = '${created.id}'
                     `);
 
-                    count++;
-                    console.log(`  📝 Embedded: ${item.referenceNo} - ${item.title}`);
+                    console.log(`  📝 Embedded: ${item.referenceNo || 'ID-' + item.objectId} - ${item.title}`);
                 } catch (embErr) {
-                    console.warn(`  ⚠️ Embedding failed for ${item.referenceNo}:`, embErr.message);
+                    console.warn(`  ⚠️ Embedding failed for ${item.title}:`, embErr.message);
                 }
-            } else {
-                count++;
             }
+            count++;
         }
 
-        console.log(`✅ Indexed ${count} items`);
+        console.log(`✅ Indexed ${count} real items from DB`);
         console.log('🎉 Search index rebuild complete!');
 
         return { success: true, count };

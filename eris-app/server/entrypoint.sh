@@ -22,6 +22,10 @@ node setup-vector.js || true
 echo "🌱 Seeding widgets..."
 node seed-widgets.js || true
 
+# Seed CRM, PMO, Training Data
+echo "🌱 Seeding application data..."
+node prisma/full-seed.js || true
+
 # Build search index with embeddings (optional, can be slow first time)
 if [ "$BUILD_INDEX" = "true" ]; then
   echo "🔄 Building search index..."

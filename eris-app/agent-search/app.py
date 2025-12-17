@@ -1,70 +1,73 @@
 """
-LangChain Agent Search - FastAPI service with Gemini + pgvector semantic search
+LangChain Agent Search - FastAPI service with Intent Parsing
+Uses Gemini 2.0 Flash for FAST intent parsing + Direct SQL queries
+Two-stage approach: LLM Intent → Direct DB Query
 """
 import os
 import time
-from typing import List, Optional
+import json
+import re
+from typing import List, Dict, Any, Optional
 from contextlib import asynccontextmanager
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain_core.prompts import ChatPromptTemplate
 
-from models import SearchIntent, SearchResult, SearchResponse
-
-# Global Embedding Model (Gemini)
-EMBEDDING_MODEL = None
+from models import SearchResponse, SearchResult, SearchIntent
 
 load_dotenv()
 
-# Database connection
+# Database setup
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://eris:eris.1234@postgres:5432/dashboard")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+# Use Gemini 2.0 Flash for SPEED
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
-# Global LLM instance
+# Global instances
 llm = None
-
+db_engine = None
+embeddings = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize LLM and Embedding models on startup"""
-    global llm, EMBEDDING_MODEL
+    """Initialize LLM and DB on startup"""
+    global llm, db_engine, embeddings
     
     if GOOGLE_API_KEY:
-        # 1. Initialize LLM (Gemini 2.5 Flash)
+        print(f"🔄 Initializing Fast Search Service with {GEMINI_MODEL}...")
+        
+        # 1. Initialize LLM (Gemini 2.0 Flash - FAST)
         llm = ChatGoogleGenerativeAI(
             model=GEMINI_MODEL,
             google_api_key=GOOGLE_API_KEY,
             temperature=0,
         )
-        print(f"✅ Gemini LLM initialized: {GEMINI_MODEL}")
         
-        # 2. Initialize Embeddings (Gemini Embeddings-001)
-        try:
-            EMBEDDING_MODEL = GoogleGenerativeAIEmbeddings(
-                model="models/embedding-001",
-                google_api_key=GOOGLE_API_KEY
-            )
-            print("✅ Gemini Embeddings initialized")
-        except Exception as e:
-            print(f"⚠️ Failed to init Embeddings: {e}")
+        # 2. Initialize Embeddings (for /embed endpoint)
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/embedding-001",
+            google_api_key=GOOGLE_API_KEY
+        )
+        
+        # 3. Initialize Database Engine directly (no LangChain SQLDatabase)
+        import sqlalchemy
+        db_engine = sqlalchemy.create_engine(DATABASE_URL)
+        
+        print("✅ Fast Search Service initialized successfully")
     else:
-        print("⚠️ No GOOGLE_API_KEY, running in fallback mode")
+        print("⚠️ No GOOGLE_API_KEY, Search will fail")
         
     yield
     print("🔴 Shutting down agent-search")
 
 
 app = FastAPI(
-    title="Agent Search",
-    description="LangChain-powered semantic search with Gemini + pgvector",
+    title="Agent Search (Fast Intent)",
+    description="Fast Intent Parsing + Direct SQL",
     lifespan=lifespan
 )
 
@@ -82,251 +85,214 @@ class SearchRequest(BaseModel):
     page: int = 1
     size: int = 20
 
+class EmbedRequest(BaseModel):
+    texts: List[str]
 
-# System prompt for understanding search intent
-INTENT_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", """You are a search intent analyzer for an enterprise system. 
-Analyze the user's search query and extract structured intent.
 
-Available entity types: CRM, PMO, Training, Purchase
-Available statuses: Pending, Approved, In Progress, In Planning, Completed, New, Qualified, Won, Proposal, Negotiation, active, prospect, In Review
-Available departments: Sales, IT, HR, PMO, Finance, Procurement, Facilities
+# ===== INTENT PARSING PROMPT (Small & Fast) =====
+INTENT_PROMPT = """Parse this search query into structured intent. Return JSON only.
+
+Available entity types: Purchase, Training, PMO, CRM
+Available statuses: pending, completed, rejected, progress, approved, active
+
+Indonesian translations:
+- pembelian/beli = Purchase
+- pelatihan/training = Training  
+- proyek/project = PMO
+- pelanggan/customer = CRM
+- selesai = completed
+- tertunda/pending = pending
+- ditolak = rejected
+- berjalan/progress = progress
+
+Query: "{query}"
+
+Return JSON:
+{{"entity_type": "<type or null>", "status": "<status or null>", "keywords": ["word1", "word2"]}}
 
 Rules:
-- Extract entity_types based on context (pembelian/purchase/beli → Purchase, kursus/training/pelatihan → Training, proyek/project/konstruksi → PMO, pelanggan/customer/klien → CRM)
-- Extract status if mentioned (pending, approved, completed, etc)
-- Extract department if mentioned (IT, Sales, HR, etc)
-- IMPORTANT: Keywords should ONLY contain specific search terms like product names (office equipment, data center, laptop, software). 
-- Do NOT include words already mapped to entity_types (project, proyek, pembelian, purchase, kursus, training, customer, pelanggan)
-- Do NOT include common words (yang, untuk, dan, semua, all, tampilkan, nilai, value, diatas, dibawah)
-- Keywords should be in English to match database content. Translate Indonesian terms (peralatan kantor → office equipment)
+1. entity_type: detected type or null if generic search
+2. status: detected status filter or null
+3. keywords: remaining search terms (translated to English)
 
-Return JSON format only."""),
-    ("human", "{query}")
-])
+Examples:
+- "pembelian pending" → {{"entity_type": "Purchase", "status": "pending", "keywords": []}}
+- "training completed" → {{"entity_type": "Training", "status": "completed", "keywords": []}}
+- "office furniture" → {{"entity_type": null, "status": null, "keywords": ["office", "furniture"]}}
+- "proyek progress" → {{"entity_type": "PMO", "status": "progress", "keywords": []}}
+
+JSON only, no explanation:"""
 
 
-def parse_intent_with_llm(query: str) -> SearchIntent:
-    """Use Gemini to understand search intent"""
-    global llm
-    
+def parse_intent(query: str) -> dict:
+    """Use LLM to parse search intent (fast, small prompt)"""
     if not llm:
-        # Fallback: basic keyword extraction
-        return SearchIntent(
-            keywords=query.lower().split(),
-            entity_types=[]
-        )
+        return {"entity_type": None, "status": None, "keywords": query.split()}
     
     try:
-        # Use structured output
-        structured_llm = llm.with_structured_output(SearchIntent)
-        chain = INTENT_PROMPT | structured_llm
-        intent = chain.invoke({"query": query})
+        prompt = INTENT_PROMPT.format(query=query)
+        response = llm.invoke(prompt)
+        content = response.content.strip()
+        
+        # Clean JSON from markdown
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0]
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0]
+        
+        intent = json.loads(content)
+        print(f"🎯 Parsed Intent: {intent}")
         return intent
     except Exception as e:
-        print(f"LLM error: {e}")
-        return SearchIntent(keywords=query.lower().split())
+        print(f"⚠️ Intent parse error: {e}")
+        return {"entity_type": None, "status": None, "keywords": query.split()}
 
 
-def generate_embedding(text: str) -> Optional[List[float]]:
-    """Generate embedding using sentence-transformers"""
-    if EMBEDDING_MODEL is None:
-        return None
-    try:
-        embedding = EMBEDDING_MODEL.encode(text, convert_to_numpy=True)
-        return embedding.tolist()
-    except Exception as e:
-        print(f"Embedding error: {e}")
-        return None
-
-
-def execute_hybrid_search(intent: SearchIntent, query: str, limit: int = 100) -> List[dict]:
-    """Execute hybrid search: pgvector semantic + SQL filters from LLM intent"""
-    try:
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
-        
-        # Build WHERE conditions from LLM intent
-        conditions = []
-        params = []
-        
-        # Entity type filter
-        if intent.entity_types:
-            placeholders = ", ".join(["%s"] * len(intent.entity_types))
-            conditions.append(f'object_type IN ({placeholders})')
-            params.extend(intent.entity_types)
-        
-        # Status filter
-        if intent.status_filter:
-            conditions.append('status ILIKE %s')
-            params.append(f"%{intent.status_filter}%")
-        
-        # Department filter
-        if intent.department_filter:
-            conditions.append('department ILIKE %s')
-            params.append(f"%{intent.department_filter}%")
-        
-        # Owner filter
-        if intent.owner_filter:
-            conditions.append('owner_name ILIKE %s')
-            params.append(f"%{intent.owner_filter}%")
-        
-        # Amount filter - parse operator and value (e.g., "<8000000", ">1000000")
-        if intent.amount_filter:
-            import re
-            match = re.match(r'([<>=]+)\s*(\d+)', intent.amount_filter)
-            if match:
-                operator = match.group(1)
-                amount_value = int(match.group(2))
-                # Map to valid SQL operators
-                if operator in ['<', '>', '<=', '>=', '=']:
-                    conditions.append(f'amount {operator} %s')
-                    params.append(amount_value)
-        
-        # Keyword filter - apply to title, description, search_text
-        if intent.keywords:
-            for kw in intent.keywords:
-                conditions.append('(title ILIKE %s OR description ILIKE %s OR search_text ILIKE %s)')
-                params.extend([f"%{kw}%", f"%{kw}%", f"%{kw}%"])
-        
-        where_clause = " AND ".join(conditions) if conditions else "TRUE"
-        
-        # Try pgvector semantic search if embeddings available
-        query_embedding = generate_embedding(query)
-        
-        if query_embedding:
-            # Hybrid: pgvector similarity + LLM filters
-            embedding_str = "[" + ",".join(map(str, query_embedding)) + "]"
-            
-            sql = f"""
-                SELECT 
-                    id, reference_no, object_type, title, subtitle,
-                    description, status, owner_name, department, amount,
-                    1 - (embedding <=> %s::vector) as similarity
-                FROM search_index
-                WHERE {where_clause} AND embedding IS NOT NULL
-                ORDER BY embedding <=> %s::vector
-                LIMIT %s
-            """
-            # Params order: embedding for SELECT, filters for WHERE, embedding for ORDER BY, limit
-            cursor.execute(sql, [embedding_str] + params + [embedding_str, limit])
-        else:
-            # Fallback: keyword search with LLM filters
-            keyword_condition = ""
-            if intent.keywords:
-                keyword_parts = []
-                for kw in intent.keywords:
-                    keyword_parts.append('search_text ILIKE %s')
-                    params.append(f"%{kw}%")
-                keyword_condition = " AND (" + " OR ".join(keyword_parts) + ")"
-            
-            sql = f"""
-                SELECT 
-                    id, reference_no, object_type, title, subtitle,
-                    description, status, owner_name, department, amount,
-                    1.0 as similarity
-                FROM search_index
-                WHERE {where_clause}{keyword_condition}
-                ORDER BY updated_at DESC
-                LIMIT %s
-            """
-            cursor.execute(sql, params + [limit])
-        
-        results = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
-        return [dict(row) for row in results]
-    except Exception as e:
-        print(f"Database error: {e}")
-        import traceback
-        traceback.print_exc()
-        return []
-
-
-@app.post("/embed")
-async def generate_embeddings(request: dict):
+def build_sql(intent: dict, limit: int = 20) -> str:
+    """Build SQL query from parsed intent (no LLM, fast)"""
+    entity_type = intent.get("entity_type")
+    status = intent.get("status")
+    keywords = intent.get("keywords", [])
+    
+    # Base query from search_index (already indexed, fast)
+    conditions = []
+    
+    if entity_type:
+        conditions.append(f"object_type = '{entity_type}'")
+    
+    if status:
+        conditions.append(f"status ILIKE '%{status}%'")
+    
+    if keywords:
+        keyword_conditions = []
+        for kw in keywords:
+            keyword_conditions.append(f"(title ILIKE '%{kw}%' OR search_text ILIKE '%{kw}%')")
+        if keyword_conditions:
+            conditions.append(f"({' OR '.join(keyword_conditions)})")
+    
+    where_clause = " AND ".join(conditions) if conditions else "1=1"
+    
+    sql = f"""
+    SELECT 
+        id,
+        object_id,
+        object_type as "objectType",
+        reference_no as "referenceNo", 
+        title,
+        subtitle,
+        description,
+        status,
+        owner_name as "ownerName",
+        department,
+        amount,
+        updated_at
+    FROM search_index
+    WHERE {where_clause}
+    ORDER BY updated_at DESC
+    LIMIT {limit}
     """
-    Generate embeddings for a list of texts (used by Node.js indexer)
-    Payload: {"texts": ["text1", "text2"]}
-    """
-    if not EMBEDDING_MODEL:
-        raise HTTPException(status_code=503, detail="Embedding model not initialized")
-        
-    try:
-        texts = request.get("texts", [])
-        if not texts:
-            return {"embeddings": []}
-            
-        print(f"🔤 Generating embeddings for {len(texts)} items")
-        embeddings = EMBEDDING_MODEL.embed_documents(texts)
-        return {"embeddings": embeddings}
-    except Exception as e:
-        print(f"❌ Embedding generation failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    
+    return sql.strip()
 
 
 @app.post("/search", response_model=SearchResponse)
-async def search(request: SearchRequest):
-    """Main search endpoint using LLM for intent + pgvector for semantic matching"""
+def search(request: SearchRequest):
+    """
+    Two-stage search:
+    1. LLM parses intent (fast, small prompt with Gemini Flash)
+    2. Direct SQL query (no LLM SQL generation)
+    """
     start_time = time.time()
     
+    if not db_engine:
+        raise HTTPException(status_code=503, detail="Search service not initialized")
+
     query = request.query.strip()
-    if not query:
-        raise HTTPException(status_code=400, detail="Query cannot be empty")
     
-    # Step 1: Parse intent with LLM
-    intent = parse_intent_with_llm(query)
-    print(f"🧠 Intent: {intent.model_dump_json()}")
+    # Stage 1: Parse Intent with LLM (fast)
+    intent_start = time.time()
+    intent = parse_intent(query)
+    intent_ms = int((time.time() - intent_start) * 1000)
+    print(f"⚡ Intent parsing: {intent_ms}ms")
     
-    # Step 2: Execute hybrid search (pgvector + filters)
-    raw_results = execute_hybrid_search(intent, query)
-    print(f"🔍 Found {len(raw_results)} results")
+    # Stage 2: Build & Execute SQL (no LLM)
+    sql_start = time.time()
+    sql = build_sql(intent, request.size)
+    print(f"📜 SQL: {sql}")
     
-    # Step 3: Convert to response format
-    results = []
-    for row in raw_results:
-        results.append(SearchResult(
-            id=row["id"],
-            referenceNo=row["reference_no"],
-            objectType=row["object_type"],
-            title=row["title"],
-            subtitle=row.get("subtitle"),
-            description=row.get("description"),
-            status=row.get("status"),
-            ownerName=row.get("owner_name"),
-            department=row.get("department"),
-            amount=float(row["amount"]) if row.get("amount") else None,
-            relevance_score=float(row.get("similarity", 1.0))
+    try:
+        import sqlalchemy
+        with db_engine.connect() as conn:
+            result = conn.execute(sqlalchemy.text(sql))
+            rows = [dict(row._mapping) for row in result.fetchall()]
+    except Exception as e:
+        print(f"❌ SQL Error: {e}")
+        rows = []
+    
+    sql_ms = int((time.time() - sql_start) * 1000)
+    print(f"⚡ SQL execution: {sql_ms}ms")
+    
+    # Format Results
+    search_results = []
+    for row in rows:
+        search_results.append(SearchResult(
+            id=str(row.get("id", "")),
+            referenceNo=str(row.get("referenceNo", "") or ""),
+            objectType=str(row.get("objectType", "") or ""),
+            title=str(row.get("title", "") or "Untitled"),
+            subtitle=str(row.get("subtitle", "") or ""),
+            description=str(row.get("description", "") or ""),
+            status=str(row.get("status", "") or ""),
+            ownerName=str(row.get("ownerName", "") or ""),
+            department=str(row.get("department", "") or ""),
+            amount=float(row.get("amount") or 0),
+            relevance_score=1.0
         ))
-    
-    # Pagination
-    start_idx = (request.page - 1) * request.size
-    end_idx = start_idx + request.size
-    paginated_results = results[start_idx:end_idx]
-    
+
     duration_ms = int((time.time() - start_time) * 1000)
     
     return SearchResponse(
         query=query,
-        intent=intent,
-        results=paginated_results,
-        total_count=len(results),
+        intent=SearchIntent(
+            keywords=intent.get("keywords", []),
+            entity_type=intent.get("entity_type"),
+            status_filter=intent.get("status")
+        ),
+        results=search_results,
+        total_count=len(search_results),
         duration_ms=duration_ms
     )
 
 
+@app.post("/embed")
+async def embed_text(request: EmbedRequest):
+    """Generate embeddings for list of texts."""
+    if not embeddings:
+        raise HTTPException(status_code=503, detail="Embeddings service not initialized")
+    
+    try:
+        vectors = embeddings.embed_documents(request.texts)
+        return {"embeddings": vectors}
+    except Exception as e:
+        print(f"❌ Embed Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/health")
 async def health():
-    """Health check endpoint"""
     return {
-        "status": "healthy",
-        "llm_available": llm is not None,
-        "embeddings_available": EMBEDDING_MODEL is not None,
-        "model": GEMINI_MODEL if llm else None
+        "status": "healthy", 
+        "llm_ready": llm is not None, 
+        "db_ready": db_engine is not None,
+        "mode": "Fast Intent Parser"
     }
 
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port="8000")
+@app.get("/test")
+async def test_llm():
+    if not llm: 
+        return {"error": "LLM not initialized"}
+    try:
+        resp = llm.invoke("Hi")
+        return {"response": resp.content}
+    except Exception as e:
+        return {"error": str(e)}

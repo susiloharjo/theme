@@ -1,22 +1,13 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TrainingService } from '../training.service';
+import { Training } from '../training.types';
+import { SearchService } from '../../../services/search.service';
 
-interface Training {
-    id: string;
-    topic: string;
-    provider: string; // Subtitle for topic
-    type: string;
-    location: string;
-    startDate: string;
-    endDate: string;
-    status: 'Pending Approval' | 'Approved' | 'In Progress';
-    cost: string; // Formatted string for now
-}
-
-interface ColumnConfig {
-    key: keyof Training | 'select' | 'actions'; // 'select' and 'actions' are special columns
+export interface ColumnConfig {
+    key: string;
     label: string;
     visible: boolean;
 }
@@ -27,207 +18,75 @@ interface ColumnConfig {
     imports: [CommonModule, RouterModule, FormsModule],
     templateUrl: './training-list.html',
 })
-export class TrainingListComponent {
+export class TrainingListComponent implements OnInit {
     @ViewChild('settingsMenu') settingsMenu!: ElementRef;
     @ViewChild('settingsButton') settingsButton!: ElementRef;
 
     isSettingsOpen = false;
-
-    // Search & Sort State
     searchText = '';
-    sortColumn: string | null = null;
+    searchResults: Set<string> | null = null;
+
+    sortColumn: string | null = 'startDate';
     sortDirection: 'asc' | 'desc' = 'asc';
 
-    // Default Columns Configuration
     columns: ColumnConfig[] = [
         { key: 'select', label: '', visible: true },
-        { key: 'topic', label: 'Topic', visible: true },
+        { key: 'topic', label: 'Topic / Course Name', visible: true },
+        { key: 'provider', label: 'Provider', visible: true },
         { key: 'type', label: 'Type', visible: true },
-        { key: 'location', label: 'Location', visible: true },
         { key: 'startDate', label: 'Start Date', visible: true },
-        { key: 'cost', label: 'Cost (IDR)', visible: true },
+        { key: 'endDate', label: 'End Date', visible: true },
+        { key: 'status', label: 'Status', visible: true },
+        { key: 'cost', label: 'Cost', visible: true },
+        { key: 'location', label: 'Location', visible: true },
         { key: 'actions', label: 'Actions', visible: true }
     ];
 
-    // Mock Data
-    trainings: Training[] = [
-        {
-            id: '1',
-            topic: 'Advanced Angular Development',
-            provider: 'Udemy',
-            type: 'Technical Skills',
-            location: 'Online',
-            startDate: '2024-12-10',
-            endDate: '2024-12-12',
-            status: 'Pending Approval',
-            cost: '1,500,000'
-        },
-        {
-            id: '2',
-            topic: 'Leadership 101',
-            provider: 'Internal HR',
-            type: 'Management',
-            location: 'Jakarta Office',
-            startDate: '2024-11-05',
-            endDate: '2024-11-05',
-            status: 'Approved',
-            cost: 'Free'
-        },
-        {
-            id: '3',
-            topic: 'Safety & Compliance 2024',
-            provider: 'E-Learning',
-            type: 'Compliance',
-            location: 'Online',
-            startDate: '2024-01-01',
-            endDate: '2024-12-31',
-            status: 'In Progress',
-            cost: 'Free'
-        },
-        {
-            id: '4',
-            topic: 'Cybersecurity Fundamentals',
-            provider: 'Coursera',
-            type: 'Technical Skills',
-            location: 'Online',
-            startDate: '2024-02-15',
-            endDate: '2024-02-20',
-            status: 'Pending Approval',
-            cost: '2,000,000'
-        },
-        {
-            id: '5',
-            topic: 'Project Management Professional',
-            provider: 'PMI',
-            type: 'Certification',
-            location: 'Singapore',
-            startDate: '2024-05-10',
-            endDate: '2024-05-15',
-            status: 'Approved',
-            cost: '15,000,000'
-        },
-        {
-            id: '6',
-            topic: 'Effective Communication',
-            provider: 'Internal HR',
-            type: 'Soft Skills',
-            location: 'Bali Office',
-            startDate: '2024-03-01',
-            endDate: '2024-03-02',
-            status: 'In Progress',
-            cost: 'Free'
-        },
-        // Adding more dummy data to reach 15 items
-        {
-            id: '7',
-            topic: 'Data Analysis with Python',
-            provider: 'DataCamp',
-            type: 'Technical Skills',
-            location: 'Online',
-            startDate: '2024-06-01',
-            endDate: '2024-06-30',
-            status: 'Approved',
-            cost: '300,000'
-        },
-        {
-            id: '8',
-            topic: 'Conflict Resolution',
-            provider: 'Internal HR',
-            type: 'Soft Skills',
-            location: 'Jakarta Office',
-            startDate: '2024-07-10',
-            endDate: '2024-07-11',
-            status: 'Pending Approval',
-            cost: 'Free'
-        },
-        {
-            id: '9',
-            topic: 'AWS Solutions Architect',
-            provider: 'A Cloud Guru',
-            type: 'Technical Skills',
-            location: 'Online',
-            startDate: '2024-08-01',
-            endDate: '2024-09-15',
-            status: 'In Progress',
-            cost: '2,500,000'
-        },
-        {
-            id: '10',
-            topic: 'Agile Methodologies',
-            provider: 'Scrum Alliance',
-            type: 'Certification',
-            location: 'Bandung',
-            startDate: '2024-04-20',
-            endDate: '2024-04-22',
-            status: 'Approved',
-            cost: '5,000,000'
-        },
-        {
-            id: '11',
-            topic: 'Public Speaking Masterclass',
-            provider: 'Udemy',
-            type: 'Soft Skills',
-            location: 'Online',
-            startDate: '2024-09-05',
-            endDate: '2024-09-06',
-            status: 'Pending Approval',
-            cost: '200,000'
-        },
-        {
-            id: '12',
-            topic: 'Machine Learning Basics',
-            provider: 'Coursera',
-            type: 'Technical Skills',
-            location: 'Online',
-            startDate: '2024-10-01',
-            endDate: '2024-11-01',
-            status: 'In Progress',
-            cost: '1,200,000'
-        },
-        {
-            id: '13',
-            topic: 'Time Management',
-            provider: 'Internal HR',
-            type: 'Soft Skills',
-            location: 'Jakarta Office',
-            startDate: '2024-01-15',
-            endDate: '2024-01-15',
-            status: 'Approved',
-            cost: 'Free'
-        },
-        {
-            id: '14',
-            topic: 'Financial Accounting 101',
-            provider: 'EdX',
-            type: 'Finance',
-            location: 'Online',
-            startDate: '2024-05-01',
-            endDate: '2024-05-20',
-            status: 'Pending Approval',
-            cost: '800,000'
-        },
-        {
-            id: '15',
-            topic: 'Business English',
-            provider: 'EF',
-            type: 'Language',
-            location: 'Online',
-            startDate: '2024-02-01',
-            endDate: '2024-04-01',
-            status: 'Approved',
-            cost: '3,000,000'
-        }
-    ];
+    trainings: Training[] = [];
 
-    // Pagination
-    currentPage = 1;
-    pageSize = 10;
+    constructor(
+        private trainingService: TrainingService,
+        private searchService: SearchService,
+        private cdr: ChangeDetectorRef
+    ) { }
+
+    ngOnInit() {
+        this.trainingService.getTrainings().subscribe({
+            next: (data) => {
+                this.trainings = data;
+                this.cdr.detectChanges();
+            },
+            error: (err) => console.error('Failed to load trainings', err)
+        });
+    }
+
+    onSearch() {
+        if (!this.searchText.trim()) {
+            this.searchResults = null;
+            return;
+        }
+
+        this.searchService.search(this.searchText, { objectType: 'Training' }).subscribe({
+            next: (response) => {
+                this.searchResults = new Set(response.results.map(r => r.objectId));
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Search failed', err);
+                this.searchResults = null;
+                this.cdr.detectChanges();
+            }
+        });
+    }
 
     get filteredSortedTrainings(): Training[] {
         let result = [...this.trainings];
 
-        // Filter
-        if (this.searchText) {
+        // Filter: Search Logic
+        if (this.searchResults) {
+            result = result.filter(t => this.searchResults!.has(t.id));
+        } else if (this.searchText) {
+            // Fallback local search
             const lowerSearch = this.searchText.toLowerCase();
             result = result.filter(item =>
                 item.topic.toLowerCase().includes(lowerSearch) ||
@@ -243,14 +102,13 @@ export class TrainingListComponent {
                 let valA = (a as any)[this.sortColumn!]?.toString().toLowerCase() || '';
                 let valB = (b as any)[this.sortColumn!]?.toString().toLowerCase() || '';
 
-                // Handle Cost sorting manually (remove commas, handle 'free')
                 if (this.sortColumn === 'cost') {
+                    // Handle numeric cost or 'free'
                     const numA = valA === 'free' ? 0 : parseInt(valA.replace(/,/g, ''), 10) || 0;
                     const numB = valB === 'free' ? 0 : parseInt(valB.replace(/,/g, ''), 10) || 0;
                     return this.sortDirection === 'asc' ? numA - numB : numB - numA;
                 }
 
-                // Default String/Date sorting
                 if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
                 if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
                 return 0;
@@ -259,6 +117,10 @@ export class TrainingListComponent {
 
         return result;
     }
+
+    // Pagination Properties
+    currentPage = 1;
+    pageSize = 10;
 
     get paginatedTrainings(): Training[] {
         const startIndex = (this.currentPage - 1) * this.pageSize;
@@ -310,10 +172,6 @@ export class TrainingListComponent {
 
     toggleSettings() {
         this.isSettingsOpen = !this.isSettingsOpen;
-        if (this.isSettingsOpen) {
-            // alert('Settings Menu Opened!'); // Commenting out alert after testing, used for debug
-            console.log('Settings Menu Opened');
-        }
     }
 
     closeSettings() {

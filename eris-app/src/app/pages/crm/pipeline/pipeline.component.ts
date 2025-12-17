@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CrmDataService } from '../shared/crm-data.service';
@@ -44,32 +44,45 @@ export class PipelineComponent implements OnInit {
     readonly DEFAULT_LIMIT = 5;
     readonly PAGE_SIZE = 5;
 
-    constructor(private crmService: CrmDataService) { }
+    constructor(
+        private crmService: CrmDataService,
+        private cdr: ChangeDetectorRef
+    ) { }
 
     ngOnInit() {
         this.loadData();
     }
 
     loadData() {
-        // Load stages (Sync)
-        this.stages = this.crmService.getOpportunityStages();
-        this.filterStageIds = this.stages.map(s => s.id);
-        this.stages.forEach(stage => {
-            this.stageLimits[stage.id] = this.DEFAULT_LIMIT;
+        // Load stages (Async)
+        this.crmService.getOpportunityStages().subscribe(stages => {
+            this.stages = stages;
+            this.filterStageIds = this.stages.map(s => s.id);
+            this.stages.forEach(stage => {
+                this.stageLimits[stage.id] = this.DEFAULT_LIMIT;
+            });
+            this.cdr.detectChanges(); // Detect on stages loaded
         });
 
         // Load opportunities (Async)
         this.loadOpportunities();
 
         // Load auxiliary data
-        this.owners = this.crmService.getUsers().filter(u => u.role === 'sales' || u.role === 'manager');
-        this.crmService.getCustomers().subscribe(data => this.customers = data);
+        this.crmService.getUsers().subscribe(users => {
+            this.owners = users.filter(u => u.role === 'sales' || u.role === 'manager');
+            this.cdr.detectChanges();
+        });
+        this.crmService.getCustomers().subscribe(data => {
+            this.customers = data;
+            this.cdr.detectChanges();
+        });
     }
 
     loadOpportunities() {
         this.crmService.getOpportunities().subscribe(data => {
             this.opportunities = data;
             this.applyFilters();
+            this.cdr.detectChanges();
         });
     }
 

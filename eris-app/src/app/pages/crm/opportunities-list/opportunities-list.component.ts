@@ -1,5 +1,9 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CrmDataService } from '../shared/crm-data.service';
+import { Opportunity } from '../shared/crm.types';
+import { SearchService } from '../../../services/search.service';
 
 export interface ColumnConfig {
     key: string;
@@ -10,40 +14,68 @@ export interface ColumnConfig {
 @Component({
     selector: 'app-opportunities-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './opportunities-list.html',
 })
-export class OpportunitiesListComponent {
+export class OpportunitiesListComponent implements OnInit {
     @ViewChild('settingsMenu') settingsMenu!: ElementRef;
     @ViewChild('settingsButton') settingsButton!: ElementRef;
 
     isSettingsOpen = false;
+    searchTerm = '';
 
     columns: ColumnConfig[] = [
         { key: 'select', label: '', visible: true },
         { key: 'name', label: 'Opportunity Name', visible: true },
-        { key: 'account', label: 'Account', visible: true },
-        { key: 'stage', label: 'Stage', visible: true },
-        { key: 'amount', label: 'Amount', visible: true },
-        { key: 'closeDate', label: 'Close Date', visible: true },
+        { key: 'customerName', label: 'Account', visible: true },
+        { key: 'stageName', label: 'Stage', visible: true },
+        { key: 'expectedValue', label: 'Amount', visible: true },
+        { key: 'expectedCloseDate', label: 'Close Date', visible: true },
         { key: 'actions', label: 'Actions', visible: true }
     ];
 
-    opportunities = [
-        { name: 'Q4 Software License', account: 'TechSolutions Inc.', stage: 'Proposal', amount: '$45,000', closeDate: '2023-12-15' },
-        { name: 'Consulting Project', account: 'Global Corp', stage: 'Negotiation', amount: '$120,000', closeDate: '2023-11-30' },
-        { name: 'Cloud Migration', account: 'StartUp Hub', stage: 'Qualification', amount: '$25,000', closeDate: '2024-01-20' },
-        { name: 'System Integration', account: 'Enterprise Systems', stage: 'Closed Won', amount: '$85,000', closeDate: '2023-10-15' },
-        { name: 'Support Contract', account: 'Cloud Services Ltd', stage: 'Proposal', amount: '$15,000', closeDate: '2023-12-01' },
-        // More dummy data
-        { name: 'Data Analytics Upgrade', account: 'Alpha Inc', stage: 'Qualification', amount: '$30,000', closeDate: '2024-02-10' },
-        { name: 'Security Audit', account: 'Beta Corp', stage: 'Closed Won', amount: '$50,000', closeDate: '2023-09-01' },
-        { name: 'Mobile App Dev', account: 'Gamma Ltd', stage: 'Negotiation', amount: '$90,000', closeDate: '2024-03-15' },
-        { name: 'ERP Implementation', account: 'Delta LLC', stage: 'Proposal', amount: '$200,000', closeDate: '2024-06-01' },
-        { name: 'Training Program', account: 'Epsilon SA', stage: 'Qualification', amount: '$10,000', closeDate: '2024-01-05' },
-        { name: 'Website Redesign', account: 'Zeta Gmbh', stage: 'Closed Won', amount: '$15,000', closeDate: '2023-11-10' },
-        { name: 'IT Infrastructure', account: 'Eta Pvt', stage: 'Negotiation', amount: '$60,000', closeDate: '2024-04-20' }
-    ];
+    opportunities: Opportunity[] = [];
+    filteredOpportunities: Opportunity[] = [];
+    isSearching = false;
+
+    constructor(
+        private crmService: CrmDataService,
+        private searchService: SearchService,
+        private cdr: ChangeDetectorRef
+    ) { }
+
+    ngOnInit() {
+        this.crmService.getOpportunities().subscribe(data => {
+            this.opportunities = data;
+            this.filteredOpportunities = data;
+            this.cdr.detectChanges();
+        });
+    }
+
+    onSearch() {
+        if (!this.searchTerm.trim()) {
+            this.filteredOpportunities = this.opportunities;
+            return;
+        }
+
+        this.isSearching = true;
+        this.searchService.search(this.searchTerm, { objectType: 'CRM' }).subscribe({
+            next: (response) => {
+                const resultIds = new Set(response.results.map(r => r.objectId));
+                // Filter opportunities that match the search result IDs
+                // Note: Search index for opportunities might have different objectId if we are searching across multiple types.
+                // Assuming objectType 'CRM' returns both Customers and Opportunities.
+                // We should filter only those present in our opportunities list.
+                this.filteredOpportunities = this.opportunities.filter(o => resultIds.has(o.id));
+                this.currentPage = 1;
+                this.isSearching = false;
+            },
+            error: (err) => {
+                console.error('Search failed', err);
+                this.isSearching = false;
+            }
+        });
+    }
 
     // Pagination Properties
     currentPage = 1;
@@ -51,11 +83,11 @@ export class OpportunitiesListComponent {
 
     get paginatedOpportunities() {
         const startIndex = (this.currentPage - 1) * this.pageSize;
-        return this.opportunities.slice(startIndex, startIndex + this.pageSize);
+        return this.filteredOpportunities.slice(startIndex, startIndex + this.pageSize);
     }
 
     get totalPages(): number {
-        return Math.ceil(this.opportunities.length / this.pageSize);
+        return Math.ceil(this.filteredOpportunities.length / this.pageSize);
     }
 
     get startIndex(): number {
@@ -63,7 +95,7 @@ export class OpportunitiesListComponent {
     }
 
     get endIndex(): number {
-        return Math.min(this.startIndex + this.pageSize - 1, this.opportunities.length);
+        return Math.min(this.startIndex + this.pageSize - 1, this.filteredOpportunities.length);
     }
 
     nextPage() {
